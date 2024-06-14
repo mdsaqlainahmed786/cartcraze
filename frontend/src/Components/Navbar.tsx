@@ -6,10 +6,11 @@ import { PiShoppingCartLight } from "react-icons/pi";
 import { Input } from "./NavComponents/Input";
 import { IoHomeOutline } from "react-icons/io5";
 import { IoMailOutline } from "react-icons/io5";
-//import BottomNav from "./BottomNav";
 import { IoMdSearch } from "react-icons/io";
 import NavItem from "./NavComponents/NavItem";
 import Icons from "./NavComponents/Icons";
+import MobileNavcomp from "./NavComponents/MobileNavcomp";
+import MobileNavIcons from "./NavComponents/MobileNavIcons";
 function Navbar() {
   const [isHamOpen, setIsHamOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -57,44 +58,24 @@ function Navbar() {
           isHamOpen ? "block" : "hidden"
         }`}
       >
-        <span className="hover:text-black hover:bg-gray-200 rounded-md p-1 ">
-          T-shirts
-        </span>
-        <span className="hover:text-black hover:bg-gray-200 rounded-md p-1 ">
-          Furniture
-        </span>
-        <span className="hover:text-black hover:bg-gray-200 rounded-md p-1 ">
-          Electronics
-        </span>
-        <span className="hover:text-black hover:bg-gray-200 rounded-md p-1 ">
-          Fashion
-        </span>
-        <span className="hover:text-black hover:bg-gray-200 rounded-md p-1 ">
-          Men's Wear
-        </span>
-        <span className="hover:text-black hover:bg-gray-200 rounded-md p-1 ">
-          Women's Wear
-        </span>
+      <MobileNavcomp navItems="T-shirts"/>
+      <MobileNavcomp navItems="Furniture"/>
+      <MobileNavcomp navItems="Fashion"/>
+      <MobileNavcomp navItems="Electronics"/>
+      <MobileNavcomp navItems="Men's Wear"/>
+      <MobileNavcomp navItems="Women's Wear"/>
       </div>
       <div className="flex justify-evenly w-full lg:hidden absolute bottom-0 flex-row text-4xl p-2">
-        <div className="cursor-pointer hover:bg-gray-200 rounded-full p-2">
-          <IoHomeOutline />
-        </div>
+        <MobileNavIcons reactMobileIcons={<IoHomeOutline />}/>
         <button
           className="cursor-pointer hover:bg-gray-200 rounded-full p-2"
           onClick={() => setIsOpen(!isOpen)}
         >
           <IoMdSearch />
         </button>
-        <div className="cursor-pointer hover:bg-gray-200 rounded-full p-2">
-          <PiShoppingCartLight />
-        </div>
-        <div className="cursor-pointer hover:bg-gray-200 rounded-full p-2">
-          <IoMailOutline />
-        </div>
-        <div className="cursor-pointer hover:bg-gray-200 rounded-full p-2">
-          <CiLogin />
-        </div>
+        <MobileNavIcons reactMobileIcons={<PiShoppingCartLight />}/>
+        <MobileNavIcons reactMobileIcons={<IoMailOutline />}/>
+        <MobileNavIcons reactMobileIcons={<CiLogin />}/>
       </div>
     </>
   );
