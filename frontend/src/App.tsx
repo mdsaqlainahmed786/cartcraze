@@ -1,9 +1,15 @@
 import "./App.css";
-import Navbar from "./Components/Navbar";
+import Carousel from "./Components/Carousel";
+import Collections from "./Components/CollectionsComponents/Collections";
+import Navbar from "./Components/NavComponents/Navbar";
 function App() {
-  return <>
-   <Navbar/>
-  </>;
+  return (
+    <>
+      <Navbar />
+      <Carousel />
+      <Collections/>
+    </>
+  );
 }
 
 export default App;

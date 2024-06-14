@@ -1,16 +1,17 @@
-import TitlePng from "../assets/Title.png";
-import HamburgerMenu from "./NavComponents/Hamburger";
+import TitlePng from '../../assets/Title.png';
+import HamburgerMenu from "../NavComponents/Hamburger";
 import { useState } from "react";
-import { CiHeart, CiLogin } from "react-icons/ci";
-import { PiShoppingCartLight } from "react-icons/pi";
-import { Input } from "./NavComponents/Input";
+import { Input } from "../NavComponents/Input";
 import { IoHomeOutline } from "react-icons/io5";
-import { IoMailOutline } from "react-icons/io5";
+import { CgProfile } from "react-icons/cg";
 import { IoMdSearch } from "react-icons/io";
-import NavItem from "./NavComponents/NavItem";
-import Icons from "./NavComponents/Icons";
-import MobileNavcomp from "./NavComponents/MobileNavcomp";
-import MobileNavIcons from "./NavComponents/MobileNavIcons";
+import { IoCartOutline } from "react-icons/io5";
+import NavItem from "../NavComponents/NavItem";
+import { IoMdHeartEmpty } from "react-icons/io";
+import { BiSolidSearchAlt2 } from "react-icons/bi";
+import Icons from "../NavComponents/Icons";
+import MobileNavcomp from "../NavComponents/MobileNavcomp";
+import MobileNavIcons from "../NavComponents/MobileNavIcons";
 function Navbar() {
   const [isHamOpen, setIsHamOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -30,15 +31,14 @@ function Navbar() {
               <NavItem navItem="T-shirts" />
               <NavItem navItem="Electronics" />
               <NavItem navItem="Furniture" />
-              <NavItem navItem="Fashion" />
               <NavItem navItem="Men's Wear" />
               <NavItem navItem="Women's Wear" />
             </div>
 
             <div className="hidden lg:flex flex-row text-2xl w-32 justify-evenly">
-              <Icons reactIcons={<CiHeart />} />
-              <Icons reactIcons={<PiShoppingCartLight />} />
-              <Icons reactIcons={<CiLogin />} />
+              <Icons reactIcons={<IoMdHeartEmpty />} />
+              <Icons reactIcons={<IoCartOutline />} />
+              <Icons reactIcons={<CgProfile />} />
             </div>
           </div>
           <div onClick={() => setIsHamOpen(!isHamOpen)}>
@@ -54,28 +54,27 @@ function Navbar() {
         </div>
       </div>
       <div
-        className={`space-y-5 p-3 shadow-md w-screen h-auto flex flex-col justify-center items-center cursor-pointer text-gray-600 lg:hidden ${
+        className={`space-y-5 p-3 shadow-md flex flex-col justify-center items-center cursor-pointer text-gray-600 lg:hidden ${
           isHamOpen ? "block" : "hidden"
         }`}
       >
       <MobileNavcomp navItems="T-shirts"/>
       <MobileNavcomp navItems="Furniture"/>
-      <MobileNavcomp navItems="Fashion"/>
       <MobileNavcomp navItems="Electronics"/>
       <MobileNavcomp navItems="Men's Wear"/>
       <MobileNavcomp navItems="Women's Wear"/>
       </div>
-      <div className="flex justify-evenly w-full lg:hidden absolute bottom-0 flex-row text-4xl p-2">
+      <div className="bg-white flex justify-evenly w-full lg:hidden fixed bottom-0 flex-row text-4xl p-2 z-20">
         <MobileNavIcons reactMobileIcons={<IoHomeOutline />}/>
         <button
           className="cursor-pointer hover:bg-gray-200 rounded-full p-2"
           onClick={() => setIsOpen(!isOpen)}
         >
-          <IoMdSearch />
+          {!isOpen? <IoMdSearch />:<BiSolidSearchAlt2 />}
         </button>
-        <MobileNavIcons reactMobileIcons={<PiShoppingCartLight />}/>
-        <MobileNavIcons reactMobileIcons={<IoMailOutline />}/>
-        <MobileNavIcons reactMobileIcons={<CiLogin />}/>
+        <MobileNavIcons reactMobileIcons={<IoCartOutline />}/>
+        <MobileNavIcons reactMobileIcons={<IoMdHeartEmpty />}/>
+        <MobileNavIcons reactMobileIcons={<CgProfile />}/>
       </div>
     </>
   );
