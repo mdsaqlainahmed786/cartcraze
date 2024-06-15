@@ -10,5 +10,14 @@ export default {
       'custom-lg': '1400px',
     },},
   },
-  plugins: [],
+  plugins: [
+    function ({ addUtilities }) {
+      addUtilities({
+        '::selection': {
+          backgroundColor: 'black', // Custom background color
+          color: 'white', // Your custom text color
+        },
+      })
+    }
+  ],
 }

@@ -11,8 +11,8 @@ function Collections() {
     <span className="flex justify-center text-3xl font-medium font-sans md:text-4xl">Trending Categories</span>
     <span className="flex text-sm text-gray-600 font-light justify-center px-2 pb-10 text-center mx-auto md:text-lg">Find a bright ideal to suit your taste with our great selection of suspension</span>
      <div className="flex flex-wrap justify-center mx-auto gap-11 max-w-[87vw] md:max-w-[68vw] lg:max-w-[60vw]">
-      <CollectionComp collectionName="Men's Ware" collectionImg={men} />
-      <CollectionComp collectionName="Women's Ware" collectionImg={women} />
+      <CollectionComp collectionName="Men's Wear" collectionImg={men} />
+      <CollectionComp collectionName="Women's Wear" collectionImg={women} />
       <CollectionComp collectionName="Hoodies" collectionImg={hoodies} />
       <CollectionComp collectionName="Sweatshirt" collectionImg={sweat_shirt} />
       <CollectionComp collectionName="Oversized T-shirt" collectionImg={oversized_tshirt} />

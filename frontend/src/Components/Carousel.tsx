@@ -49,7 +49,7 @@ const Carousel: React.FC = () => {
   };
 
   return (
-    <div className="relative w-full max-w-[97vw] mx-auto mt-[5px]">
+    <div className="relative w-full max-w-[97vw] mx-auto">
       <div className="overflow-hidden relative">
         <div
           className="flex transition-transform duration-500"

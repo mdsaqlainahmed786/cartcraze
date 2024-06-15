@@ -18,10 +18,10 @@ function Navbar() {
 
   return (
     <>
-      <div className="w-full shadow-md space-y-12 py-2">
+      <div className="w-full shadow-md space-y-12 py-2 sticky z-[52] top-0 bg-white">
         <div className="flex justify-between items-center m-auto max-w-[95vw] custom-md-lg:flex-col space-y-3 custom-lg:flex-row lg:max-w-[90vw]">
           <div className="hover:cursor-pointer">
-            <img className="h-12 lg:h-16" src={TitlePng} alt="Title.png" />
+            <img className="h-12 lg:h-16 hover:opacity-70" src={TitlePng} alt="Title.png" />
           </div>
           <div className="custom-lg:flex hidden lg:flex flex-row">
             <Input />
@@ -54,7 +54,7 @@ function Navbar() {
         </div>
       </div>
       <div
-        className={`space-y-5 p-3 shadow-md flex flex-col justify-center items-center cursor-pointer text-gray-600 lg:hidden ${
+        className={`space-y-5 p-3 sticky z-50 ${isOpen?"top-[168px]":"top-[84px]"} bg-white shadow-md flex flex-col justify-center items-center cursor-pointer text-gray-600 lg:hidden ${
           isHamOpen ? "block" : "hidden"
         }`}
       >
