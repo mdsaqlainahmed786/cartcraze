@@ -4,13 +4,11 @@ interface CollectionProps {
 }
 function CollectionComp({ collectionImg, collectionName }: CollectionProps) {
   return (
-    <div className="w-[28vw] cursor-pointer transition-transform duration-300 hover:scale-110 md:w-64">
-      <img
-        className="h-48 rounded-md object-fill hover:opacity-90 md:h-96 lg:h-96"
-        src={collectionImg}
-        alt="mens"
-      />
-      <span className="w-full flex justify-center p-1 text-center md:text-2xl">{collectionName}</span>
+    <div className="flex flex-col object-cover justify-center items-center transition-transform duration-300 hover:scale-110 hover:opacity-90 hover:cursor-pointer">
+     <img className="rounded-md h-44 max-h-72 md:h-56" src={collectionImg} alt={collectionName}/>
+     <div className="text-sm m-1">
+      {collectionName}
+     </div>
     </div>
   );
 }

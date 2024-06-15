@@ -9,8 +9,8 @@ function Collections() {
   return (
   <div className="mt-7 w-full mx-auto pb-16 space-y-2">
     <span className="flex justify-center text-3xl font-medium font-sans md:text-4xl">Trending Categories</span>
-    <span className="flex text-sm text-gray-600 font-light justify-center pb-10 text-center px-2 mx-auto md:text-lg">Find a bright ideal to suit your taste with our great selection of suspension</span>
-     <div className="flex flex-wrap justify-center mx-auto gap-11 max-w-[79vw]">
+    <span className="flex text-sm text-gray-600 font-light justify-center px-2 pb-10 text-center mx-auto md:text-lg">Find a bright ideal to suit your taste with our great selection of suspension</span>
+     <div className="flex flex-wrap justify-center mx-auto gap-11 max-w-[87vw] md:max-w-[68vw] lg:max-w-[60vw]">
       <CollectionComp collectionName="Men's Ware" collectionImg={men} />
       <CollectionComp collectionName="Women's Ware" collectionImg={women} />
       <CollectionComp collectionName="Hoodies" collectionImg={hoodies} />
