@@ -7,7 +7,7 @@ interface BenefitsOfStoreProps {
 function Benifits({ icon, benefit }: BenefitsOfStoreProps) {
   useEffect(() => {
     AOS.init({
-      duration: 600, // Animation duration in milliseconds // Whether animation should happen only once - while scrolling down
+      duration: 1000, // Animation duration in milliseconds // Whether animation should happen only once - while scrolling down
     });
   }, []);
   return (

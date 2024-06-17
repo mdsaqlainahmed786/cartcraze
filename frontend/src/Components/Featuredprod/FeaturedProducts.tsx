@@ -2,11 +2,12 @@ import { useEffect } from "react";
 import featured_1 from "../../assets/featured_1.webp";
 import FeaturedProductComp from "./FeaturedProductComp";
 import "aos/dist/aos.css";
+import AOS from 'aos'
 function FeaturedProducts() {
   useEffect(() => {
-    // AOS.init({
-    //   duration: 600, // Animation duration in milliseconds // Whether animation should happen only once - while scrolling down
-    // });
+    AOS.init({
+      duration: 600, // Animation duration in milliseconds // Whether animation should happen only once - while scrolling down
+    });
   }, []);
   return (
     <div
