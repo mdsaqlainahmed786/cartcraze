@@ -4,7 +4,7 @@ interface NavItemProps {
 }
     const NavItem: React.FC<NavItemProps> = ({ navItem }) => {
   return (
-    <span className="mr-4 cursor-pointer hover:text-black border-black hover:border-b-4 rounded-b-sm pb-[20px]">
+    <span className="mr-4 cursor-pointer hover:text-black rounded-b-sm pb-[20px]">
     {navItem}
   </span>
   )

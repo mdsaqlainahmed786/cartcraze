@@ -52,14 +52,14 @@ function NewArrivals() {
           </span>
         </div>
         </div>
-        <div className={`flex flex-wrap gap-8 justify-center mx-auto max-w-[80vw] ${menArrivals?"flex":"hidden"}`}>
+        <div className={`flex pt-5 flex-wrap gap-8 justify-center mx-auto max-w-[80vw] ${menArrivals?"flex":"hidden"}`}>
           <FeaturedProductComp image={men} category="T-shirt" oldPrice="599" newPrice="499" title="Gym Freak T-shirt"/>
           <FeaturedProductComp image={men} category="T-shirt" oldPrice="599" newPrice="499" title="Gym Freak T-shirt"/>
           <FeaturedProductComp image={men} category="T-shirt" oldPrice="599" newPrice="499" title="Gym Freak T-shirt"/>
           <FeaturedProductComp image={men} category="T-shirt" oldPrice="599" newPrice="499" title="Gym Freak T-shirt"/>
           <FeaturedProductComp image={men} category="T-shirt" oldPrice="599" newPrice="499" title="Gym Freak T-shirt"/>
         </div>
-        <div className={`flex flex-wrap gap-8 justify-center mx-auto max-w-[80vw] ${womenArrivals?"flex":"hidden"}`}>
+        <div className={`flex pt-5 flex-wrap gap-8 justify-center mx-auto max-w-[80vw] ${womenArrivals?"flex":"hidden"}`}>
           <FeaturedProductComp image={women} category="T-shirt" oldPrice="599" newPrice="499" title="Pink funk T-shirt"/>
           <FeaturedProductComp image={women} category="T-shirt" oldPrice="599" newPrice="499" title="Pink funk T-shirt"/>
           <FeaturedProductComp image={women} category="T-shirt" oldPrice="599" newPrice="499" title="Pink funk T-shirt"/>

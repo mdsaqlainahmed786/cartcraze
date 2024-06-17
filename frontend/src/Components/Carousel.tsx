@@ -74,7 +74,7 @@ const Carousel: React.FC = () => {
       </button>
       <button
         onClick={goToNext}
-        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-3xl text-white p-2 rounded-full z-10 hover:bg-gray-100 hover:text-black"
+        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-3xl text-white p-2 rounded-full z-10 lg:hover:bg-gray-100 lg:hover:text-black"
       >
         &#10095;
       </button>

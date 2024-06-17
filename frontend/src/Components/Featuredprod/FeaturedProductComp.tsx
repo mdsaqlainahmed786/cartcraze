@@ -10,17 +10,17 @@ interface FeaturedComponentProps {
 function FeaturedProductComp({title, category, oldPrice, newPrice, image}:FeaturedComponentProps) {
   return (
     <div className="flex justify-center items-center">
-    <div className="shadow-md rounded-md pb-3">
+    <div className="shadow-md rounded-md pb-3 hover:shadow-lg">
       <div className="flex relative justify-start flex-col space-y-4 space-x-1 cursor-pointer group">
         <img className="h-72 rounded-md" src={image} alt="men.webp" />
         <div
-          className={`hidden absolute h-full text-4xl flex flex-col group-hover:flex`}
+          className={`sm:flex absolute h-full text-4xl flex flex-col lg:hidden group-hover:flex`}
         >
           <div className="flex flex-col space-y-2 space-x-1 w-full items-end">
             <div className="bg-white text-[25px] rounded-full p-1 hover:text-red-600">
               <IoMdHeartEmpty />
             </div>
-            <div className="bg-white text-[25px] rounded-full p-1 hover:text-red-600">
+            <div className="hidden bg-white text-[25px] rounded-full p-1 hover:text-red-600 lg:block">
               <IoCartOutline />
             </div>
           </div>
