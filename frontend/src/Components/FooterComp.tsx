@@ -3,7 +3,7 @@ import pay from "../assets/pay.png";
 function FooterComp() {
   return (
     <div className="pb-24 bg-white border-t-2">
-      <div className="flex pt-6 flex-wrap gap-11 mx-auto justify-center items-center w-[32vw] md:w-[30vw] lg:w-full lg:justify-around">
+      <div className="flex pt-6 flex-wrap gap-11 mx-auto justify-center items-center w-[47vw] md:w-[30vw] lg:w-full lg:justify-around">
         <div className="flex flex-col space-y-3">
           <img className="h-16" src={titlePng} alt="title" />
           <div className="flex text-center w-[10rem] text-gray-600 text-md">

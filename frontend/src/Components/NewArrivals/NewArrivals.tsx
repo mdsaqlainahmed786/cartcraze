@@ -1,9 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import men from "../../assets/mens'ware.webp";
 import women from "../../assets/women's_ware.webp";
 import FeaturedProductComp from "../Featuredprod/FeaturedProductComp";
-
+import AOS from "aos";
+import "aos/dist/aos.css";
 function NewArrivals() {
+  useEffect(() => {
+    AOS.init({
+      duration: 600, // Animation duration in milliseconds // Whether animation should happen only once - while scrolling down
+    });
+  }, []);
   const [menArrivals, setMenArrivals] = useState(true);
   const [womenArrivals, setWomenArrivals] = useState(false);
   const menArrivalsHandler = () => {
@@ -14,9 +20,17 @@ function NewArrivals() {
     setWomenArrivals(true);
     setMenArrivals(false);
   };
-
+  useEffect(() => {
+    AOS.init({
+      duration: 600,
+    });
+  }, []);
   return (
-    <div className="pb-24 mx-auto max-w-[80vw] space-y-3">
+    <div
+      className="pb-24 mx-auto max-w-[80vw] space-y-3 aos-init aos-animate"
+      data-aos="zoom-in-up"
+      data-aos-anchor-placement="top-bottom"
+    >
       <span className="flex justify-center text-3xl font-medium font-sans md:text-4xl">
         New Arrivals
       </span>
@@ -51,21 +65,89 @@ function NewArrivals() {
             Women
           </span>
         </div>
-        </div>
-        <div className={`flex pt-5 flex-wrap gap-8 justify-center mx-auto max-w-[80vw] ${menArrivals?"flex":"hidden"}`}>
-          <FeaturedProductComp image={men} category="T-shirt" oldPrice="599" newPrice="499" title="Gym Freak T-shirt"/>
-          <FeaturedProductComp image={men} category="T-shirt" oldPrice="599" newPrice="499" title="Gym Freak T-shirt"/>
-          <FeaturedProductComp image={men} category="T-shirt" oldPrice="599" newPrice="499" title="Gym Freak T-shirt"/>
-          <FeaturedProductComp image={men} category="T-shirt" oldPrice="599" newPrice="499" title="Gym Freak T-shirt"/>
-          <FeaturedProductComp image={men} category="T-shirt" oldPrice="599" newPrice="499" title="Gym Freak T-shirt"/>
-        </div>
-        <div className={`flex pt-5 flex-wrap gap-8 justify-center mx-auto max-w-[80vw] ${womenArrivals?"flex":"hidden"}`}>
-          <FeaturedProductComp image={women} category="T-shirt" oldPrice="599" newPrice="499" title="Pink funk T-shirt"/>
-          <FeaturedProductComp image={women} category="T-shirt" oldPrice="599" newPrice="499" title="Pink funk T-shirt"/>
-          <FeaturedProductComp image={women} category="T-shirt" oldPrice="599" newPrice="499" title="Pink funk T-shirt"/>
-          <FeaturedProductComp image={women} category="T-shirt" oldPrice="599" newPrice="499" title="Pink funk T-shirt"/>
-          <FeaturedProductComp image={women} category="T-shirt" oldPrice="599" newPrice="499" title="Pink funk T-shirt"/>
-        </div>
+      </div>
+      <div
+        className={`flex pt-5 flex-wrap gap-8 justify-center mx-auto max-w-[80vw] ${
+          menArrivals ? "flex" : "hidden"
+        }`}
+      >
+        <FeaturedProductComp
+          image={men}
+          category="T-shirt"
+          oldPrice="599"
+          newPrice="499"
+          title="Gym Freak T-shirt"
+        />
+        <FeaturedProductComp
+          image={men}
+          category="T-shirt"
+          oldPrice="599"
+          newPrice="499"
+          title="Gym Freak T-shirt"
+        />
+        <FeaturedProductComp
+          image={men}
+          category="T-shirt"
+          oldPrice="599"
+          newPrice="499"
+          title="Gym Freak T-shirt"
+        />
+        <FeaturedProductComp
+          image={men}
+          category="T-shirt"
+          oldPrice="599"
+          newPrice="499"
+          title="Gym Freak T-shirt"
+        />
+        <FeaturedProductComp
+          image={men}
+          category="T-shirt"
+          oldPrice="599"
+          newPrice="499"
+          title="Gym Freak T-shirt"
+        />
+      </div>
+      <div
+        className={`flex pt-5 flex-wrap gap-8 justify-center mx-auto max-w-[80vw] ${
+          womenArrivals ? "flex" : "hidden"
+        }`}
+      >
+        <FeaturedProductComp
+          image={women}
+          category="T-shirt"
+          oldPrice="599"
+          newPrice="499"
+          title="Pink funk T-shirt"
+        />
+        <FeaturedProductComp
+          image={women}
+          category="T-shirt"
+          oldPrice="599"
+          newPrice="499"
+          title="Pink funk T-shirt"
+        />
+        <FeaturedProductComp
+          image={women}
+          category="T-shirt"
+          oldPrice="599"
+          newPrice="499"
+          title="Pink funk T-shirt"
+        />
+        <FeaturedProductComp
+          image={women}
+          category="T-shirt"
+          oldPrice="599"
+          newPrice="499"
+          title="Pink funk T-shirt"
+        />
+        <FeaturedProductComp
+          image={women}
+          category="T-shirt"
+          oldPrice="599"
+          newPrice="499"
+          title="Pink funk T-shirt"
+        />
+      </div>
     </div>
   );
 }
