@@ -51,6 +51,7 @@ const Carousel: React.FC = () => {
   return (
     <div className="relative w-full max-w-[97vw] mx-auto">
       <div className="overflow-hidden relative">
+        {!images || images.length==0 && <div className="text-9xl">Loading.........................</div>}
         <div
           className="flex transition-transform duration-500"
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}

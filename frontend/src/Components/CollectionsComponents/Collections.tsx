@@ -23,18 +23,18 @@ function Collections() {
         suspension
       </span>
       <div className="flex flex-wrap justify-center mx-auto gap-11 max-w-[87vw] md:max-w-[68vw] lg:max-w-[60vw]" data-aos="zoom-in-up" data-aos-anchor-placement="top-bottom">
-        <CollectionComp collectionName="Men's Wear" collectionImg={men} />
-        <CollectionComp collectionName="Women's Wear" collectionImg={women} />
-        <CollectionComp collectionName="Hoodies" collectionImg={hoodies} />
-        <CollectionComp
+        <CollectionComp link="menswear" collectionName="Men's Wear" collectionImg={men} />
+        <CollectionComp link="womenswear" collectionName="Women's Wear" collectionImg={women} />
+        <CollectionComp link="hoodies" collectionName="Hoodies" collectionImg={hoodies} />
+        <CollectionComp link='sweatshirts'
           collectionName="Sweatshirt"
           collectionImg={sweat_shirt}
         />
-        <CollectionComp
-          collectionName="Oversized T-shirt"
+        <CollectionComp link='tshirts'
+          collectionName="T-shirt"
           collectionImg={oversized_tshirt}
         />
-        <CollectionComp collectionName="Furniture" collectionImg={furniture} />
+        <CollectionComp link='furniture' collectionName="Furniture" collectionImg={furniture} />
       </div>
     </div>
   );

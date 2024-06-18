@@ -12,6 +12,7 @@ import { BiSolidSearchAlt2 } from "react-icons/bi";
 import Icons from "../NavComponents/Icons";
 import MobileNavcomp from "../NavComponents/MobileNavcomp";
 import MobileNavIcons from "../NavComponents/MobileNavIcons";
+import { Link } from "react-router-dom";
 function Navbar() {
   const [isHamOpen, setIsHamOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -32,12 +33,11 @@ function Navbar() {
           </div>
           <div className="hidden custom-md-lg:flex space-x-5 flex-row justify-center items-center custom-lg:space-x-10">
             <div className="hidden font-semibold text-gray-600 lg:text-lg lg:block">
-              
-              <NavItem navItem="T-shirts" />
-              <NavItem navItem="Electronics" />
-              <NavItem navItem="Furniture" />
-              <NavItem navItem="Men's Wear" />
-              <NavItem navItem="Women's Wear" />
+              <NavItem link='tshirts' navItem="T-shirts" />
+              <NavItem link='hoodies' navItem="Hoodies" />
+              <NavItem link='furniture' navItem="Furniture" />
+              <NavItem link='menswear' navItem="Men's Wear" />
+              <NavItem link='womenswear' navItem="Women's Wear" />
             </div>
 
             <div className="hidden lg:flex flex-row text-3xl w-32 justify-evenly">
@@ -45,19 +45,23 @@ function Navbar() {
                 <div className="absolute -top-0 right-1 w-[19px] h-5 text-center bg-black text-sm text-white rounded-full">
                   0
                 </div>
+                <Link to="/wishlist">
                 <div className="hover:bg-gray-200 rounded-full p-2">
                   <IoMdHeartEmpty />
                 </div>
+                </Link>
               </div>
               <div className="relative cursor-pointer">
                 <div className="absolute top-0 right-1 w-[19px] h-5 text-center bg-black text-sm text-white rounded-full">
                   0
                 </div>
+                <Link to="/cart">
                 <div className="hover:bg-gray-200 rounded-full p-2">
                   <IoCartOutline />
                 </div>
+                </Link>
               </div>
-              <Icons reactIcons={<CgProfile />} />
+              <Icons link="signin" reactIcons={<CgProfile />} />
             </div>
           </div>
           <div onClick={() => setIsHamOpen(!isHamOpen)}>
@@ -79,11 +83,11 @@ function Navbar() {
           isHamOpen ? "block" : "hidden"
         }`}
       >
-        <MobileNavcomp navItems="T-shirts" />
-        <MobileNavcomp navItems="Furniture" />
-        <MobileNavcomp navItems="Electronics" />
-        <MobileNavcomp navItems="Men's Wear" />
-        <MobileNavcomp navItems="Women's Wear" />
+        <MobileNavcomp link='tshirts' navItems="T-shirts" />
+        <MobileNavcomp link='furniture' navItems="Furniture" />
+        <MobileNavcomp link='hoodies' navItems="Hoodies" />
+        <MobileNavcomp link='menswear' navItems="Men's Wear" />
+        <MobileNavcomp link='womenswear' navItems="Women's Wear" />
       </div>
       <div className="bg-white flex justify-evenly w-full lg:hidden fixed bottom-0 flex-row text-4xl p-2 z-20">
         <MobileNavIcons reactMobileIcons={<IoHomeOutline />} />
@@ -97,19 +101,25 @@ function Navbar() {
           <div className="absolute top-1 right-1 w-5 text-center bg-black text-sm text-white rounded-full">
             0
           </div>
+          <Link to="/cart">
           <div className="hover:bg-gray-200 rounded-full p-2">
             <IoCartOutline />
           </div>
+          </Link>
         </div>
         <div className="relative cursor-pointer">
           <div className="absolute top-1 right-1 w-5 text-center bg-black text-sm text-white rounded-full">
             0
           </div>
+          <Link to="/wishlist">
           <div className="hover:bg-gray-200 rounded-full p-2">
             <IoMdHeartEmpty />
           </div>
+          </Link>
         </div>
+        <Link to="/signin">
         <MobileNavIcons reactMobileIcons={<CgProfile />} />
+        </Link>
       </div>
     </>
   );
