@@ -7,16 +7,14 @@ import BenefitsOfSore from "../Components/BenefitsOfStore/BenefitsOfSore";
 import FooterComp from "../Components/FooterComp";
 function Home() {
   return (
-    <>
-      <Navbar />
+    <>      <Navbar />
       <Carousel />
       <Collections />
       <FeaturedProducts />
       <NewArrivals />
       <BenefitsOfSore />
       <FooterComp />
-    </>
-  );
+    </>  );
 }
 
 export default Home;

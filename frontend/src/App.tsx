@@ -11,6 +11,7 @@ import Hoodies from "./pages/ProductsRoutes/hoodies";
 import MensWear from "./pages/ProductsRoutes/menswear";
 import WomensWear from "./pages/ProductsRoutes/womenswear";
 import Sweatshirt from "./pages/ProductsRoutes/sweatshirts";
+import Signup from "./pages/AuthRoutes/signup";
 function App() {
   return (
     <>
@@ -18,6 +19,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />}></Route>
           <Route path="/signin" element={<Signin />}></Route>
+          <Route path="/signup" element={<Signup />}></Route>
           <Route path="/wishlist" element={<WishList />}></Route>
           <Route path="/cart" element={<Cart />}></Route>
           <Route path="/tshirts" element={<Tshirts />}></Route>

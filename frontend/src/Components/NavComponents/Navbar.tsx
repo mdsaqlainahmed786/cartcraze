@@ -21,6 +21,7 @@ function Navbar() {
     <>
       <div className="w-full shadow-md space-y-3 py-2 sticky z-[52] top-0 bg-white">
         <div className="flex justify-between items-center m-auto max-w-[95vw] custom-md-lg:flex-col space-y-3 custom-lg:flex-row lg:max-w-[90vw]">
+          <Link to="/">
           <div className="hover:cursor-pointer">
             <img
               className="h-12 lg:h-16 hover:opacity-70"
@@ -28,6 +29,7 @@ function Navbar() {
               alt="Title.png"
             />
           </div>
+            </Link>
           <div className="custom-lg:flex hidden lg:flex flex-row">
             <Input />
           </div>
