@@ -1,18 +1,47 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { FaFilterCircleXmark } from "react-icons/fa6";
 import PriceSlider from '../Components/PriceSlider';
 
-function Filter() {
-  const [minVal, setMinVal] = useState(200);
-  const [maxVal, setMaxVal] = useState(10000);
-  const [errMsg, setErrMsg] = useState(false)
+
+const Filter = () => {
+  const [minVal, setMinVal] = useState<number>(200);
+  const [maxVal, setMaxVal] = useState<number>(10000);
+  const [errMsg, setErrMsg] = useState<boolean>(false);
+  const [selectedColors, setSelectedColors] = useState<string[]>([]);
+  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
+
+  const colorOptions = ["Blue", "Black", "Brown", "Cream", "Green", "Grey"];
+  const sizeOptions = ["S", "M", "L", "XL", "XXL"];
+
   const priceFilterer = () => {
     console.log('PriceFilterer called'); // Debug log
     console.log('minVal:', minVal, 'maxVal:', maxVal); 
-    if(minVal<=0||maxVal<=0||minVal>maxVal) return setErrMsg(true)
-      else return setErrMsg(false)
+    if(minVal <= 0 || maxVal <= 0 || minVal > maxVal) {
+      setErrMsg(true);
+    } else {
+      setErrMsg(false);
+    }
   };
 
+  const toggleColor = (color: string) => {
+    setSelectedColors(prev =>
+      prev.includes(color) ? prev.filter(c => c !== color) : [...prev, color]
+    );
+  };
+
+  const toggleSize = (size: string) => {
+    setSelectedSizes(prev =>
+      prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]
+    );
+  };
+
+  const clearFilters = () => {
+    setMinVal(200);
+    setMaxVal(10000);
+    setErrMsg(false);
+    setSelectedColors([]);
+    setSelectedSizes([]);
+  };
 
   return (
     <div className="hidden lg:flex lg:w-[22rem]">
@@ -20,22 +49,23 @@ function Filter() {
         <div className="flex flex-col p-3 bg-white">
           <div className="flex justify-between items-center border-b-2 border-black pb-2">
             <span className="text-3xl">Filters</span>
-            <div className="text-3xl cursor-pointer">
+            <div className="text-3xl cursor-pointer" onClick={clearFilters}>
               <FaFilterCircleXmark />
             </div>
           </div>
           <span className="mt-7 font-semibold text-xl mb-4">Colors</span>
           <div className="space-y-2">
-            {["Blue", "Black", "Brown", "Cream", "Green", "Grey"].map((filter) => (
-              <div key={filter} className="space-x-2 ml-3">
+            {colorOptions.map((color) => (
+              <div key={color} className="space-x-2 ml-3">
                 <label className="inline-flex items-center cursor-pointer">
                   <input
                     className="accent-black h-4 w-4"
                     type="checkbox"
-                    required
+                    checked={selectedColors.includes(color)}
+                    onChange={() => toggleColor(color)}
                   />
                   <span className="font-semibold text-gray-600 hover:text-black ml-2">
-                    {filter}
+                    {color}
                   </span>
                 </label>
               </div>
@@ -43,16 +73,17 @@ function Filter() {
           </div>
           <span className="mt-7 font-semibold text-xl mb-4">Size</span>
           <div className="space-y-2">
-            {["S", "M", "L", "XL", "XXL"].map((filter) => (
-              <div key={filter} className="space-x-2 ml-3">
+            {sizeOptions.map((size) => (
+              <div key={size} className="space-x-2 ml-3">
                 <label className="inline-flex items-center cursor-pointer">
                   <input
                     className="accent-black h-4 w-4"
                     type="checkbox"
-                    required
+                    checked={selectedSizes.includes(size)}
+                    onChange={() => toggleSize(size)}
                   />
                   <span className="font-semibold text-gray-600 hover:text-black ml-2">
-                    {filter}
+                    {size}
                   </span>
                 </label>
               </div>

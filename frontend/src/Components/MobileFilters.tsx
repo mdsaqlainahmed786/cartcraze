@@ -10,6 +10,35 @@ function MobileFilters({ onFilterOpen }: FilterProps) {
   const [minVal, setMinVal] = useState(200);
   const [maxVal, setMaxVal] = useState(10000);
   const [errMsg, setErrMsg] = useState(false);
+  const [selectedColors, setSelectedColors] = useState<string[]>([]);
+  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
+  const colorOptions = ["Blue", "Black", "Brown", "Cream", "Green", "Grey"];
+  const sizeOptions = ["S", "M", "L", "XL", "XXL"];
+
+  const toogleColors = (color: string) => {
+    setSelectedColors((prev) =>
+      prev.includes(color)
+        ? selectedColors.filter((c) => c !== color)
+        : [...prev, color]
+    );
+  };
+
+  const toogleSizes = (size: string) => {
+    setSelectedSizes((prev) =>
+      prev.includes(size)
+        ? selectedSizes.filter((s) => s !== size)
+        : [...prev, size]
+    );
+  };
+
+  const clearFilters = () => {
+    setMinVal(200);
+    setMaxVal(10000);
+    setErrMsg(false);
+    setSelectedColors([]);
+    setSelectedSizes([]);
+  };
+
   const onFilterPrice = () => {
     console.log("PriceFilterer called"); // Debug log
     console.log("minVal:", minVal, "maxVal:", maxVal);
@@ -26,7 +55,7 @@ function MobileFilters({ onFilterOpen }: FilterProps) {
           <div>
             <span className="text-3xl font-semibold">Filters</span>
           </div>
-          <div className="text-3xl cursor-pointer">
+          <div onClick={clearFilters} className="text-3xl cursor-pointer">
             <FaFilterCircleXmark />
           </div>
         </div>
@@ -34,25 +63,25 @@ function MobileFilters({ onFilterOpen }: FilterProps) {
       <div className="text-xl flex space-y-2 flex-col m-5">
         <span className="font-semibold">Colors</span>
         <div className="ml-5 flex flex-col space-y-4">
-          {["Black", "Blue", "Green", "Grey", "Cream"].map((filter) => (
+          {colorOptions.map((color) => (
             <label
-              key={filter}
+              key={color}
               className="inline-flex items-center cursor-pointer"
             >
-              <input className="accent-black h-4 w-4" type="checkbox" />
-              <span className="text-md hover:text-black ml-2">{filter}</span>
+              <input className="accent-black h-4 w-4"   checked={selectedColors.includes(color)} onChange={()=>toogleColors(color)} type="checkbox" />
+              <span className="text-md hover:text-black ml-2">{color}</span>
             </label>
           ))}
         </div>
         <span className="font-semibold">Size</span>
         <div className="ml-5 flex flex-col space-y-4">
-          {["S", "M", "L", "XL", "XXL"].map((filter) => (
+          {sizeOptions.map((size) => (
             <label
-              key={filter}
+              key={size}
               className="inline-flex items-center cursor-pointer"
             >
-              <input className="accent-black h-4 w-4" type="checkbox" />
-              <span className="text-md hover:text-black ml-2">{filter}</span>
+              <input className="accent-black h-4 w-4" checked={selectedSizes.includes(size)} onChange={()=>toogleSizes(size)} type="checkbox" />
+              <span className="text-md hover:text-black ml-2">{size}</span>
             </label>
           ))}
         </div>
