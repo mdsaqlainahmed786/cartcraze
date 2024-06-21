@@ -1,13 +1,37 @@
 import { useState } from "react";
 import FooterComp from "../../Components/FooterComp";
 import titlePng from "../../assets/Title.png";
-import {Link} from "react-router-dom"
+import { Link } from "react-router-dom";
 import Navbar from "../../Components/NavComponents/Navbar";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import  { ToastContainer, toast, Bounce} from "react-toastify"
+import "react-toastify/dist/ReactToastify.css";
 function Signup() {
+  const [userDetails, setUserDetails] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
+  const [confirmingPassword, setConfirmingPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+  const onSubmitSignup = async (e:React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (confirmingPassword !== userDetails.password)
+      return toast.error("Passwords Don't Match!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+        })
 
+    console.log(userDetails);
+  };
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
@@ -18,9 +42,10 @@ function Signup() {
     <>
       <Navbar />
       <div className="lg:flex lg:h-[42rem] lg:m-5 flex-row-reverse lg:shadow-xl lg:rounded-lg">
-        <form>
+        <form onSubmit={onSubmitSignup}>
           <div className="flex my-11 justify-center items-center lg:justify-end lg:my-0">
             <div className="flex flex-col space-y-7 w-full py-10 justify-center items-center bg-white lg:w-[80vw] lg:max-w-[50vw] lg:h-screen">
+              <ToastContainer/>
               <img className="h-20 w-40" src={titlePng} alt="title" />
               <div className="flex text-center px-2 text-md text-neutral-600 font-semibold lg:text-lg">
                 Signup with email and password to get a 25% OFF Coupon
@@ -29,12 +54,24 @@ function Signup() {
                 type="text"
                 className="border-2 w-[14rem] md:w-72 p-1 focus-none outline-none rounded-md lg:w-72"
                 placeholder="Username"
+                onChange={(e) =>
+                  setUserDetails((prevState) => ({
+                    ...prevState,
+                    username: e.target.value,
+                  }))
+                }
                 required
               />
               <input
                 type="email"
                 className="border-2 w-[14rem] md:w-72 p-1 focus-none outline-none rounded-md lg:w-72"
                 placeholder="Email"
+                onChange={(e) =>
+                  setUserDetails((prevState) => ({
+                    ...prevState,
+                    email: e.target.value,
+                  }))
+                }
                 required
               />
               <div className="relative mx-2 w-[14rem] md:w-72 lg:w-72">
@@ -43,6 +80,12 @@ function Signup() {
                   className="border-2 w-full p-1 focus-none outline-none rounded-md pr-10"
                   placeholder="Set Password"
                   required
+                  onChange={(e) =>
+                    setUserDetails((prevState) => ({
+                      ...prevState,
+                      password: e.target.value,
+                    }))
+                  }
                 />
                 <button
                   type="button"
@@ -61,6 +104,7 @@ function Signup() {
                   type={confirmPasswordVisible ? "text" : "password"}
                   className="border-2 w-full p-1 focus-none outline-none rounded-md pr-10"
                   placeholder="Confirm Password"
+                  onChange={(e) => setConfirmingPassword(e.target.value)}
                   required
                 />
                 <button
@@ -78,7 +122,13 @@ function Signup() {
               <button className="w-[14rem] md:w-72 lg:w-72 mx-2 bg-gray-800 text-white p-1 flex justify-center rounded-md hover:bg-black">
                 SignUp
               </button>
-              <div className="text-gray-500 text-lg font-medium">Already have an account?<Link to='/signin'> <span className="hover:underline">Login</span></Link></div>
+              <div className="text-gray-500 text-lg font-medium">
+                Already have an account?
+                <Link to="/signin">
+                  {" "}
+                  <span className="hover:underline">Login</span>
+                </Link>
+              </div>
             </div>
           </div>
         </form>

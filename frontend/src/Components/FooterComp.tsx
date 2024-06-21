@@ -16,7 +16,7 @@ function FooterComp() {
             href="/"
             className="text-md text-neutral-600 hover:text-black cursor-pointer hover:underline"
           >
-            T-Shirts
+            Foot Wear
           </a>
           <a
             href="/"
@@ -40,7 +40,7 @@ function FooterComp() {
             href="/"
             className="text-md text-neutral-600 hover:text-black cursor-pointer hover:underline"
           >
-            Hoodies
+            Kid's Wear
           </a>
         </div>
         <div className="flex flex-col space-y-1 justify-center items-center lg:justify-start lg:items-start">

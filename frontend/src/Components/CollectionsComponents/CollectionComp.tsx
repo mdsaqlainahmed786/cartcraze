@@ -23,7 +23,7 @@ function CollectionComp({ collectionImg, collectionName, link}: CollectionProps)
         src={collectionImg}
         alt={collectionName}
       />
-      <div className="text-sm m-1">{collectionName}</div>
+      <div className="text-sm font-semibold m-1">{collectionName}</div>
     </div>
     </Link>
     </>

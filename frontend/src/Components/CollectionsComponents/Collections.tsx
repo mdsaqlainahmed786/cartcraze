@@ -1,9 +1,4 @@
-import men from "../../assets/mens'ware.webp";
-import women from "../../assets/women's_ware.webp";
-import hoodies from "../../assets/hoodies.webp";
-import sweat_shirt from "../../assets/sweat_shirt.webp";
-import oversized_tshirt from "../../assets/oversized_tshirt.webp";
-import furniture from "../../assets/furniture.webp";
+
 import CollectionComp from "./CollectionComp";
 import { useEffect } from "react";
 import AOS from 'aos'
@@ -23,18 +18,18 @@ function Collections() {
         suspension
       </span>
       <div className="flex flex-wrap justify-center mx-auto gap-11 max-w-[87vw] md:max-w-[68vw] lg:max-w-[60vw]" data-aos="zoom-in-up" data-aos-anchor-placement="top-bottom">
-        <CollectionComp link="menswear" collectionName="Men's Wear" collectionImg={men} />
-        <CollectionComp link="womenswear" collectionName="Women's Wear" collectionImg={women} />
-        <CollectionComp link="hoodies" collectionName="Hoodies" collectionImg={hoodies} />
-        <CollectionComp link='sweatshirts'
-          collectionName="Sweatshirt"
-          collectionImg={sweat_shirt}
+        <CollectionComp link="menssuit" collectionName="Mens Suit" collectionImg='https://imagescdn.vanheusenindia.com/img/app/product/6/697468-7476359.jpg?auto=format&w=390' />
+        <CollectionComp link="mensshirt" collectionName="Mens Shirt" collectionImg='https://imagescdn.vanheusenindia.com/img/app/product/8/891912-10826044.jpg?auto=format&w=390' />
+        <CollectionComp link='menstshirt'
+          collectionName="Mens T-shirt"
+          collectionImg='https://imagescdn.vanheusenindia.com/img/app/product/9/912268-11293144.jpg?auto=format&w=390'
         />
-        <CollectionComp link='tshirts'
-          collectionName="T-shirt"
-          collectionImg={oversized_tshirt}
+        <CollectionComp link='mensbottom' collectionName="Mens Bottom" collectionImg="https://imagescdn.vanheusenindia.com/img/app/product/3/39628078-12988396.jpg?auto=format&w=390" />
+          <CollectionComp link="womenstees&tops" collectionName="Womens Tees & Tops" collectionImg='https://imagescdn.vanheusenindia.com/img/app/product/7/758689-8660509.jpg?auto=format&w=390' />
+        <CollectionComp link='womensshirt'
+          collectionName="Womens Shirt"
+          collectionImg='https://imagescdn.vanheusenindia.com/img/app/product/8/876386-10493810.jpg?auto=format&w=390'
         />
-        <CollectionComp link='furniture' collectionName="Furniture" collectionImg={furniture} />
       </div>
     </div>
   );
