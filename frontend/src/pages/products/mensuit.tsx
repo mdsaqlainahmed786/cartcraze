@@ -19,20 +19,17 @@ function MenSuit() {
 
     window.addEventListener("resize", handleResize);
 
-    
     if (isMdScreen && mobileFilter) {
       document.body.classList.add("no-scroll");
     } else {
       document.body.classList.remove("no-scroll");
     }
 
-    
     return () => {
       window.removeEventListener("resize", handleResize);
       document.body.classList.remove("no-scroll");
     };
   }, [mobileFilter, isMdScreen]);
-
 
   const onFilterOpen = () => {
     setMobileFilter(!mobileFilter);
@@ -67,44 +64,45 @@ function MenSuit() {
           <CategoryProduct
             category="Mens Suit"
             imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
-            newPrice={1249}
-            oldPrice={1799}
-            title="Ultra Slim Fit Formal"
+            newPrice={12499}
+            oldPrice={17999}
+            title="Men Black Solid Ultra Slim Fit Formal Four Piece Suit"
+          />
+
+          <CategoryProduct
+            category="Mens Suit"
+            imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
+            newPrice={12499}
+            oldPrice={17999}
+            title="Men Black Solid Ultra Slim Fit Formal Four Piece Suit"
           />
           <CategoryProduct
             category="Mens Suit"
             imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
-            newPrice={1249}
-            oldPrice={1799}
-            title="Ultra Slim Fit Formal"
+            newPrice={12499}
+            oldPrice={17999}
+            title="Men Black Solid Ultra Slim Fit Formal Four Piece Suit"
           />
           <CategoryProduct
             category="Mens Suit"
             imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
-            newPrice={1249}
-            oldPrice={1799}
-            title="Ultra Slim Fit Formal"
+            newPrice={12499}
+            oldPrice={17999}
+            title="Men Black Solid Ultra Slim Fit Formal Four Piece Suit"
           />
           <CategoryProduct
             category="Mens Suit"
             imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
-            newPrice={1249}
-            oldPrice={1799}
-            title="Ultra Slim Fit Formal"
+            newPrice={12499}
+            oldPrice={17999}
+            title="Men Black Solid Ultra Slim Fit Formal Four Piece Suit"
           />
           <CategoryProduct
             category="Mens Suit"
             imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
-            newPrice={1249}
-            oldPrice={1799}
-            title="Ultra Slim Fit Formal"
-          />
-          <CategoryProduct
-            category="Mens Suit"
-            imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
-            newPrice={1249}
-            oldPrice={1799}
-            title="Ultra Slim Fit Formal"
+            newPrice={12499}
+            oldPrice={17999}
+            title="Men Black Solid Ultra Slim Fit Formal Four Piece Suit"
           />
         </div>
       </div>

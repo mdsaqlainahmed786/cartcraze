@@ -12,6 +12,7 @@ import MensTshirt from "./pages/products/mentshirt";
 import MensBottom from "./pages/products/mensbottom";
 import WomenTeesTops from "./pages/products/womenteestops";
 import WomenShirt from "./pages/products/womenshirt";
+import ProductDetail from "./pages/products/[specificProduct]";
 function App() {
   return (
     <>
@@ -28,6 +29,7 @@ function App() {
           <Route path="/menssuit" element={<MenSuit />}></Route>
           <Route path="/mensshirt" element={<MenShirt />}></Route>
           <Route path="/menstshirt" element={<MensTshirt />}></Route>
+           <Route path="/product/:productName" element={<ProductDetail />}></Route>
         </Routes>
       </BrowserRouter>
     </>

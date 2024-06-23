@@ -22,4 +22,17 @@
   backdrop-filter: blur(5px); /* Blur effect */
   z-index: 40; /* Ensure it covers the content but stays behind the navbar */
 }
+.image-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.image-container img {
+  transition: transform 0.5s ease;
+}
+
+.image-container img:hover {
+  transform: scale(1.5);
+}
+
   

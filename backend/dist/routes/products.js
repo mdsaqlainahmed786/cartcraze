@@ -64,12 +64,12 @@ exports.productsRouter.get("/all", (req, res) => __awaiter(void 0, void 0, void 
         });
     }
 }));
-exports.productsRouter.get("/get/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const productId = req.params.id;
+exports.productsRouter.get("/get/:name", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const productName = req.params.name.replace(/-/g, ' ');
     try {
         const specificProduct = yield prisma.product.findFirst({
             where: {
-                id: productId
+                title: productName
             }
         });
         //console.log(specificProduct)

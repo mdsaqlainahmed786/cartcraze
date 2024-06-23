@@ -21,6 +21,7 @@ const PriceSlider = ({errMsg, minVal, setMinVal, maxVal, setMaxVal }:PriceProps)
               value={minVal}
               className="w-20 outline-none border-2"
               type="number"
+              aria-valuemax={10000}
             />
             <span className="font-semibold mx-2">Max:</span>
             <input

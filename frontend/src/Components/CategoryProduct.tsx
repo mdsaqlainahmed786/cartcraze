@@ -1,6 +1,7 @@
 import { IoMdHeartEmpty } from "react-icons/io";
 import { useState } from "react";
 import { FaHeart } from "react-icons/fa6";
+import { Link } from 'react-router-dom';
 interface CategoryProductProps {
   imageSrc:string;
   title:string;
@@ -15,7 +16,9 @@ function CategoryProduct({imageSrc, title, category, newPrice, oldPrice}:Categor
     setLiked(!liked)
   }
   return (
-    <div className="flex mt-5 w-[47vw] flex-col justify-center rounded-md shadow-md cursor-pointer md:w-[20vw] lg:w-[rem]">
+    <>
+      <Link to={`/product/${title.replace(/\s+/g, '-').toLowerCase()}`}>
+    <div className="flex mt-5 w-[47vw] flex-col justify-center rounded-md shadow-md cursor-pointer md:w-[30vw] lg:w-[20vw]">
       <div className="flex flex-col justify-start">
         <img
           className="h-full w-full rounded-t-md group"
@@ -51,6 +54,8 @@ function CategoryProduct({imageSrc, title, category, newPrice, oldPrice}:Categor
         </button>
       </div>
     </div>
+    </Link>
+    </>
   );
 }
 

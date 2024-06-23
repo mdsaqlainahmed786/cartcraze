@@ -50,12 +50,12 @@ productsRouter.get("/all", async (req: Request, res: Response) => {
     }
 })
 
-productsRouter.get("/get/:id", async (req: Request, res: Response) => {
-    const productId = req.params.id
+productsRouter.get("/get/:name", async (req: Request, res: Response) => {
+    const productName = req.params.name.replace(/-/g, ' ');
     try {
         const specificProduct = await prisma.product.findFirst({
             where: {
-                id: productId
+                title: productName
             }
         })
         //console.log(specificProduct)
