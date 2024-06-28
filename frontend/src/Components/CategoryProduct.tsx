@@ -17,14 +17,16 @@ function CategoryProduct({imageSrc, title, category, newPrice, oldPrice}:Categor
   }
   return (
     <>
-      <Link to={`/product/${title.replace(/\s+/g, '-').toLowerCase()}`}>
+    
     <div className="flex mt-5 w-[47vw] flex-col justify-center rounded-md shadow-md cursor-pointer md:w-[30vw] lg:w-[20vw]">
       <div className="flex flex-col justify-start">
+      <Link to={`/product/${title.replace(/\s+/g, '-').toLowerCase()}`}>
         <img
           className="h-full w-full rounded-t-md group"
           src={imageSrc}
           alt="hello"
         />
+         </Link>
         <div
           className="sm:flex absolute h-full text-4xl flex flex-col group-hover:flex"
         >
@@ -46,7 +48,7 @@ function CategoryProduct({imageSrc, title, category, newPrice, oldPrice}:Categor
             </span>
           </div>
           <span className="text-sm font-light my-1">
-            FREE Delivery By CrazeCart
+            FREE Delivery By CartCraze
           </span>
         </div>
         <button className="bg-gray-800 m-6 hover:bg-black text-white flex justify-center p-1 rounded-2xl">
@@ -54,7 +56,7 @@ function CategoryProduct({imageSrc, title, category, newPrice, oldPrice}:Categor
         </button>
       </div>
     </div>
-    </Link>
+   
     </>
   );
 }

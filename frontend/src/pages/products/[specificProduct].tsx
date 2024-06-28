@@ -7,6 +7,9 @@ import FooterComp from "../../Components/FooterComp";
 import ImageMagnifier from "../../Components/ProductDetails/ImageMagnifier";
 import ImageThumbnail from "../../Components/ProductDetails/ImageThumbnail";
 import ProductDescription from "../../Components/ProductDetails/ProductDescription";
+import BenefitsOfStore from "../../Components/BenefitsOfStore/BenefitsOfStore";
+// import CategoryProduct from "../../Components/CategoryProduct";
+// import RecommendedProductsCarousel from "../../Components/RecomendedProducts";
 
 function ProductDetail() {
   const slideImages = [
@@ -31,10 +34,15 @@ function ProductDetail() {
   const handlers = useSwipeable({
     onSwipedLeft: nextImg,
     onSwipedRight: prevImg,
-    //@ts-expect-error pkg
+    //@ts-expect-error pkg err
     preventDefaultTouchmoveEvent: true,
     trackMouse: true, // allows swipe with mouse (for testing on desktop)
   });
+
+  // Recommended Products Carousel State and Handlers
+  
+
+  
 
   return (
     <>
@@ -43,7 +51,11 @@ function ProductDetail() {
         <div>Home &#10095; Products &#10095; Mens'wear</div>
       </div>
       <div className="hidden lg:flex flex-row lg:justify-between mt-5">
-        <ImageThumbnail images={slideImages} setImage={setImage} selectedImage={image} />
+        <ImageThumbnail
+          images={slideImages}
+          setImage={setImage}
+          selectedImage={image}
+        />
         <ImageMagnifier imageSrc={image} />
         <ProductDescription productName={productName!} />
       </div>
@@ -66,7 +78,9 @@ function ProductDetail() {
               {slideImages.map((_, index) => (
                 <div
                   key={index}
-                  className={`w-3 h-3 mx-1 rounded-full ${index === currentIndex ? "bg-black" : "bg-gray-400"}`}
+                  className={`w-3 h-3 mx-1 rounded-full ${
+                    index === currentIndex ? "bg-black" : "bg-gray-400"
+                  }`}
                 />
               ))}
             </div>
@@ -74,6 +88,10 @@ function ProductDetail() {
         </div>
         <ProductDescription productName={productName!} />
       </div>
+      <BenefitsOfStore />
+      {/* <div className="">
+       <RecommendedProductsCarousel/>
+      </div> */}
       <FooterComp />
     </>
   );

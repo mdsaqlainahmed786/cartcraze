@@ -5,7 +5,7 @@ import { MdWorkspacePremium } from "react-icons/md";
 import { MdDiscount } from "react-icons/md";
 import AOS from "aos";
 import "aos/dist/aos.css";
-function BenefitsOfSore() {
+function BenefitsOfStore() {
   useEffect(() => {
     AOS.init({
       duration: 600, // Animation duration in milliseconds // Whether animation should happen only once - while scrolling down
@@ -42,4 +42,4 @@ function BenefitsOfSore() {
   );
 }
 
-export default BenefitsOfSore;
+export default BenefitsOfStore;

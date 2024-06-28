@@ -3,7 +3,7 @@ import Collections from "../Components/CollectionsComponents/Collections";
 import Navbar from "../Components/NavComponents/Navbar";
 import FeaturedProducts from "../Components/Featuredprod/FeaturedProducts";
 import NewArrivals from "../Components/NewArrivals/NewArrivals";
-import BenefitsOfSore from "../Components/BenefitsOfStore/BenefitsOfSore";
+import BenefitsOfStore from "../Components/BenefitsOfStore/BenefitsOfStore";
 import FooterComp from "../Components/FooterComp";
 function Home() {
   return (
@@ -12,7 +12,7 @@ function Home() {
       <Collections />
       <FeaturedProducts />
       <NewArrivals />
-      <BenefitsOfSore />
+      <BenefitsOfStore />
       <FooterComp />
     </>  );
 }
