@@ -5,7 +5,6 @@ import CategoryProduct from "../../Components/CategoryProduct";
 import "../../index.css";
 import { useState, useEffect } from "react";
 import Filter from "../../Components/Filter";
-import "react-toastify/dist/ReactToastify.css";
 import MobileFilters from "../../Components/MobileFilters";
 
 function MensTshirt() {

@@ -14,7 +14,7 @@ function WishList() {
           Keep a track of your choices, Save your Favorite items in the wishlist and buy them any time you like!
         </span>
         </div>
-        <div className="flex flex-col justify-center items-center space-y-5  mx-auto max-w-[90vw]">
+        <div className="flex flex-col justify-center items-center space-y-5  mx-auto max-w-[95vw]">
           <WishlistProductComp
             title="Men Black Solid Ultra Slim Fit Formal Four Piece Suit"
             imgSrc="https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"

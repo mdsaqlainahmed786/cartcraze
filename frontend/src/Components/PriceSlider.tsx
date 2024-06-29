@@ -1,5 +1,3 @@
-
-import 'react-toastify/dist/ReactToastify.css';
 interface PriceProps {
   minVal:number;
   maxVal:number;

@@ -4,7 +4,7 @@ import titlePng from "../../assets/Title.png";
 import { Link } from "react-router-dom";
 import Navbar from "../../Components/NavComponents/Navbar";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import  { ToastContainer, toast, Bounce} from "react-toastify"
+import  { toast, Bounce} from "react-toastify"
 import "react-toastify/dist/ReactToastify.css";
 function Signup() {
   const [userDetails, setUserDetails] = useState({
@@ -45,7 +45,6 @@ function Signup() {
         <form onSubmit={onSubmitSignup}>
           <div className="flex my-11 justify-center items-center lg:justify-end lg:my-0">
             <div className="flex flex-col space-y-7 w-full py-10 justify-center items-center bg-white lg:w-[80vw] lg:max-w-[50vw] lg:h-screen">
-              <ToastContainer/>
               <img className="h-20 w-40" src={titlePng} alt="title" />
               <div className="flex text-center px-2 text-md text-neutral-600 font-semibold lg:text-lg">
                 Signup with email and password to get a 25% OFF Coupon

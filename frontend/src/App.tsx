@@ -5,6 +5,7 @@ import Signin from "./pages/Authentication/signin";
 import Home from "./pages/home";
 import WishList from "./pages/wishList";
 import Cart from "./pages/cart";
+import { ToastContainer } from "react-toastify";
 import Signup from "./pages/Authentication/signup";
 import MenSuit from "./pages/products/mensuit";
 import MenShirt from "./pages/products/menshirt";
@@ -16,6 +17,7 @@ import ProductDetail from "./pages/products/[specificProduct]";
 function App() {
   return (
     <>
+     <ToastContainer/>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />}></Route>
