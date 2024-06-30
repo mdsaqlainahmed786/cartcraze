@@ -34,10 +34,7 @@ function MensTshirt() {
 
 
   const onFilterOpen = () => {
-    
     setMobileFilter(!mobileFilter);
-   
-    
   };
 
   return (

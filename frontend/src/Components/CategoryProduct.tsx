@@ -1,10 +1,9 @@
 import { IoMdHeartEmpty } from "react-icons/io";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { FaHeart } from "react-icons/fa6";
 import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
+import {toast} from "react-toastify"
 import "react-toastify/dist/ReactToastify.css";
-import WishList from "../pages/wishList";
 
 interface CategoryProductProps {
   imageSrc: string;
@@ -22,49 +21,23 @@ function CategoryProduct({
   oldPrice,
 }: CategoryProductProps) {
   const [liked, setLiked] = useState(false);
-  
-    useEffect(() => {
-      const existingWishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
-    const isLiked = existingWishlist.some((item: any) => item.title === title);
-    setLiked(isLiked);
-    }, [title]);
 
-  const onLikeHandler = async () => {
-    const likeState = !liked;
-    setLiked((prevLiked) => !prevLiked);
-
-    // localStorage.setItem('liked', JSON.stringify(liked))
-    const newItem = {
-      title,
-      imageSrc,
-      category,
-      oldPrice,
-      newPrice,
-      likeState,
-    };
-    if (!liked) {
-      toast("Product Added to wishlist", {
-        position: "top-right",
-        autoClose: 3000,
-        closeOnClick: true,
-        draggable: false,
-        type: "success",
-        toastId: 13,
-      });
-    }
-    console.log(newItem);
-    if(likeState==true) {
-      const existingWishlist = JSON.parse(
-        localStorage.getItem("wishlist") || "[]"
-      );
-      existingWishlist.push(newItem);
-      localStorage.setItem("wishlist", JSON.stringify(existingWishlist));
-    }
-    else if(likeState==false) {
-      const list =  JSON.parse(localStorage.getItem("wishlist") || "[]")
-      const updatedWishlist = list.filter((item:any) => item.title !== title);
-    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist))
-    }
+  const onLikeHandler = () => {
+    setLiked(!liked);
+      if(!liked){
+        toast('Product Added to wishlist', {
+            position: "top-right",
+            autoClose: 3000,
+            closeOnClick: true,
+            draggable: false,
+            type: "success",
+            toastId: 13                      
+        })
+      }
+    const newItem = {title, imageSrc, category, oldPrice, newPrice}
+    const existingWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    existingWishlist.push(newItem);
+    localStorage.setItem('wishlist', JSON.stringify(existingWishlist));
   };
 
   return (
@@ -86,7 +59,7 @@ function CategoryProduct({
                   liked ? "text-red-600 lg:text-[40px]" : ""
                 }`}
               >
-                {liked ? <FaHeart /> : <IoMdHeartEmpty />}
+                {!liked ? <IoMdHeartEmpty /> : <FaHeart />}
               </div>
             </div>
           </div>
@@ -110,6 +83,7 @@ function CategoryProduct({
           </button>
         </div>
       </div>
+     
     </>
   );
 }
