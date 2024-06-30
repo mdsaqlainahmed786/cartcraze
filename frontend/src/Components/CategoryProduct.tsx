@@ -1,9 +1,10 @@
 import { IoMdHeartEmpty } from "react-icons/io";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaHeart } from "react-icons/fa6";
 import { Link } from "react-router-dom";
-import {toast} from "react-toastify"
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-hot-toast";
+import { useRecoilState } from "recoil";
+import { wishlistState } from "../RecoilStateProviders/WishListCount";
 
 interface CategoryProductProps {
   imageSrc: string;
@@ -22,23 +23,73 @@ function CategoryProduct({
 }: CategoryProductProps) {
   const [liked, setLiked] = useState(false);
 
-  const onLikeHandler = () => {
-    setLiked(!liked);
-      if(!liked){
-        toast('Product Added to wishlist', {
-            position: "top-right",
-            autoClose: 3000,
-            closeOnClick: true,
-            draggable: false,
-            type: "success",
-            toastId: 13                      
-        })
-      }
-    const newItem = {title, imageSrc, category, oldPrice, newPrice}
-    const existingWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
-    existingWishlist.push(newItem);
-    localStorage.setItem('wishlist', JSON.stringify(existingWishlist));
+  const [_, updateWishlistCount] = useRecoilState(wishlistState);
+  const onLikeHandler = async () => {
+    const likeState = !liked;
+    setLiked((prevLiked) => !prevLiked);
+    console.log(_);
+    // localStorage.setItem('liked', JSON.stringify(liked))
+    const newItem = {
+      title,
+      imageSrc,
+      category,
+      oldPrice,
+      newPrice,
+      likeState,
+    };
+    const existingWishlist = JSON.parse(
+      localStorage.getItem("wishlist") || "[]"
+    );
+    if (likeState) {
+      toast.success("Product added to wishlist", {
+        style: {
+          border: "1px solid black",
+          padding: "16px",
+          color: "black",
+          marginTop: "75px",
+        },
+        iconTheme: {
+          primary: "black",
+          secondary: "white",
+        },
+      });
+      existingWishlist.push(newItem);
+      localStorage.setItem("wishlist", JSON.stringify(existingWishlist));
+      setLiked(true);
+    }
+    if (!likeState) {
+      const filteredWishlist = existingWishlist.filter(
+        (item: CategoryProductProps) => item.title !== title
+      );
+      localStorage.setItem("wishlist", JSON.stringify(filteredWishlist));
+      toast.success("Product removed from wishlist", {
+        style: {
+          border: "1px solid black",
+          padding: "16px",
+          color: "black",
+          marginTop: "75px",
+        },
+        iconTheme: {
+          primary: "black",
+          secondary: "white",
+        },
+      });
+
+      setLiked(false);
+    }
+    updateWishlistCount(JSON.parse(localStorage.getItem("wishlist")!).length);
   };
+  // console.log(newItem);
+
+  useEffect(() => {
+    const existingWishlist = JSON.parse(
+      localStorage.getItem("wishlist") || "[]"
+    );
+    const isLiked = existingWishlist.some(
+      (item: CategoryProductProps) => item.title === title
+    );
+    setLiked(isLiked);
+  }, [liked, title]);
 
   return (
     <>
@@ -59,7 +110,7 @@ function CategoryProduct({
                   liked ? "text-red-600 lg:text-[40px]" : ""
                 }`}
               >
-                {!liked ? <IoMdHeartEmpty /> : <FaHeart />}
+                {liked ? <FaHeart /> : <IoMdHeartEmpty />}
               </div>
             </div>
           </div>
@@ -83,7 +134,6 @@ function CategoryProduct({
           </button>
         </div>
       </div>
-     
     </>
   );
 }

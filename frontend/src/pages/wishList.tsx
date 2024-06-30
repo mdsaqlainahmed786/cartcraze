@@ -3,6 +3,9 @@ import FooterComp from "../Components/FooterComp";
 import WishlistProductComp from "../Components/WishlistProductComp";
 import { useState, useEffect } from "react";
 import NotFound from "../Components/NotFound";
+import { wishlistState } from "../RecoilStateProviders/WishListCount";
+import { useRecoilState } from "recoil";
+
 interface WishlistItem {
   title: string;
   imageSrc: string;
@@ -13,19 +16,24 @@ interface WishlistItem {
 
 function WishList() {
   const [wishList, setWishList] = useState<WishlistItem[]>([]);
+  const [wishlistCount, setWishlistCount] = useRecoilState(wishlistState);
 
   useEffect(() => {
     const storedWishlist = JSON.parse(
       localStorage.getItem("wishlist") || "[]"
     ) as WishlistItem[];
     setWishList(storedWishlist);
+    setWishlistCount(storedWishlist.length);
   }, []);
 
   const onRemoveHandler = (title: string) => {
+    console.log(wishlistCount);
     const updatedWishlist = wishList.filter((item) => item.title !== title);
     setWishList(updatedWishlist);
     localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+    setWishlistCount(updatedWishlist.length);
   };
+
   return (
     <>
       <Navbar />
@@ -52,27 +60,6 @@ function WishList() {
             />
           ))}
           {wishList.length == 0 && <NotFound />}
-          {/* <WishlistProductComp
-            title="Men Black Solid Ultra Slim Fit Formal Four Piece Suit"
-            imgSrc="https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
-            category="Mens-Suit"
-            newPrice={12999}
-            oldPrice={17999}
-          />
-          <WishlistProductComp
-            title="Men Black Solid Ultra Slim Fit Formal Four Piece Suit"
-            imgSrc="https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
-            category="Mens-Suit"
-            newPrice={12999}
-            oldPrice={17999}
-          />
-          <WishlistProductComp
-            title="Men Black Solid Ultra Slim Fit Formal Four Piece Suit"
-            imgSrc="https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
-            category="Mens-Suit"
-            newPrice={12999}
-            oldPrice={17999}
-          /> */}
         </div>
       </div>
       <FooterComp />

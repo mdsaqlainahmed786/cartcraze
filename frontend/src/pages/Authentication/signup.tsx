@@ -4,8 +4,7 @@ import titlePng from "../../assets/Title.png";
 import { Link } from "react-router-dom";
 import Navbar from "../../Components/NavComponents/Navbar";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import  { toast, Bounce} from "react-toastify"
-import "react-toastify/dist/ReactToastify.css";
+import  { toast } from "react-hot-toast"
 function Signup() {
   const [userDetails, setUserDetails] = useState({
     username: "",
@@ -18,17 +17,18 @@ function Signup() {
   const onSubmitSignup = async (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (confirmingPassword !== userDetails.password)
-      return toast.error("Passwords Don't Match!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-        })
+      return toast.error("Passwords do not match!", {
+        style: {
+          border: "1px solid black",
+          padding: "16px",
+          color: "black",
+          marginTop:'75px'
+        },
+        iconTheme: {
+          primary: "black",
+          secondary: "white",
+        },
+      });
 
     console.log(userDetails);
   };
