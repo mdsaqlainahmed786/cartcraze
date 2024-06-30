@@ -67,42 +67,42 @@ function MensBottom() {
             imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/8/812010-9678661.jpg?auto=format&w=390"
             newPrice={1099}
             oldPrice={1899}
-            title="White Graphic Print T-shirt"
+            title="MEN BLUE SOLID SLIM FIT TROUSERS"
           />
           <CategoryProduct
             category="Mens Bottom"
             imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/8/812010-9678661.jpg?auto=format&w=390"
             newPrice={1099}
             oldPrice={1899}
-            title="White Graphic Print T-shirt"
+            title="MEN BLUE SOLID SLIM FIT TROUSERS"
           />
           <CategoryProduct
             category="Mens Bottom"
             imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/8/812010-9678661.jpg?auto=format&w=390"
             newPrice={1099}
             oldPrice={1899}
-            title="White Graphic Print T-shirt"
+            title="MEN BLUE SOLID SLIM FIT TROUSERS"
           />
           <CategoryProduct
             category="Mens Bottom"
             imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/8/812010-9678661.jpg?auto=format&w=390"
             newPrice={1099}
             oldPrice={1899}
-            title="White Graphic Print T-shirt"
+            title="MEN BLUE SOLID SLIM FIT TROUSERS"
           />
           <CategoryProduct
             category="Mens Bottom"
             imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/8/812010-9678661.jpg?auto=format&w=390"
             newPrice={1099}
             oldPrice={1899}
-            title="White Graphic Print T-shirt"
+            title="MEN BLUE SOLID SLIM FIT TROUSERS"
           />
           <CategoryProduct
             category="Mens Bottom"
             imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/8/812010-9678661.jpg?auto=format&w=390"
             newPrice={1099}
             oldPrice={1899}
-            title="White Graphic Print T-shirt"
+            title="MEN BLUE SOLID SLIM FIT TROUSERS"
           />
         </div>
       </div>

@@ -67,42 +67,42 @@ function WomenShirt() {
             imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/3/39628929-13005690.jpg?auto=format&w=390"
             newPrice={1069}
             oldPrice={1699}
-            title="White Graphic Print T-shirt"
+            title="Women Red Solid Sleeves"
           />
           <CategoryProduct
             category="Women Shirts"
             imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/3/39628929-13005690.jpg?auto=format&w=390"
             newPrice={1069}
             oldPrice={1699}
-            title="White Graphic Print T-shirt"
+            title="Women Red Solid Sleeves"
           />
           <CategoryProduct
             category="Women Shirts"
             imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/3/39628929-13005690.jpg?auto=format&w=390"
             newPrice={1069}
             oldPrice={1699}
-            title="White Graphic Print T-shirt"
+            title="Women Red Solid Sleeves"
           />
           <CategoryProduct
             category="Women Shirts"
             imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/3/39628929-13005690.jpg?auto=format&w=390"
             newPrice={1069}
             oldPrice={1699}
-            title="White Graphic Print T-shirt"
+            title="Women Red Solid Sleeves"
           />
           <CategoryProduct
             category="Women Shirts"
             imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/3/39628929-13005690.jpg?auto=format&w=390"
             newPrice={1069}
             oldPrice={1699}
-            title="White Graphic Print T-shirt"
+            title="Women Red Solid Sleeves"
           />
           <CategoryProduct
             category="Women Shirts"
             imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/3/39628929-13005690.jpg?auto=format&w=390"
             newPrice={1069}
             oldPrice={1699}
-            title="White Graphic Print T-shirt"
+            title="Women Red Solid Sleeves"
           />
         </div>
       </div>

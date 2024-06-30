@@ -6,6 +6,7 @@ interface WishListProps {
   imgSrc: string;
   newPrice: number;
   oldPrice: number;
+  onRemove:()=>void
 }
 function WishlistProductComp({
   title,
@@ -13,12 +14,14 @@ function WishlistProductComp({
   category,
   newPrice,
   oldPrice,
+  onRemove
 }: WishListProps) {
+
   return (
     <>
-      <div className="flex border-2 rounded-md space-x-2 shadow-md">
+      <div className="flex md:w-[60vw] w-full border-2 rounded-md space-x-2 shadow-md">
         <Link to={`/product/${title.replace(/\s+/g, "-").toLowerCase()}`}>
-          <img className="h-64 md:h-full md:w-56" src={imgSrc} alt="img" />
+          <img className="h-64 w-56 md:h-full md:w-56" src={imgSrc} alt="img" />
         </Link>
         <div className="w-full flex space-y-1 py-2 px-1 flex-col justify-start">
           <span className="my-1 text-[17px] md:text-[26px]">{title}</span>
@@ -43,13 +46,13 @@ function WishlistProductComp({
               Add to cart
             </button>
             <button
-              onClick={(e) => e.stopPropagation()}
+              onClick={onRemove}
               className="hidden lg:flex border-2 border-black hover:border-red-600 hover:text-red-600 justify-center p-1.5 w-[30vw] rounded-2xl text-sm lg:w-44"
             >
               Remove from Wishlist
             </button>
             <div
-              onClick={(e) => e.stopPropagation()}
+              onClick={onRemove}
               className="text-3xl cursor-pointer p-1 hover:bg-gray-200 rounded-full lg:hidden"
             >
               <TbHeartCancel />

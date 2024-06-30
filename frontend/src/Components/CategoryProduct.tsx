@@ -34,6 +34,10 @@ function CategoryProduct({
             toastId: 13                      
         })
       }
+    const newItem = {title, imageSrc, category, oldPrice, newPrice}
+    const existingWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    existingWishlist.push(newItem);
+    localStorage.setItem('wishlist', JSON.stringify(existingWishlist));
   };
 
   return (
