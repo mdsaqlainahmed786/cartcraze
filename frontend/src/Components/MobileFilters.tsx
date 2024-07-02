@@ -12,7 +12,7 @@ function MobileFilters({ onFilterOpen }: FilterProps) {
   const [errMsg, setErrMsg] = useState(false);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
-  const colorOptions = ["Blue", "Black", "Brown", "Cream", "Green", "Grey"];
+  const colorOptions = ["Blue", "Black", "Brown", "Green", "Grey"];
   const sizeOptions = ["S", "M", "L", "XL", "XXL"];
 
   const toogleColors = (color: string) => {

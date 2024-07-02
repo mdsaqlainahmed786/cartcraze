@@ -1,8 +1,51 @@
+import toast from "react-hot-toast";
+import { useState } from "react";
 interface ProductProps {
   productName: string;
+  sizes?: string[];
 }
 
 function ProductDescription({ productName }: ProductProps) {
+  const sizes = ["S", "M", "L", "XL", "XXL"];
+  const colorImages = [
+    "https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
+  ];
+  const [selectedSize, setSelectedSize] = useState(sizes[0]);
+
+  const onAddtoWishList = () => {
+    // const newItem = {
+    //   title,
+    //   imageSrc,
+    //   category,
+    //   oldPrice,
+    //   newPrice,
+    //   likeState,
+    // }
+
+    const existingWishlist = JSON.parse(
+      localStorage.getItem("wishlist") || "[]"
+    );
+    toast.success("Product added to wishlist", {
+      style: {
+        border: "1px solid black",
+        padding: "16px",
+        color: "black",
+        marginTop: "75px",
+      },
+      iconTheme: {
+        primary: "black",
+        secondary: "white",
+      },
+    });
+    // existingWishlist.push(newItem);
+    localStorage.setItem("wishlist", JSON.stringify(existingWishlist));
+  };
+  // useEffect(() => {
+  //   if (sizes.length > 0) {
+  //     console.log(sizes[0]);
+  //     setSize(size[0])
+  //   }
+  // }, [sizes]);
   return (
     <div className="flex flex-col mt-2 space-y-1 pb-10 md:mt-0 md:mx-4 md:w-[50%]">
       <div className="text-2xl flex justify-between font-semibold">
@@ -26,29 +69,36 @@ function ProductDescription({ productName }: ProductProps) {
         <span>SIZE</span>
         <div className="flex flex-wrap gap-4 justify-center items-center">
           <div className="flex flex-wrap m-2 space-x-5">
-            <div className="p-1 px-3 border-2 rounded-lg cursor-pointer hover:bg-black hover:text-white">
-              S
-            </div>
-            <div className="p-1 px-3 border-2 rounded-lg cursor-pointer hover:bg-black hover:text-white">
-              M
-            </div>
-            <div className="p-1 px-3 border-2 rounded-lg cursor-pointer hover:bg-black hover:text-white">
-              L
-            </div>
-            <div className="p-1 px-3 border-2 rounded-lg cursor-pointer hover:bg-black hover:text-white">
-              XL
-            </div>
-            <div className="p-1 px-3 border-2 rounded-lg cursor-pointer hover:bg-black hover:text-white">
-              XXL
-            </div>
+            {sizes?.map((size) => (
+              <div
+                onClick={() => setSelectedSize(size)}
+                className={`p-1 px-3 border-2 rounded-lg cursor-pointer hover:bg-black hover:text-white ${
+                  selectedSize === size ? "bg-black text-white" : ""
+                }`}
+              >
+                {size}
+              </div>
+            ))}
           </div>
         </div>
       </div>
       <div>
-        <span>COLOR: BLACK</span>
-        <div className="flex flex-wrap gap-4 justify-center items-center space-x-5 -space-y-2 mt-6">
+        <span>COLOR</span>
+        <div className="flex justify-start space-x-5 ml-12 -space-y-2 mt-6">
           <div className="flex flex-wrap">
-            <div className="flex flex-col justify-center items-center text-center w-16 mt-0 ml-7">
+            {
+              colorImages?.map((image)=>(
+                <div
+                className="flex flex-col justify-center items-center text-center w-16 mt-0 ml-7">
+              <img
+                className={`border-2 rounded-md cursor-pointer border-black`}
+                src={image}
+                alt="men"
+              />
+            </div>
+              ))
+            }
+            {/* <div className="flex flex-col justify-center items-center text-center w-16 mt-0 ml-7">
               <img
                 className="border-2 rounded-md cursor-pointer hover:border-black"
                 src="https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
@@ -61,14 +111,7 @@ function ProductDescription({ productName }: ProductProps) {
                 src="https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
                 alt="men"
               />
-            </div>
-            <div className="flex flex-col justify-center items-center text-center w-16 mt-0 ml-7">
-              <img
-                className="border-2 rounded-md cursor-pointer hover:border-black"
-                src="https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
-                alt="men"
-              />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -86,7 +129,10 @@ function ProductDescription({ productName }: ProductProps) {
         </p>
       </div>
       <div className="flex flex-col justify-center items-center space-y-5 pt-5 md:justify-center md:flex-row md:items-center md:space-y-0 md:space-x-3">
-        <button className="border-2 border-black w-[80%] rounded-full py-2 hover:bg-black hover:text-white md:w-52">
+        <button
+          onClick={onAddtoWishList}
+          className="border-2 border-black w-[80%] rounded-full py-2 hover:bg-black hover:text-white md:w-52"
+        >
           Add to Wishlist
         </button>
         <button className="bg-gray-800 text-white w-[80%] rounded-full py-2.5 hover:bg-black md:w-52">

@@ -20,7 +20,7 @@ function ProductDetail() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [image, setImage] = useState(slideImages[0]);
   const { productName } = useParams();
-
+ 
   const nextImg = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % slideImages.length);
   };
@@ -38,12 +38,6 @@ function ProductDetail() {
     preventDefaultTouchmoveEvent: true,
     trackMouse: true, // allows swipe with mouse (for testing on desktop)
   });
-
-  // Recommended Products Carousel State and Handlers
-  
-
-  
-
   return (
     <>
       <Navbar />
@@ -57,7 +51,7 @@ function ProductDetail() {
           selectedImage={image}
         />
         <ImageMagnifier imageSrc={image} />
-        <ProductDescription productName={productName!} />
+        <ProductDescription productName={productName!}  />
       </div>
       <div className="flex flex-col md:flex-row mx-3 mt-3 lg:hidden">
         <div className="flex flex-col items-center justify-start pt-0 md:sticky md:top-0 md:h-screen md:overflow-hidden">
