@@ -59,7 +59,7 @@ userRouter.post("/signup", async (req: Request, res: Response) => {
         const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET as string, { expiresIn: '2m' })
         //res.cookie("Secret_Auth_token", token)
         //res.send("signed Up!")
-        const verificationLink = `http://localhost:3000/api/v1/user/verify_email/${token}`
+        const verificationLink = `http://localhost:5173/verify/${token}`
         const mail = {
             to: email,
             from: 'cartcrazeofficial786@gmail.com',
@@ -86,7 +86,7 @@ userRouter.post("/signup", async (req: Request, res: Response) => {
                 })
                 // res.clearCookie("Secret_Auth_token");
             }
-        }, 5 * 60 * 1000) //3 * 60 * 1000
+        }, 2 * 60 * 1000) //3 * 60 * 1000
     } catch (error) {
         res.status(400).json({
             error
@@ -94,7 +94,7 @@ userRouter.post("/signup", async (req: Request, res: Response) => {
     }
 });
 
-userRouter.get("/verify_email/:token", async (req: Request, res: Response) => {
+userRouter.get("/verify/:token", async (req: Request, res: Response) => {
     const token = req.params?.token as string
     if (!token) return res.status(404).json({
         message: "No token found!"
@@ -164,42 +164,45 @@ userRouter.post("/signin", async (req: Request, res: Response) => {
 });
 
 userRouter.post('/forgot_password', async (req: Request, res: Response) => {
-    const { email } = req.body
+    const { email } = req.body;
     try {
         const userToResetPassword = await prisma.user.findUnique({
             where: {
                 email
             }
-        })
-        if (!userToResetPassword) return res.status(404).json({ message: "No user found with that email" })
-        if (!userToResetPassword.isVerified) return res.status(401).json({ message: "You are not authorized yet!" })
-        const resetPasswordToken = jwt.sign({ userId: userToResetPassword.id, email: userToResetPassword.email }, process.env.JWT_SECRET as string, { expiresIn: '1m' })
-        const verificationLink = `http://localhost:3000/api/v1/user/reset_password/${resetPasswordToken}`
+        });
+        if (!userToResetPassword || !userToResetPassword.isVerified) {
+            return res.status(404).json({ message: "No user found with that email or not authorized yet!" });
+        }
+
+        const resetPasswordToken = jwt.sign({ userId: userToResetPassword.id, email: userToResetPassword.email }, process.env.JWT_SECRET as string, { expiresIn: '3m' });
+        const verificationLink = `http://localhost:5173/reset_password/${resetPasswordToken}`;
         const mail = {
             to: email,
             from: 'cartcrazeofficial786@gmail.com',
             subject: 'Reset your password',
-            text: `Please verify your email to reset your password by clicking the following link, will expire in 1 minutes: ${verificationLink}`,
-            html: `<strong>Please verify your email to reset your password by clicking the following link, will expire in 1 minutes: <a href="${verificationLink}">Verify Email</a></strong>`,
-        }
-        await sgMail.send(mail)
-        res.status(200).json({
-            message: "The reset email verification has sent to your mail!",
-            resetPasswordToken
-        })
+            text: `Please verify your email to reset your password by clicking the following link, will expire in 3 minutes: ${verificationLink}`,
+            html: `<strong>Please verify your email to reset your password by clicking the following link, will expire in 3 minutes: <a href="${verificationLink}">Verify Email</a></strong>`,
+        };
+
+        sgMail.send(mail)
+            .then(() => {
+                res.status(200).json({ message: "The reset email verification has been sent to your mail!", resetPasswordToken });
+            })
+            .catch((error) => {
+                console.error(error);
+                res.status(400).json({ message: "Error sending email. Try again later.", error });
+            });
     } catch (err) {
-        res.status(400).json({
-            message: "There was a error or The token is expired/invalid try again later",
-            err
-        })
+        res.status(400).json({ message: "There was an error or the token is expired/invalid. Try again later.", err });
     }
-})
+});
 
 userRouter.post("/reset_password/:token", async (req: Request, res: Response) => {
     const token = req.params?.token
     if (!token) return res.status(404).json({ message: "No token found" })
     const bodyParser = resetPasswordInput.safeParse(req.body)
-       if(!bodyParser.success) return res.json({
+       if(!bodyParser.success) return res.status(400).json({
         message:"Invalid input, password must contain at least 8 characters"
        })
     try {

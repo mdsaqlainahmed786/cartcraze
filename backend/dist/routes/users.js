@@ -74,7 +74,7 @@ exports.userRouter.post("/signup", (req, res) => __awaiter(void 0, void 0, void 
         const token = jsonwebtoken_1.default.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '2m' });
         //res.cookie("Secret_Auth_token", token)
         //res.send("signed Up!")
-        const verificationLink = `http://localhost:3000/api/v1/user/verify_email/${token}`;
+        const verificationLink = `http://localhost:5173/verify/${token}`;
         const mail = {
             to: email,
             from: 'cartcrazeofficial786@gmail.com',
@@ -101,7 +101,7 @@ exports.userRouter.post("/signup", (req, res) => __awaiter(void 0, void 0, void 
                 });
                 // res.clearCookie("Secret_Auth_token");
             }
-        }), 5 * 60 * 1000); //3 * 60 * 1000
+        }), 2 * 60 * 1000); //3 * 60 * 1000
     }
     catch (error) {
         res.status(400).json({
@@ -109,7 +109,7 @@ exports.userRouter.post("/signup", (req, res) => __awaiter(void 0, void 0, void 
         });
     }
 }));
-exports.userRouter.get("/verify_email/:token", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.userRouter.get("/verify/:token", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const token = (_a = req.params) === null || _a === void 0 ? void 0 : _a.token;
     if (!token)
@@ -185,30 +185,29 @@ exports.userRouter.post('/forgot_password', (req, res) => __awaiter(void 0, void
                 email
             }
         });
-        if (!userToResetPassword)
-            return res.status(404).json({ message: "No user found with that email" });
-        if (!userToResetPassword.isVerified)
-            return res.status(401).json({ message: "You are not authorized yet!" });
-        const resetPasswordToken = jsonwebtoken_1.default.sign({ userId: userToResetPassword.id, email: userToResetPassword.email }, process.env.JWT_SECRET, { expiresIn: '1m' });
-        const verificationLink = `http://localhost:3000/api/v1/user/reset_password/${resetPasswordToken}`;
+        if (!userToResetPassword || !userToResetPassword.isVerified) {
+            return res.status(404).json({ message: "No user found with that email or not authorized yet!" });
+        }
+        const resetPasswordToken = jsonwebtoken_1.default.sign({ userId: userToResetPassword.id, email: userToResetPassword.email }, process.env.JWT_SECRET, { expiresIn: '3m' });
+        const verificationLink = `http://localhost:5173/reset_password/${resetPasswordToken}`;
         const mail = {
             to: email,
             from: 'cartcrazeofficial786@gmail.com',
             subject: 'Reset your password',
-            text: `Please verify your email to reset your password by clicking the following link, will expire in 1 minutes: ${verificationLink}`,
-            html: `<strong>Please verify your email to reset your password by clicking the following link, will expire in 1 minutes: <a href="${verificationLink}">Verify Email</a></strong>`,
+            text: `Please verify your email to reset your password by clicking the following link, will expire in 3 minutes: ${verificationLink}`,
+            html: `<strong>Please verify your email to reset your password by clicking the following link, will expire in 3 minutes: <a href="${verificationLink}">Verify Email</a></strong>`,
         };
-        yield mail_1.default.send(mail);
-        res.status(200).json({
-            message: "The reset email verification has sent to your mail!",
-            resetPasswordToken
+        mail_1.default.send(mail)
+            .then(() => {
+            res.status(200).json({ message: "The reset email verification has been sent to your mail!", resetPasswordToken });
+        })
+            .catch((error) => {
+            console.error(error);
+            res.status(400).json({ message: "Error sending email. Try again later.", error });
         });
     }
     catch (err) {
-        res.status(400).json({
-            message: "There was a error or The token is expired/invalid try again later",
-            err
-        });
+        res.status(400).json({ message: "There was an error or the token is expired/invalid. Try again later.", err });
     }
 }));
 exports.userRouter.post("/reset_password/:token", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -218,7 +217,7 @@ exports.userRouter.post("/reset_password/:token", (req, res) => __awaiter(void 0
         return res.status(404).json({ message: "No token found" });
     const bodyParser = resetPasswordInput.safeParse(req.body);
     if (!bodyParser.success)
-        return res.json({
+        return res.status(400).json({
             message: "Invalid input, password must contain at least 8 characters"
         });
     try {

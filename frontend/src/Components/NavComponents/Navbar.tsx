@@ -1,6 +1,6 @@
 import TitlePng from "../../assets/Title.png";
 import HamburgerMenu from "../NavComponents/Hamburger";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "../NavComponents/Input";
 import { IoHomeOutline } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
@@ -10,19 +10,47 @@ import NavItem from "../NavComponents/NavItem";
 import { IoMdHeartEmpty } from "react-icons/io";
 import { BiSolidSearchAlt2 } from "react-icons/bi";
 import Icons from "../NavComponents/Icons";
+import { CiLogout } from "react-icons/ci";
 import MobileNavcomp from "../NavComponents/MobileNavcomp";
 import MobileNavIcons from "../NavComponents/MobileNavIcons";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { wishlistState } from "../../RecoilStateProviders/WishListCount";
 import { useRecoilValue } from "recoil";
-
+import Cookies from "js-cookie";
+import axios from "axios";
+import toast from "react-hot-toast";
 function Navbar() {
   const [isHamOpen, setIsHamOpen] = useState(false);
   // const [wishListCount, setWishListCount] = useState(0)
   const [isOpen, setIsOpen] = useState(false);
+  const [token, setToken] = useState("");
   const location = useLocation();
+  const navigate = useNavigate();
   const wishlistCount = useRecoilValue(wishlistState);
   // const existingWishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");// Get the current path
+  const onLogOut = async () => {
+    await axios.get("http://localhost:3000/api/v1/user/logout", {
+      withCredentials: true,
+    });
+
+    toast.success("Logout Successful", {
+      style: {
+        border: "1px solid black",
+        padding: "16px",
+        color: "black",
+        marginTop: "75px",
+      },
+      iconTheme: {
+        primary: "black",
+        secondary: "white",
+      },
+    });
+    navigate("/signup");
+  };
+  useEffect(() => {
+    const token = Cookies.get("Secret_Auth_token");
+    setToken(token);
+  }, []);
   const isActive = (path: string) => location.pathname === path;
   return (
     <>
@@ -68,7 +96,7 @@ function Navbar() {
                 navItem="Women Shirt"
               />
             </div>
-            <div className="hidden lg:flex flex-row text-3xl w-32 justify-evenly">
+            <div className="hidden lg:flex flex-row text-3xl w-36 justify-evenly">
               <div className="relative cursor-pointer">
                 <div className="absolute -top-0 right-1 w-[19px] h-5 text-center bg-black text-sm text-white rounded-full">
                   {wishlistCount}
@@ -89,7 +117,24 @@ function Navbar() {
                   </div>
                 </Link>
               </div>
-              <Icons link="signup" reactIcons={<CgProfile />} />
+              {!token ? (
+                <Icons link="signup" reactIcons={<CgProfile />} />
+              ) : (
+                <>
+                  <div className="block group relative">
+                    <div className="cursor-pointer bg-black text-white flex justify-center text-[20px] w-full h-9 rounded-full mt-1 mx-2">
+                      M
+                    </div>
+                    <div
+                      onClick={onLogOut}
+                      className="hidden bg-white z-[999] cursor-pointer absolute justify-center items-center text-[19px] -ml-5 mt-1 shadow-lg p-2 group-hover:flex hover:bg-gray-100"
+                    >
+                      <CiLogout />
+                      <span className="mx-2">logout</span>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
           <div onClick={() => setIsHamOpen(!isHamOpen)}>
@@ -145,9 +190,26 @@ function Navbar() {
             </div>
           </Link>
         </div>
+          {!token ? (
         <Link to="/signin">
-          <MobileNavIcons reactMobileIcons={<CgProfile />} />
+            <MobileNavIcons reactMobileIcons={<CgProfile />} />
         </Link>
+          ) : (
+            <>
+              <div className="block group relative">
+                <div className="cursor-pointer bg-black text-white flex justify-center text-[20px] w-full h-9 rounded-full mt-1 mx-2">
+                  M
+                </div>
+                <div
+                  onClick={onLogOut}
+                  className="hidden bg-white z-[999] cursor-pointer absolute bottom-14 justify-center items-center text-[19px] -ml-11 mt-1 shadow-lg p-2 group-hover:flex hover:bg-gray-100"
+                >
+                  <CiLogout />
+                  <span className="mx-2">logout</span>
+                </div>
+              </div>
+            </>
+          )}
       </div>
     </>
   );
