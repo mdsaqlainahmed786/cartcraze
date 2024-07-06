@@ -34,4 +34,22 @@
 .image-container img:hover {
   transform: scale(1.5);
 }
+/* Initial hidden state */
+.hammenu {
+  position: fixed;
+  top: 0;
+  right: -100%; /* Start off-screen */
+  width: 80%;
+  max-width: 300px;
+  height: 100%;
+  background-color: white;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+  transition: right 0.3s ease;
+  z-index: 50;
+}
+
+/* Visible state */
+.hammenu.open {
+  right: 0; /* Slide in */
+}
 

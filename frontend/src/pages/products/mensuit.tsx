@@ -108,7 +108,7 @@ function MenSuit() {
       <div
         className={`bottom-16 overflow-y-scroll rounded-lg ${
           mobileFilter ? "sticky" : "hidden"
-        } h-[60vh] w-full bg-white z-50 lg:hidden`}
+        } h-[60vh] w-full bg-white z-40 lg:hidden`}
       >
         <MobileFilters onFilterOpen={onFilterOpen} />
       </div>

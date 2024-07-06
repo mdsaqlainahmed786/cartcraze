@@ -70,7 +70,7 @@ userRouter.post("/signup", async (req: Request, res: Response) => {
         await sgMail.send(mail)
         res.status(200).json({
             message: "The verification link has been sent to mail!",
-            token
+            token,
         });
         setTimeout(async () => {
             const userCheck = await prisma.user.findFirst({
@@ -78,6 +78,7 @@ userRouter.post("/signup", async (req: Request, res: Response) => {
                     id: user.id
                 }
             })
+        
             if (!userCheck || !userCheck.isVerified) {
                 await prisma.user.delete({
                     where: {
@@ -114,10 +115,18 @@ userRouter.get("/verify/:token", async (req: Request, res: Response) => {
             process.env.JWT_SECRET as string
         );
         // console.log(newToken)
+        
         res.clearCookie("Secret_Auth_token");
         res.cookie("Secret_Auth_token", newToken)
+
+        const userName = await prisma.user.findUnique({
+            where:{
+                email:decodedToken.email
+            }
+        })
         res.status(200).json({
-            newToken
+            newToken,
+            userName
         })
     } catch (error) {
         res.status(400).json({
@@ -154,7 +163,10 @@ userRouter.post("/signin", async (req: Request, res: Response) => {
         res.status(200).json({
             message: "The user has been successfully found!",
             UserId: user.id,
-            token
+            token,
+            username:user.username,
+            userEmail:user.email
+
         });
     } catch (error) {
         res.status(400).json({

@@ -85,7 +85,7 @@ exports.userRouter.post("/signup", (req, res) => __awaiter(void 0, void 0, void 
         yield mail_1.default.send(mail);
         res.status(200).json({
             message: "The verification link has been sent to mail!",
-            token
+            token,
         });
         setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
             const userCheck = yield prisma.user.findFirst({
@@ -130,8 +130,14 @@ exports.userRouter.get("/verify/:token", (req, res) => __awaiter(void 0, void 0,
         // console.log(newToken)
         res.clearCookie("Secret_Auth_token");
         res.cookie("Secret_Auth_token", newToken);
+        const userName = yield prisma.user.findUnique({
+            where: {
+                email: decodedToken.email
+            }
+        });
         res.status(200).json({
-            newToken
+            newToken,
+            userName
         });
     }
     catch (error) {
@@ -168,7 +174,9 @@ exports.userRouter.post("/signin", (req, res) => __awaiter(void 0, void 0, void 
         res.status(200).json({
             message: "The user has been successfully found!",
             UserId: user.id,
-            token
+            token,
+            username: user.username,
+            userEmail: user.email
         });
     }
     catch (error) {

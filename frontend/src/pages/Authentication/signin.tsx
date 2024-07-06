@@ -7,8 +7,12 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import toast from "react-hot-toast";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { useRecoilState } from 'recoil'
+import { emailState, usernameState } from "../../RecoilStateProviders/UserDetails";
 function Signin() {
   const [loading, setLoading] = useState(false);
+  const [currentUserEmail, setCurrentUserEmail] = useRecoilState(emailState);
+  const [currentUsername, setCurrentUsername] = useRecoilState(usernameState);
   const [userObj, setUserobj] = useState({
     email: "",
     password: "",
@@ -30,7 +34,16 @@ function Signin() {
         userObj,
         { withCredentials: true }
       );
-      console.log(response);
+     // console.log(response.data.username);
+     const username = response.data.username
+      setCurrentUsername(username)
+      localStorage.setItem('username', username)
+       console.log(currentUsername)
+     // console.log(response.data.userEmail);
+     const usersEmail = response.data.userEmail
+      setCurrentUserEmail(usersEmail)
+      localStorage.setItem('email', usersEmail)
+      console.log(currentUserEmail)
       if (response.status === 200) {
         toast.success("SignIn Successful", {
           style: {
@@ -44,7 +57,7 @@ function Signin() {
             secondary: "white",
           }, // Add styling and options to customize error toast notification
         });
-        navigate("/");
+         navigate("/");
       }
     } catch (error) {
       toast.error("Something went wrong!", {
@@ -63,7 +76,7 @@ function Signin() {
       setLoading(false);
     }
 
-    console.log(userObj);
+   // console.log(userObj);
   };
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -90,7 +103,7 @@ function Signin() {
     //     //     { email: userObj.email },
     //     //     { withCredentials: true }
     //     // );
-         
+
     //         // toast.success("Reset verification mail has been sent!", {
     //         //     style: {
     //         //         border: "1px solid black",
@@ -103,7 +116,7 @@ function Signin() {
     //         //         secondary: "white",
     //         //     },
     //         // });
-        
+
     // } catch (error) {
     //     console.log(error);
     //     toast.error("Something went wrong!", {
@@ -119,8 +132,8 @@ function Signin() {
     //         },
     //     });
     // }
-    navigate('/forgot_password')
-};
+    navigate("/forgot_password");
+  };
   return (
     <>
       <Navbar />

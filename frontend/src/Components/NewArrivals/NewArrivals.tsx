@@ -5,11 +5,11 @@ import FeaturedProductComp from "../Featuredprod/FeaturedProductComp";
 import AOS from "aos";
 import "aos/dist/aos.css";
 function NewArrivals() {
-  useEffect(() => {
-    AOS.init({
-      duration: 600, // Animation duration in milliseconds // Whether animation should happen only once - while scrolling down
-    });
-  }, []);
+  // useEffect(() => {
+  //   AOS.init({
+  //     duration: 600, // Animation duration in milliseconds // Whether animation should happen only once - while scrolling down
+  //   });
+  // }, []);
   const [menArrivals, setMenArrivals] = useState(true);
   const [womenArrivals, setWomenArrivals] = useState(false);
   const menArrivalsHandler = () => {

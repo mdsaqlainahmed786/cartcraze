@@ -5,6 +5,8 @@ import failed from "../../assets/verifyfail.png";
 import TitlePng from '../../assets/Title.png';
 import toast from "react-hot-toast";
 import success from "../../assets/verifysuccess.png";
+import { useRecoilState } from "recoil";
+import { emailState, usernameState } from "../../RecoilStateProviders/UserDetails";
 
 function Verify() {
   const [verified, setVerified] = useState(false);
@@ -13,7 +15,9 @@ function Verify() {
   const navigate = useNavigate();
   const { Token } = useParams();
   const toastShown = useRef(false);
-
+  const [currentUserEmail, setCurrentUserEmail] = useRecoilState(emailState);
+  const [currentUsername, setCurrentUsername] = useRecoilState(usernameState);
+  
   useEffect(() => {
     const verifyEmail = async () => {
       try {
@@ -24,6 +28,12 @@ function Verify() {
         console.log(response);
         if (response.status === 200) {
           setVerified(true);
+          const usersEmail = response.data.userName.email
+          const usersName = response.data.userName.username
+          setCurrentUserEmail(usersEmail);
+          localStorage.setItem("username", usersName);
+          localStorage.setItem("email", usersEmail);
+          setCurrentUsername(usersName);
           setTimeout(() => {
             if (!toastShown.current) {
               toast.success("SignUp Successful!", {
@@ -54,8 +64,9 @@ function Verify() {
     };
 
     verifyEmail();
-  }, [Token, navigate]);
-
+  }, [Token, navigate, setCurrentUserEmail, setCurrentUsername]);
+  
+  console.log(currentUserEmail, currentUsername)
   useEffect(() => {
     if (verified && !errorOccurred) {
       const interval = setInterval(() => {
