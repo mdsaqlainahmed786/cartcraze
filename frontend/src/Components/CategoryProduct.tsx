@@ -93,8 +93,8 @@ function CategoryProduct({
 
   return (
     <>
-      <Link to={`/product/${title.replace(/\s+/g, "-").toLowerCase()}`}>
-        <div className="flex mt-5 w-[47vw] flex-col justify-center rounded-md shadow-md cursor-pointer md:w-[30vw] lg:w-[20vw]">
+
+        <div className="flex mt-5 w-[47vw] flex-col justify-center rounded-md shadow-md md:w-[30vw] lg:w-[20vw]">
           <div className="flex flex-col justify-start">
             <img
               className="h-full w-full rounded-t-md group"
@@ -106,7 +106,7 @@ function CategoryProduct({
               <div className="flex flex-col space-y-2 space-x-1 w-full items-end">
                 <div
                   onClick={onLikeHandler}
-                  className={`m-1 text-[20px] lg:text-[39px] rounded-full p-1 hover:text-red-600 ${
+                  className={`m-1 text-[20px] lg:text-[39px] cursor-pointer rounded-full p-1 hover:text-red-600 ${
                     liked ? "text-red-600 lg:text-[40px]" : ""
                   }`}
                 >
@@ -114,7 +114,8 @@ function CategoryProduct({
                 </div>
               </div>
             </div>
-            <div className="flex flex-col pl-2 space-y-1.5">
+            <Link to={`/product/${title.replace(/\s+/g, "-").toLowerCase()}`}>
+            <div className="flex flex-col pl-2 space-y-1.5 cursor-pointer">
               <span className="font-semibold my-1 text-[15px] md:text-[20px]">
                 {title}
               </span>
@@ -142,9 +143,9 @@ function CategoryProduct({
                 <span className="font-semibold text-neutral-600">Black</span>
               </div>
             </div>
+      </Link>
           </div>
         </div>
-      </Link>
     </>
   );
 }

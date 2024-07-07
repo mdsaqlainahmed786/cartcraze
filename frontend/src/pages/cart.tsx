@@ -2,8 +2,12 @@ import CartProductComp from "../Components/CartProductComp";
 import CartSummary from "../Components/CartSummary";
 import FooterComp from "../Components/FooterComp";
 import Navbar from "../Components/NavComponents/Navbar";
-
+import { useNavigate } from "react-router-dom";
 function Cart() {
+  const navigate = useNavigate();
+  const toCheckout = () => {
+    navigate("/checkout");
+  }
   return (
     <>
       <Navbar />
@@ -28,7 +32,7 @@ function Cart() {
             <span className="font-semibold text-center text-2xl">
               Cart Summary
             </span>
-           <CartSummary/>
+           <CartSummary toCheckout={toCheckout}/>
           </div>
         </div>
       </div>

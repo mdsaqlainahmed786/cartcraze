@@ -189,7 +189,7 @@ function Navbar() {
             className={`flex flex-col justify-center items-center bg-gray-800 text-white`}
           >
             <div className="flex items-center">
-              <div className="text-gray-800 bg-white flex justify-center text-[20px] min-w-9 h-9 rounded-full text-center pt-1 px-1 mt-1 mx-2">
+              <div className="text-gray-800 bg-white flex justify-center text-[20px] w-full min-w-9 h-9 rounded-full mt-1 mx-2 px-1 pt-0.5">
                 {userName[0]?.toUpperCase()}
               </div>
               <div className="flex flex-col mt-4">
@@ -261,8 +261,9 @@ function Navbar() {
         ) : (
           <>
             <div className="block group relative">
-              <div className="bg-black text-white flex justify-center text-[20px] w-full h-9 rounded-full mt-1 mx-2">
+              <div className="bg-black text-white flex justify-center text-[20px] w-full min-w-6  h-9 rounded-full mt-1 mx-2 px-1 pb-10">
                 {userName[0]?.toUpperCase()}
+               
               </div>
             </div>
           </>

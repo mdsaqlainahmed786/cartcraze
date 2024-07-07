@@ -27,8 +27,26 @@ function Signin() {
   }, [navigate]);
   const onSubmitSignin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // if (!captchaVerified) {
+    //   return toast.error("Please verify the captcha", {
+    //     style: {
+    //       border: "1px solid black",
+    //       padding: "16px",
+    //       color: "black",
+    //       marginTop: "75px",
+    //     },
+    //     iconTheme: {
+    //       primary: "black",
+    //       secondary: "white",
+    //     },
+    //   });
+    // }
     setLoading(true);
     try {
+      // const captchaSuccess = await verifyCaptcha();
+      // if (!captchaSuccess) {
+      //   throw new Error('Captcha verification failed');
+      // }
       const response = await axios.post(
         "http://localhost:3000/api/v1/user/signin",
         userObj,
@@ -83,55 +101,6 @@ function Signin() {
   };
 
   const onForgetPassword = async () => {
-    // if (userObj.email === "") {
-    //     return toast.error("Email required for reset verification", {
-    //         style: {
-    //             border: "1px solid black",
-    //             padding: "16px",
-    //             color: "black",
-    //             marginTop: "75px",
-    //         },
-    //         iconTheme: {
-    //             primary: "black",
-    //             secondary: "white",
-    //         },
-    //     });
-    // }
-    // try {
-    //     // const response = await axios.post(
-    //     //     "http://localhost:3000/api/v1/user/forgot_password",
-    //     //     { email: userObj.email },
-    //     //     { withCredentials: true }
-    //     // );
-
-    //         // toast.success("Reset verification mail has been sent!", {
-    //         //     style: {
-    //         //         border: "1px solid black",
-    //         //         padding: "16px",
-    //         //         color: "black",
-    //         //         marginTop: "75px",
-    //         //     },
-    //         //     iconTheme: {
-    //         //         primary: "black",
-    //         //         secondary: "white",
-    //         //     },
-    //         // });
-
-    // } catch (error) {
-    //     console.log(error);
-    //     toast.error("Something went wrong!", {
-    //         style: {
-    //             border: "1px solid black",
-    //             padding: "16px",
-    //             color: "black",
-    //             marginTop: "75px",
-    //         },
-    //         iconTheme: {
-    //             primary: "black",
-    //             secondary: "white",
-    //         },
-    //     });
-    // }
     navigate("/forgot_password");
   };
   return (
@@ -188,6 +157,7 @@ function Signin() {
                   Forgot Password?
                 </span>
               </div>
+              {/* <NotRobot handleCaptchaChange={handleCaptchaChange} /> */}
               <button
                 className={`w-[14rem] md:w-72 lg:w-72 mx-2 bg-gray-800 text-white p-1.5 flex justify-center items-center rounded-md hover:bg-black ${
                   loading

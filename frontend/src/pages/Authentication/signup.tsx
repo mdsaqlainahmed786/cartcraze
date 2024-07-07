@@ -8,18 +8,36 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+import NotRobot from "../../Components/NotRobot";
+
 function Signup() {
+  const [captchaVerified, setCaptchaVerified] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [userDetails, setUserDetails] = useState({
     username: "",
     email: "",
     password: "",
   });
-  // const navigate = useNavigation()
   const [confirmingPassword, setConfirmingPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
+const handleCaptchaChange = (token: string | null) => {
+  setCaptchaToken(token);
+  setCaptchaVerified(true);
+};
+
+  const verifyCaptcha = async () => {
+    try {
+      const response = await axios.post('http://localhost:3001/verify-recaptcha', { token: captchaToken });
+      return response.data.success;
+    } catch (error) {
+      console.error("Error verifying captcha", error);
+      return false;
+    }
+  };
   useEffect(() => {
     const token = Cookies.get("Secret_Auth_token");
     if (token) {
@@ -27,9 +45,11 @@ function Signup() {
     }
   }, [navigate]);
 
+  
+
   const onSubmitSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (confirmingPassword !== userDetails.password)
+    if (confirmingPassword !== userDetails.password) {
       return toast.error("Passwords do not match!", {
         style: {
           border: "1px solid black",
@@ -42,12 +62,30 @@ function Signup() {
           secondary: "white",
         },
       });
-      setLoading(true)
+    }
+    if (!captchaVerified) {
+      return toast.error("Please verify the captcha", {
+        style: {
+          border: "1px solid black",
+          padding: "16px",
+          color: "black",
+          marginTop: "75px",
+        },
+        iconTheme: {
+          primary: "black",
+          secondary: "white",
+        },
+      });
+    }
+
+    setLoading(true);
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/v1/user/signup",
-        userDetails
-      );
+      const captchaSuccess = await verifyCaptcha();
+      if (!captchaSuccess) {
+        throw new Error('Captcha verification failed');
+      }
+
+      const response = await axios.post("http://localhost:3000/api/v1/user/signup", userDetails);
      
       if (response) {
         toast.success(response.data.message, {
@@ -60,13 +98,12 @@ function Signup() {
           iconTheme: {
             primary: "black",
             secondary: "white",
-          }, // Add styling and options to customize error toast notification
+          },
         });
-      
       }
     } catch (error) {
-      //@ts-expect-error err
-      console.error(error.response.data);
+      //@ts-expect-error catch err
+      console.error(error.response?.data || error.message);
       toast.error("Something Went Wrong", {
         style: {
           border: "1px solid black",
@@ -77,19 +114,22 @@ function Signup() {
         iconTheme: {
           primary: "black",
           secondary: "white",
-        }, // Add styling and options to customize error toast notification
+        },
       });
-    } finally{
-      setLoading(false)
+    } finally {
+      setLoading(false);
     }
     console.log(userDetails);
   };
+
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
+
   const toggleConfirmPasswordVisibility = () => {
     setConfirmPasswordVisible(!confirmPasswordVisible);
   };
+
   return (
     <>
       <Navbar />
@@ -170,6 +210,7 @@ function Signup() {
                   )}
                 </button>
               </div>
+              <NotRobot handleCaptchaChange={handleCaptchaChange} />
               <button className={`w-[14rem] md:w-72 lg:w-72 mx-2 bg-gray-800 text-white p-1.5 flex justify-center items-center rounded-md hover:bg-black ${loading?'opacity-80 cursor-not-allowed hover:bg-gray-800':''}`}>
                 {loading && (
                   <div role="status">

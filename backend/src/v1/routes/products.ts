@@ -8,13 +8,16 @@ const searchSchema = z.object({
     productQuery: z.string().min(1)
 });
 productsRouter.post("/add", async (req: Request, res: Response) => {
-    const { title, description, price, images, category } = req.body
+    const { title, description, newPrice, oldPrice, color, images, category, sizes } = req.body
     try {
         const product = await prisma.product.create({
             data: {
                 title,
                 description,
-                price,
+                newPrice,
+                oldPrice,
+                color,
+                sizes,
                 images,
                 category
             }
@@ -71,25 +74,25 @@ productsRouter.get("/get/:name", async (req: Request, res: Response) => {
     }
 })
 
-productsRouter.get('/category/:category', async (req: Request, res: Response) => {
-    const productCategory = req.params?.category
-    try {
-        const categorySpecificProducts = await prisma.product.findMany({
-            where: {
-                category: productCategory
-            }
-        })
-        res.json({
-            message: `The products for the category ${productCategory}`,
-            categorySpecificProducts
-        })
-    } catch (err) {
-        res.status(400).json({
-            error: "No product found with that category!",
-            err
-        })
-    }
-})
+// productsRouter.get('/category/:category', async (req: Request, res: Response) => {
+//     const productCategory = req.params?.category
+//     try {
+//         const categorySpecificProducts = await prisma.product.findMany({
+//             where: {
+//                 category: productCategory
+//             }
+//         })
+//         res.json({
+//             message: `The products for the category ${productCategory}`,
+//             categorySpecificProducts
+//         })
+//     } catch (err) {
+//         res.status(400).json({
+//             error: "No product found with that category!",
+//             err
+//         })
+//     }
+// })
 
 productsRouter.get("/search", async (req: Request, res: Response) => {
     const productQuery = req.query?.productQuery as string;
@@ -134,32 +137,32 @@ productsRouter.get("/search", async (req: Request, res: Response) => {
     }
 });
 
-productsRouter.get('/filter_price', async (req: Request, res: Response) => {
-    const minPrice = parseInt(req.query?.min as string)
-    const maxPrice = parseInt(req.query?.max as string)
+// productsRouter.get('/filter_price', async (req: Request, res: Response) => {
+//     const minPrice = parseInt(req.query?.min as string)
+//     const maxPrice = parseInt(req.query?.max as string)
 
     
-    if(minPrice>maxPrice) return res.status(400).json({message:"Invalid filtering"})
-    try {
-        const filteredProducts = await prisma.product.findMany({
-            where: {
-                price: {
-                    'gte': minPrice || 0,
-                    'lte': maxPrice || Number.MAX_SAFE_INTEGER
-                }
-            }
-        })
-        if (!filteredProducts.length) return res.json({
-            message: "There is not product with entered input!"
-        })
-        res.status(200).json({
-            message:"Products filtered!",
-            filteredProducts
-        })
-    } catch (err) {
-        res.status(400).json({
-            error: "No product found with that query!",
-            err
-        });
-    }
-})
+//     if(minPrice>maxPrice) return res.status(400).json({message:"Invalid filtering"})
+//     try {
+//         const filteredProducts = await prisma.product.findMany({
+//             where: {
+//                 price: {
+//                     'gte': minPrice || 0,
+//                     'lte': maxPrice || Number.MAX_SAFE_INTEGER
+//                 }
+//             }
+//         })
+//         if (!filteredProducts.length) return res.json({
+//             message: "There is not product with entered input!"
+//         })
+//         res.status(200).json({
+//             message:"Products filtered!",
+//             filteredProducts
+//         })
+//     } catch (err) {
+//         res.status(400).json({
+//             error: "No product found with that query!",
+//             err
+//         });
+//     }
+// })

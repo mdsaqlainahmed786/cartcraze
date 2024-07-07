@@ -28,7 +28,7 @@ cartRouter.get('/getcart', async (req: AuthenticatedRequest, res: Response) => {
             }
         })
         const totalAmount = cartItems.reduce((total, item) => {
-            return total + item.product.price * item.quantity;
+            return total + item.product.newPrice * item.quantity;
         }, 0)
         res.status(200).json({
             cartItems,

@@ -1,4 +1,8 @@
-function CartSummary() {
+interface CartSummaryProps {
+  toCheckout: () => void;
+}
+
+function CartSummary({toCheckout}: CartSummaryProps) {
   return (
     <div className="space-y-2 border-2 mt-5 p-4 rounded-md shadow-md">
       <div className="flex w-full justify-between text-sm">
@@ -25,7 +29,7 @@ function CartSummary() {
       <div className="flex bg-white pt-1 justify-center max-w-[90vw]">
         <div className="flex justify-between items-center space-x-16">
           <span className="font-semibold">Total Payment: ₹13,648.5/-</span>
-          <button className="bg-gray-700 text-white px-8 p-1 rounded-full hover:bg-black">
+          <button onClick={toCheckout} className="bg-gray-700 text-white px-8 p-1 rounded-full hover:bg-black">
             Checkout
           </button>
         </div>

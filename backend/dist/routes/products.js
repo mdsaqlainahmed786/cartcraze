@@ -23,13 +23,16 @@ const searchSchema = zod_1.default.object({
     productQuery: zod_1.default.string().min(1)
 });
 exports.productsRouter.post("/add", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { title, description, price, images, category } = req.body;
+    const { title, description, newPrice, oldPrice, color, images, category, sizes } = req.body;
     try {
         const product = yield prisma.product.create({
             data: {
                 title,
                 description,
-                price,
+                newPrice,
+                oldPrice,
+                color,
+                sizes,
                 images,
                 category
             }
@@ -85,30 +88,28 @@ exports.productsRouter.get("/get/:name", (req, res) => __awaiter(void 0, void 0,
         });
     }
 }));
-exports.productsRouter.get('/category/:category', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const productCategory = (_a = req.params) === null || _a === void 0 ? void 0 : _a.category;
-    try {
-        const categorySpecificProducts = yield prisma.product.findMany({
-            where: {
-                category: productCategory
-            }
-        });
-        res.json({
-            message: `The products for the category ${productCategory}`,
-            categorySpecificProducts
-        });
-    }
-    catch (err) {
-        res.status(400).json({
-            error: "No product found with that category!",
-            err
-        });
-    }
-}));
+// productsRouter.get('/category/:category', async (req: Request, res: Response) => {
+//     const productCategory = req.params?.category
+//     try {
+//         const categorySpecificProducts = await prisma.product.findMany({
+//             where: {
+//                 category: productCategory
+//             }
+//         })
+//         res.json({
+//             message: `The products for the category ${productCategory}`,
+//             categorySpecificProducts
+//         })
+//     } catch (err) {
+//         res.status(400).json({
+//             error: "No product found with that category!",
+//             err
+//         })
+//     }
+// })
 exports.productsRouter.get("/search", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _b;
-    const productQuery = (_b = req.query) === null || _b === void 0 ? void 0 : _b.productQuery;
+    var _a;
+    const productQuery = (_a = req.query) === null || _a === void 0 ? void 0 : _a.productQuery;
     //console.log(productQuery)
     const parseResult = searchSchema.safeParse({ productQuery });
     if (!parseResult.success) {
@@ -150,34 +151,30 @@ exports.productsRouter.get("/search", (req, res) => __awaiter(void 0, void 0, vo
         });
     }
 }));
-exports.productsRouter.get('/filter_price', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c, _d;
-    const minPrice = parseInt((_c = req.query) === null || _c === void 0 ? void 0 : _c.min);
-    const maxPrice = parseInt((_d = req.query) === null || _d === void 0 ? void 0 : _d.max);
-    if (minPrice > maxPrice)
-        return res.status(400).json({ message: "Invalid filtering" });
-    try {
-        const filteredProducts = yield prisma.product.findMany({
-            where: {
-                price: {
-                    'gte': minPrice || 0,
-                    'lte': maxPrice || Number.MAX_SAFE_INTEGER
-                }
-            }
-        });
-        if (!filteredProducts.length)
-            return res.json({
-                message: "There is not product with entered input!"
-            });
-        res.status(200).json({
-            message: "Products filtered!",
-            filteredProducts
-        });
-    }
-    catch (err) {
-        res.status(400).json({
-            error: "No product found with that query!",
-            err
-        });
-    }
-}));
+// productsRouter.get('/filter_price', async (req: Request, res: Response) => {
+//     const minPrice = parseInt(req.query?.min as string)
+//     const maxPrice = parseInt(req.query?.max as string)
+//     if(minPrice>maxPrice) return res.status(400).json({message:"Invalid filtering"})
+//     try {
+//         const filteredProducts = await prisma.product.findMany({
+//             where: {
+//                 price: {
+//                     'gte': minPrice || 0,
+//                     'lte': maxPrice || Number.MAX_SAFE_INTEGER
+//                 }
+//             }
+//         })
+//         if (!filteredProducts.length) return res.json({
+//             message: "There is not product with entered input!"
+//         })
+//         res.status(200).json({
+//             message:"Products filtered!",
+//             filteredProducts
+//         })
+//     } catch (err) {
+//         res.status(400).json({
+//             error: "No product found with that query!",
+//             err
+//         });
+//     }
+// })

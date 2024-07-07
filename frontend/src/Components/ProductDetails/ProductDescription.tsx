@@ -12,7 +12,7 @@ function ProductDescription({ productName }: ProductProps) {
   ];
   const [selectedSize, setSelectedSize] = useState(sizes[0]);
 
-  const onAddtoWishList = () => {
+  const onAddtoCart = () => {
     // const newItem = {
     //   title,
     //   imageSrc,
@@ -130,12 +130,12 @@ function ProductDescription({ productName }: ProductProps) {
       </div>
       <div className="flex flex-col justify-center items-center space-y-5 pt-5 md:justify-center md:flex-row md:items-center md:space-y-0 md:space-x-3">
         <button
-          onClick={onAddtoWishList}
-          className="border-2 border-black w-[80%] rounded-full py-2 hover:bg-black hover:text-white md:w-52"
+          
+          className="bg-gray-800 text-white w-[80%] rounded-full py-2.5 hover:bg-black md:w-52"
         >
-          Add to Wishlist
+          Buy Now
         </button>
-        <button className="bg-gray-800 text-white w-[80%] rounded-full py-2.5 hover:bg-black md:w-52">
+        <button onClick={onAddtoCart} className="border-2 border-black w-[80%] rounded-full py-2 hover:bg-black hover:text-white md:w-52">
           Add to Cart
         </button>
       </div>

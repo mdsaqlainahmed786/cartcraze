@@ -37,7 +37,7 @@ exports.cartRouter.get('/getcart', (req, res) => __awaiter(void 0, void 0, void 
             }
         });
         const totalAmount = cartItems.reduce((total, item) => {
-            return total + item.product.price * item.quantity;
+            return total + item.product.newPrice * item.quantity;
         }, 0);
         res.status(200).json({
             cartItems,

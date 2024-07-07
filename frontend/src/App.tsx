@@ -19,6 +19,7 @@ import Verify from "./pages/Authentication/verify";
 
 import ForgotPassword from "./pages/Authentication/forgotpassword";
 import ResetPassword from "./pages/Authentication/reset_password";
+import Checkout from "./pages/checkout";
 function App() {
   return (
     <>
@@ -30,6 +31,7 @@ function App() {
             <Route path="/signin" element={<Signin />}></Route>
             <Route path="/signup" element={<Signup />}></Route>
             <Route path="/wishlist" element={<WishList />}></Route>
+            <Route path="/checkout" element={<Checkout />}></Route>
             <Route path="/cart" element={<Cart />}></Route>
             <Route path="/forgot_password" element={<ForgotPassword/>}></Route>
             <Route path="/verify/:Token" element={<Verify />}></Route>

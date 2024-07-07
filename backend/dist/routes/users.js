@@ -18,6 +18,7 @@ const express_1 = __importDefault(require("express"));
 const zod_1 = __importDefault(require("zod"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const axios_1 = __importDefault(require("axios"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const mail_1 = __importDefault(require("@sendgrid/mail"));
@@ -260,4 +261,29 @@ exports.userRouter.get('/logout', (req, res) => __awaiter(void 0, void 0, void 0
     res.status(200).json({
         message: "logout successful"
     });
+}));
+exports.userRouter.post('/verify-recaptcha', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const secretKey = process.env.SECRET_KEY; // Replace with your actual secret key
+    const token = req.body.token;
+    try {
+        const response = yield axios_1.default.post(`https://www.google.com/recaptcha/api/siteverify`, null, {
+            params: {
+                secret: secretKey,
+                response: token,
+            },
+        });
+        const data = response.data;
+        if (data.success) {
+            // CAPTCHA was successfully verified
+            res.status(200).json({ success: true });
+        }
+        else {
+            // CAPTCHA verification failed
+            res.status(400).json({ success: false, error: data['error-codes'] });
+        }
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
+    }
 }));
