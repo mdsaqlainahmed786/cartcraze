@@ -20,7 +20,7 @@ function WishlistProductComp({
   return (
     <>
       <div className="flex md:w-[60vw] w-full border-2 rounded-md space-x-2 shadow-md">
-        <Link to={`/product/${title.replace(/\s+/g, "-").toLowerCase()}`}>
+        <Link to={`/product/${title.replace(/\s+/g, "-").toUpperCase()}`}>
           <img className="h-64 w-56 md:h-full md:w-56" src={imgSrc} alt="img" />
         </Link>
         <div className="w-full flex space-y-1 py-2 px-1 flex-col justify-start">

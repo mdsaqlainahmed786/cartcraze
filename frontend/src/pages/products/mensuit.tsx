@@ -6,12 +6,30 @@ import "../../index.css";
 import { useState, useEffect } from "react";
 import Filter from "../../Components/Filter";
 import MobileFilters from "../../Components/MobileFilters";
-
+import axios from "axios";
 function MenSuit() {
+  interface Product {
+    id: string;
+    title: string;
+    category: string;
+    newPrice: number;
+    oldPrice: number;
+    images: string[];
+    sizes: string[];
+    color: string;
+  }
   const [mobileFilter, setMobileFilter] = useState(false);
   const [isMdScreen, setIsMdScreen] = useState(window.innerWidth <= 1023);
+  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
+    const mensSuitFetcher = async() => {
+      const response = await axios.get('http://localhost:3000/api/v1/products/category/Men-Suits');
+      console.log(response.data.categorySpecificProducts);
+      const mensSuit = response.data.categorySpecificProducts;
+      setProducts(mensSuit);
+    }
+    mensSuitFetcher();
     const handleResize = () => {
       setIsMdScreen(window.innerWidth <= 1023);
     };
@@ -60,49 +78,18 @@ function MenSuit() {
       <div className="flex flex-row justify-center">
         <Filter />
         <div className="flex-1 flex gap-2 justify-center flex-wrap pb-10">
-          <CategoryProduct
-            category="Mens Suit"
-            imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
-            newPrice={12499}
-            oldPrice={17999}
-            title="Men Black Solid Ultra Slim Fit Formal Four Piece Suit"
-          />
-
-          <CategoryProduct
-            category="Mens Suit"
-            imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
-            newPrice={12499}
-            oldPrice={17999}
-            title="Men Black Solid Ultra Slim Fit Formal Four Piece Suit"
-          />
-          <CategoryProduct
-            category="Mens Suit"
-            imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
-            newPrice={12499}
-            oldPrice={17999}
-            title="Men Black Solid Ultra Slim Fit Formal Four Piece Suit"
-          />
-          <CategoryProduct
-            category="Mens Suit"
-            imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
-            newPrice={12499}
-            oldPrice={17999}
-            title="Men Black Solid Ultra Slim Fit Formal Four Piece Suit"
-          />
-          <CategoryProduct
-            category="Mens Suit"
-            imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
-            newPrice={12499}
-            oldPrice={17999}
-            title="Men Black Solid Ultra Slim Fit Formal Four Piece Suit"
-          />
-          <CategoryProduct
-            category="Mens Suit"
-            imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
-            newPrice={12499}
-            oldPrice={17999}
-            title="Men Black Solid Ultra Slim Fit Formal Four Piece Suit"
-          />
+        {products.map((product) => (
+        <CategoryProduct key={product.id}
+          category={product.category}
+          imageSrc={product.images[0]}
+          newPrice={product.newPrice}
+          oldPrice={product.oldPrice}
+          title={product.title}
+          sizes={product.sizes}
+          color={product.color}
+        />
+      
+      ))}
         </div>
       </div>
       <div

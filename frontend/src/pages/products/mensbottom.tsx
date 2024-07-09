@@ -6,11 +6,30 @@ import "../../index.css";
 import { useState, useEffect } from "react";
 import Filter from "../../Components/Filter";
 import MobileFilters from "../../Components/MobileFilters";
+import axios from "axios";
 function MensBottom() {
+  interface Product {
+    id: string;
+    title: string;
+    category: string;
+    newPrice: number;
+    oldPrice: number;
+    images: string[];
+    color: string;
+    sizes: string[];
+  }
   const [mobileFilter, setMobileFilter] = useState(false);
   const [isMdScreen, setIsMdScreen] = useState(window.innerWidth <= 1023);
+  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
+    const mensShirtFetcher = async() => {
+      const response = await axios.get('http://localhost:3000/api/v1/products/category/Men-Bottom');
+      console.log(response.data.categorySpecificProducts);
+      const menBottom = response.data.categorySpecificProducts;
+      setProducts(menBottom);
+    }
+    mensShirtFetcher();
     const handleResize = () => {
       setIsMdScreen(window.innerWidth <= 1023);
     };
@@ -62,48 +81,18 @@ function MensBottom() {
       <div className="flex flex-row justify-center">
         <Filter />
         <div className="flex-1 flex gap-2 justify-center flex-wrap pb-10">
-          <CategoryProduct
-            category="Mens Bottom"
-            imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/8/812010-9678661.jpg?auto=format&w=390"
-            newPrice={1099}
-            oldPrice={1899}
-            title="MEN BLUE SOLID SLIM FIT TROUSERS"
-          />
-          <CategoryProduct
-            category="Mens Bottom"
-            imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/8/812010-9678661.jpg?auto=format&w=390"
-            newPrice={1099}
-            oldPrice={1899}
-            title="MEN BLUE SOLID SLIM FIT TROUSERS"
-          />
-          <CategoryProduct
-            category="Mens Bottom"
-            imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/8/812010-9678661.jpg?auto=format&w=390"
-            newPrice={1099}
-            oldPrice={1899}
-            title="MEN BLUE SOLID SLIM FIT TROUSERS"
-          />
-          <CategoryProduct
-            category="Mens Bottom"
-            imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/8/812010-9678661.jpg?auto=format&w=390"
-            newPrice={1099}
-            oldPrice={1899}
-            title="MEN BLUE SOLID SLIM FIT TROUSERS"
-          />
-          <CategoryProduct
-            category="Mens Bottom"
-            imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/8/812010-9678661.jpg?auto=format&w=390"
-            newPrice={1099}
-            oldPrice={1899}
-            title="MEN BLUE SOLID SLIM FIT TROUSERS"
-          />
-          <CategoryProduct
-            category="Mens Bottom"
-            imageSrc="https://imagescdn.vanheusenindia.com/img/app/product/8/812010-9678661.jpg?auto=format&w=390"
-            newPrice={1099}
-            oldPrice={1899}
-            title="MEN BLUE SOLID SLIM FIT TROUSERS"
-          />
+        {products.map((product) => (
+        <CategoryProduct key={product.id}
+          category={product.category}
+          imageSrc={product.images[0]}
+          newPrice={product.newPrice}
+          oldPrice={product.oldPrice}
+          title={product.title}
+          color={product.color}
+          sizes={product.sizes}
+        />
+      
+      ))}
         </div>
       </div>
       <div

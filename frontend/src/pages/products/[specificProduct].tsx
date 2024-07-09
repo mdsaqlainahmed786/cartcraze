@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSwipeable } from "react-swipeable";
 import "../../index.css";
 import Navbar from "../../Components/NavComponents/Navbar";
@@ -8,19 +8,15 @@ import ImageMagnifier from "../../Components/ProductDetails/ImageMagnifier";
 import ImageThumbnail from "../../Components/ProductDetails/ImageThumbnail";
 import ProductDescription from "../../Components/ProductDetails/ProductDescription";
 import BenefitsOfStore from "../../Components/BenefitsOfStore/BenefitsOfStore";
-// import CategoryProduct from "../../Components/CategoryProduct";
-// import RecommendedProductsCarousel from "../../Components/RecomendedProducts";
+import axios from "axios";
 
 function ProductDetail() {
-  const slideImages = [
-    "https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390",
-    "https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906968.jpg?auto=format&w=390",
-    "https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906959.jpg?auto=format&w=390",
-  ];
+  const [product, setProduct] = useState<any>(null); // Use `null` instead of an empty array
+  const [slideImages, setSlideImages] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [image, setImage] = useState(slideImages[0]);
+  const [image, setImage] = useState<string | null>(null);
   const { productName } = useParams();
- 
+
   const nextImg = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % slideImages.length);
   };
@@ -38,6 +34,45 @@ function ProductDetail() {
     preventDefaultTouchmoveEvent: true,
     trackMouse: true, // allows swipe with mouse (for testing on desktop)
   });
+
+  useEffect(() => {
+    const productFetcher = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/v1/products/get/${productName}`
+        );
+        console.log(response.data.specificProduct);
+        const detailedProduct = response.data.specificProduct;
+        setProduct(detailedProduct);
+        if (detailedProduct.images.length > 0) {
+          setSlideImages(detailedProduct.images);
+          setImage(detailedProduct.images[0]); // Set the first image as default
+        }
+      } catch (error) {
+        console.error("Error fetching product data:", error);
+      }
+    };
+    productFetcher();
+  }, [productName]);
+
+  useEffect(() => {
+    if (slideImages.length > 0) {
+      setImage(slideImages[0]);
+    }
+  }, [slideImages]);
+
+  if (!product) {
+    return (
+      <>
+        <Navbar />
+        <div className="flex justify-center items-center min-h-screen">
+          <p>Loading product details...</p>
+        </div>
+        <FooterComp />
+      </>
+    );
+  }
+
   return (
     <>
       <Navbar />
@@ -51,7 +86,15 @@ function ProductDetail() {
           selectedImage={image}
         />
         <ImageMagnifier imageSrc={image} />
-        <ProductDescription productName={productName!}  />
+        <ProductDescription
+          productName={productName!}
+          productDescription={product.description}
+          newPrice={product.newPrice}
+          oldPrice={product.oldPrice}
+          sizes={product.sizes}
+          color={product.color}
+          colorImages={product.images[0]}
+        />
       </div>
       <div className="flex flex-col md:flex-row mx-3 mt-3 lg:hidden">
         <div className="flex flex-col items-center justify-start pt-0 md:sticky md:top-0 md:h-screen md:overflow-hidden">
@@ -61,11 +104,13 @@ function ProductDetail() {
                 {...handlers}
                 className="relative overflow-hidden border-2 border-gray-300"
               >
-                <img
-                  src={slideImages[currentIndex]}
-                  alt={`Slide ${currentIndex}`}
-                  className="w-full h-full object-cover"
-                />
+                {image && (
+                  <img
+                    src={slideImages[currentIndex]}
+                    alt={`Slide ${currentIndex}`}
+                    className="w-full h-full object-cover"
+                  />
+                )}
               </div>
             </div>
             <div className="flex justify-center mt-2">
@@ -80,12 +125,17 @@ function ProductDetail() {
             </div>
           </div>
         </div>
-        <ProductDescription productName={productName!} />
+        <ProductDescription
+          productName={productName!}
+          productDescription={product.description}
+          newPrice={product.newPrice}
+          oldPrice={product.oldPrice}
+          sizes={product.sizes}
+          color={product.color}
+          colorImages={product.images[0]}
+        />
       </div>
       <BenefitsOfStore />
-      {/* <div className="">
-       <RecommendedProductsCarousel/>
-      </div> */}
       <FooterComp />
     </>
   );

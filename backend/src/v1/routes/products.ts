@@ -73,69 +73,45 @@ productsRouter.get("/get/:name", async (req: Request, res: Response) => {
         })
     }
 })
+productsRouter.get('/category/:category', async (req: Request, res: Response) => {
+    const productCategory = req.params.category;
+    let { color, size } = req.query;
 
-// productsRouter.get('/category/:category', async (req: Request, res: Response) => {
-//     const productCategory = req.params?.category
-//     try {
-//         const categorySpecificProducts = await prisma.product.findMany({
-//             where: {
-//                 category: productCategory
-//             }
-//         })
-//         res.json({
-//             message: `The products for the category ${productCategory}`,
-//             categorySpecificProducts
-//         })
-//     } catch (err) {
-//         res.status(400).json({
-//             error: "No product found with that category!",
-//             err
-//         })
-//     }
-// })
+    const colors = typeof color === 'string' ? color.split(',') : [];
+    const sizes = typeof size === 'string' ? size.split(',') : [];
 
-productsRouter.get("/search", async (req: Request, res: Response) => {
-    const productQuery = req.query?.productQuery as string;
-    //console.log(productQuery)
-    const parseResult = searchSchema.safeParse({ productQuery });
-    if (!parseResult.success) {
-        return res.status(400).json({ error: "Invalid search query" });
+    const whereClause: any = {
+        category: productCategory
+    };
+
+    if (colors.length) {
+        whereClause.color = {
+            in: colors
+        };
+    }
+
+    if (sizes.length) {
+        whereClause.sizes = {
+            hasSome: sizes
+        };
     }
 
     try {
-        const foundProduct = await prisma.product.findMany({
-            where: {
-                OR: [
-                    {
-                        title: {
-                            contains: productQuery,
-                            mode: 'insensitive'
-                        }
-                    },
-                    {
-                        description: {
-                            contains: productQuery,
-                            mode: 'insensitive'
-                        }
-                    }
-                ]
-            }
+        const categorySpecificProducts = await prisma.product.findMany({
+            where: whereClause
         });
-        //  console.log(foundProduct)
-        if (!foundProduct.length) return res.json({
-            message: "There is not product with entered input!"
-        })
-        res.status(200).json({
-            message: "Product found!",
-            foundProduct
+        res.json({
+            message: `The products for the category ${productCategory}`,
+            categorySpecificProducts
         });
     } catch (err) {
         res.status(400).json({
-            error: "No product found with that query!",
+            error: "No product found with that category!",
             err
         });
     }
 });
+
 
 // productsRouter.get('/filter_price', async (req: Request, res: Response) => {
 //     const minPrice = parseInt(req.query?.min as string)

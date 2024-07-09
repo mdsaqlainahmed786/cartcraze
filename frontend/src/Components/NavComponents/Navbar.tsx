@@ -38,7 +38,7 @@ function Navbar() {
   const wishlistCount = useRecoilValue(wishlistState);
   // const existingWishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");// Get the current path
   const [isMdScreen, setIsMdScreen] = useState(window.innerWidth <= 1023);
-//console.log(isMdScreen)
+  //console.log(isMdScreen)
   const cartCount = 0;
   useEffect(() => {
     const handleResize = () => {
@@ -130,7 +130,11 @@ function Navbar() {
             </div>
             <div className="hidden lg:flex flex-row text-3xl w-36 justify-evenly">
               <div className="relative cursor-pointer">
-                <div className={`${wishlistCount==0 ? 'hidden':'absolute'} -top-0 right-1 w-[19px] h-5 text-center bg-black text-sm text-white rounded-full`}>
+                <div
+                  className={`${
+                    wishlistCount == 0 ? "hidden" : "absolute"
+                  } -top-0 right-1 w-[19px] h-5 text-center bg-black text-sm text-white rounded-full`}
+                >
                   {wishlistCount}
                 </div>
                 <Link to="/wishlist">
@@ -140,7 +144,11 @@ function Navbar() {
                 </Link>
               </div>
               <div className="relative cursor-pointer">
-                <div className={`${cartCount==0 ? 'hidden':'absolute'} top-0 right-1 w-[19px] h-5 text-center bg-black text-sm text-white rounded-full`}>
+                <div
+                  className={`${
+                    cartCount == 0 ? "hidden" : "absolute"
+                  } top-0 right-1 w-[19px] h-5 text-center bg-black text-sm text-white rounded-full`}
+                >
                   {cartCount}
                 </div>
                 <Link to="/cart">
@@ -189,9 +197,14 @@ function Navbar() {
             className={`flex flex-col justify-center items-center bg-gray-800 text-white`}
           >
             <div className="flex items-center">
-              <div className="text-gray-800 bg-white flex justify-center text-[20px] w-full min-w-9 h-9 rounded-full mt-1 mx-2 px-1 pt-0.5">
-                {userName[0]?.toUpperCase()}
-              </div>
+              {token ? (
+                <div className="text-gray-800 bg-white flex justify-center text-[20px] w-full min-w-9 h-9 rounded-full mt-1 mx-2 px-1 pt-0.5">
+                  {userName[0]?.toUpperCase()}
+                </div>
+              ) : (
+                <CgProfile className="text-4xl mx-2" />
+              )}
+
               <div className="flex flex-col mt-4">
                 <span className="text-xl font-bold">Hi,</span>
                 {token ? (
@@ -213,7 +226,7 @@ function Navbar() {
           <MobileNavcomp link="menstshirt" navItems="Mens Tshirt" />
           <MobileNavcomp link="womenstees&tops" navItems="Women Tops" />
           <MobileNavcomp link="womensshirt" navItems="Women Shirt" />
-          {token && (
+          {token ? (
             <div
               onClick={onLogOut}
               className="hover:bg-gray-200 rounded-md w-full p-1 cursor-pointer flex justify-center items-center"
@@ -221,12 +234,20 @@ function Navbar() {
               <CiLogout className="text-lg -mb-1" />
               <span className="mx-2">logout</span>
             </div>
+          ) : (
+            <div
+              onClick={onLogOut}
+              className="hover:bg-gray-200 rounded-md w-full p-1 cursor-pointer flex justify-center items-center"
+            >
+              <CiLogout className="text-lg -mb-1" />
+              <span className="mx-2">logIn</span>
+            </div>
           )}
         </div>
       </div>
       <div className="bg-white flex justify-evenly w-full lg:hidden fixed bottom-0 flex-row text-4xl p-2 z-50">
-        <Link to='/'>
-        <MobileNavIcons reactMobileIcons={<IoHomeOutline />} />
+        <Link to="/">
+          <MobileNavIcons reactMobileIcons={<IoHomeOutline />} />
         </Link>
         <button
           className="cursor-pointer hover:bg-gray-200 rounded-full p-2"
@@ -235,8 +256,12 @@ function Navbar() {
           {!isOpen ? <IoMdSearch /> : <BiSolidSearchAlt2 />}
         </button>
         <div className="relative cursor-pointer">
-          <div className={`${cartCount==0 ? 'hidden':'absolute'} top-1 right-1 w-5 text-center bg-black text-sm text-white rounded-full`}>
-           {cartCount}
+          <div
+            className={`${
+              cartCount == 0 ? "hidden" : "absolute"
+            } top-1 right-1 w-5 text-center bg-black text-sm text-white rounded-full`}
+          >
+            {cartCount}
           </div>
           <Link to="/cart">
             <div className="hover:bg-gray-200 rounded-full p-2">
@@ -245,7 +270,11 @@ function Navbar() {
           </Link>
         </div>
         <div className="relative cursor-pointer">
-          <div className={`${wishlistCount==0 ? 'hidden':'absolute'} top-1 right-1 w-5 text-center bg-black text-sm text-white rounded-full`}>
+          <div
+            className={`${
+              wishlistCount == 0 ? "hidden" : "absolute"
+            } top-1 right-1 w-5 text-center bg-black text-sm text-white rounded-full`}
+          >
             {wishlistCount}
           </div>
           <Link to="/wishlist">
@@ -263,7 +292,6 @@ function Navbar() {
             <div className="block group relative">
               <div className="bg-black text-white flex justify-center text-[20px] w-full min-w-6  h-9 rounded-full mt-1 mx-2 px-1 pb-10">
                 {userName[0]?.toUpperCase()}
-               
               </div>
             </div>
           </>
@@ -274,4 +302,3 @@ function Navbar() {
 }
 
 export default Navbar;
-
