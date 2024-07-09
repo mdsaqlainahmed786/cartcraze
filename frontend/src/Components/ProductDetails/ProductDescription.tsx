@@ -1,9 +1,14 @@
 import toast from "react-hot-toast";
 import { useState } from "react";
+
 interface ProductProps {
   productName: string;
   sizes?: string[];
   productDescription?: string;
+  oldPrice: number;
+  newPrice: number;
+  color: string;
+  colorImages: string;
 }
 
 function ProductDescription({
@@ -11,24 +16,13 @@ function ProductDescription({
   productDescription,
   oldPrice,
   newPrice,
-  sizes,
+  sizes = [], // Provide a default empty array
   color,
   colorImages,
 }: ProductProps) {
-  // const colorImages = [
-  //   "https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
-  // ];
-  const [selectedSize, setSelectedSize] = useState(sizes[0]);
-  const onAddtoCart = () => {
-    // const newItem = {
-    //   title,
-    //   imageSrc,
-    //   category,
-    //   oldPrice,
-    //   newPrice,
-    //   likeState,
-    // }
+  const [selectedSize, setSelectedSize] = useState<string | undefined>(sizes[0]);
 
+  const onAddtoCart = () => {
     const existingWishlist = JSON.parse(
       localStorage.getItem("wishlist") || "[]"
     );
@@ -44,15 +38,9 @@ function ProductDescription({
         secondary: "white",
       },
     });
-    // existingWishlist.push(newItem);
     localStorage.setItem("wishlist", JSON.stringify(existingWishlist));
   };
-  // useEffect(() => {
-  //   if (sizes.length > 0) {
-  //     console.log(sizes[0]);
-  //     setSize(size[0])
-  //   }
-  // }, [sizes]);
+
   return (
     <div className="flex flex-col mt-2 space-y-1 pb-10 md:mt-0 md:mx-4 md:w-[50%]">
       <div className="text-2xl flex justify-between font-semibold">
@@ -76,8 +64,9 @@ function ProductDescription({
         <span>SIZE</span>
         <div className="flex flex-wrap gap-4 justify-center items-center">
           <div className="flex flex-wrap m-2 space-x-5">
-            {sizes?.map((size) => (
+            {sizes.map((size, index) => (
               <div
+                key={index}
                 onClick={() => setSelectedSize(size)}
                 className={`p-1 px-3 border-2 rounded-lg cursor-pointer hover:bg-black hover:text-white ${
                   selectedSize === size ? "bg-black text-white" : ""
@@ -95,26 +84,11 @@ function ProductDescription({
           <div className="flex flex-wrap">
             <div className="flex flex-col justify-center items-center text-center w-16 mt-0 ml-7">
               <img
-                className={`border-2 rounded-md cursor-pointer border-black`}
+                className="border-2 rounded-md cursor-pointer border-black"
                 src={colorImages}
                 alt="men"
               />
             </div>
-
-            {/* <div className="flex flex-col justify-center items-center text-center w-16 mt-0 ml-7">
-              <img
-                className="border-2 rounded-md cursor-pointer hover:border-black"
-                src="https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
-                alt="men"
-              />
-            </div>
-            <div className="flex flex-col justify-center items-center text-center w-16 mt-0 ml-7">
-              <img
-                className="border-2 rounded-md cursor-pointer hover:border-black"
-                src="https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
-                alt="men"
-              />
-            </div> */}
           </div>
         </div>
       </div>

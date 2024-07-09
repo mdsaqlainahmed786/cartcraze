@@ -9,12 +9,22 @@ import ImageThumbnail from "../../Components/ProductDetails/ImageThumbnail";
 import ProductDescription from "../../Components/ProductDetails/ProductDescription";
 import BenefitsOfStore from "../../Components/BenefitsOfStore/BenefitsOfStore";
 import axios from "axios";
+interface Product {
+  title: string;
+  description: string;
+  newPrice: number;
+  oldPrice: number;
+  sizes: string[];
+  color: string;
+  images: string[];
+
+}
 
 function ProductDetail() {
-  const [product, setProduct] = useState<any>(null); // Use `null` instead of an empty array
+  const [product, setProduct] = useState<Product | null>(null); // Use `null` instead of an empty array
   const [slideImages, setSlideImages] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState<string>(""); // Set initial value as an empty string
   const { productName } = useParams();
 
   const nextImg = () => {
@@ -93,7 +103,7 @@ function ProductDetail() {
           oldPrice={product.oldPrice}
           sizes={product.sizes}
           color={product.color}
-          colorImages={product.images[0]}
+          colorImages={product?.images[0]}
         />
       </div>
       <div className="flex flex-col md:flex-row mx-3 mt-3 lg:hidden">
@@ -132,7 +142,7 @@ function ProductDetail() {
           oldPrice={product.oldPrice}
           sizes={product.sizes}
           color={product.color}
-          colorImages={product.images[0]}
+          colorImages={product?.images[0]}
         />
       </div>
       <BenefitsOfStore />
