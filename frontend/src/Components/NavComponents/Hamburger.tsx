@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-
-const HamburgerMenu: React.FC = ({isHamsymbolOpen, setIsHamSymbolOpen}) => {
+interface HamburgerMenuProps {
+  isHamsymbolOpen: boolean;
+  setIsHamSymbolOpen: (isOpen: boolean) => void;
+}
+const HamburgerMenu = ({isHamsymbolOpen, setIsHamSymbolOpen}:HamburgerMenuProps) => {
 //  const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {

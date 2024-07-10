@@ -1,6 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useSwipeable } from "react-swipeable";
+import loader from "../../assets/loader.gif";
+import serverDown from "../../assets/serverDown.png";
 import "../../index.css";
 import Navbar from "../../Components/NavComponents/Navbar";
 import FooterComp from "../../Components/FooterComp";
@@ -24,6 +26,8 @@ function ProductDetail() {
   const [product, setProduct] = useState<Product | null>(null); // Use `null` instead of an empty array
   const [slideImages, setSlideImages] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [error, setError] = useState(false);
+ // const [loader, setLoader] = useState(false)
   const [image, setImage] = useState<string>(""); // Set initial value as an empty string
   const { productName } = useParams();
 
@@ -54,12 +58,14 @@ function ProductDetail() {
         console.log(response.data.specificProduct);
         const detailedProduct = response.data.specificProduct;
         setProduct(detailedProduct);
+        setError(false);
         if (detailedProduct.images.length > 0) {
           setSlideImages(detailedProduct.images);
           setImage(detailedProduct.images[0]); // Set the first image as default
         }
       } catch (error) {
         console.error("Error fetching product data:", error);
+        setError(true);
       }
     };
     productFetcher();
@@ -76,7 +82,7 @@ function ProductDetail() {
       <>
         <Navbar />
         <div className="flex justify-center items-center min-h-screen">
-          <p>Loading product details...</p>
+         <img className="md:h-[25rem]" src={loader} alt="loader"/>
         </div>
         <FooterComp />
       </>
@@ -86,6 +92,17 @@ function ProductDetail() {
   return (
     <>
       <Navbar />
+      {error && (
+        <div className="flex flex-col justify-center items-center h-[80vh] mx-auto">
+          <img
+            className="h-[25vh] md:h-[40vh]" 
+            src={serverDown}
+            alt="server down"
+          />
+          <h1 className="text-3xl mt-5">Product not found</h1>
+        </div>
+      )
+          }
       <div className="flex flex-row justify-between items-center mx-5">
         <div>Home &#10095; Products &#10095; Mens'wear</div>
       </div>

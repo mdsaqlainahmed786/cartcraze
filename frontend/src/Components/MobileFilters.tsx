@@ -1,6 +1,5 @@
 import { FaFilterCircleXmark } from "react-icons/fa6";
 import { useEffect, useState } from "react";
-import PriceSlider from "../Components/PriceSlider";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -11,9 +10,9 @@ interface FilterProps {
 }
 
 function MobileFilters({ category, onFilterOpen, setProducts }: FilterProps) {
-  const [minVal, setMinVal] = useState(200);
-  const [maxVal, setMaxVal] = useState(10000);
-  const [errMsg, setErrMsg] = useState(false);
+  // const [minVal, setMinVal] = useState(200);
+  // const [maxVal, setMaxVal] = useState(10000);
+  // const [errMsg, setErrMsg] = useState(false);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const colorOptions = ["Blue", "Black", "Brown", "Green", "Grey"];
@@ -38,18 +37,18 @@ function MobileFilters({ category, onFilterOpen, setProducts }: FilterProps) {
       setSelectedSizes([]);
     }
 
-    setMinVal(200);
-    setMaxVal(10000);
-    setErrMsg(false);
+    // setMinVal(200);
+    // setMaxVal(10000);
+    // setErrMsg(false);
   }, [location.search, category]);
 
   const priceFilterer = () => {
-    if (minVal <= 0 || maxVal <= 0 || minVal > maxVal) {
-      setErrMsg(true);
-    } else {
-      setErrMsg(false);
+    // if (minVal <= 0 || maxVal <= 0 || minVal > maxVal) {
+    //   setErrMsg(true);
+    // } else {
+    //   setErrMsg(false);
       updateURLAndFetchProducts();
-    }
+    //}
   };
 
   const toggleColor = (color: string) => {
@@ -65,9 +64,9 @@ function MobileFilters({ category, onFilterOpen, setProducts }: FilterProps) {
   };
 
   const clearFilters = () => {
-    setMinVal(200);
-    setMaxVal(10000);
-    setErrMsg(false);
+    // setMinVal(200);
+    // setMaxVal(10000);
+    // setErrMsg(false);
     setSelectedColors([]);
     setSelectedSizes([]);
     navigate(`/${category}`);
@@ -148,13 +147,13 @@ function MobileFilters({ category, onFilterOpen, setProducts }: FilterProps) {
             </label>
           ))}
         </div>
-        <PriceSlider
+        {/* <PriceSlider
           minVal={minVal}
           maxVal={maxVal}
           setMinVal={setMinVal}
           setMaxVal={setMaxVal}
           errMsg={errMsg}
-        />
+        /> */}
         <div className="w-full flex justify-end items-center space-x-5 pt-5">
           <button
             onClick={onFilterOpen}
