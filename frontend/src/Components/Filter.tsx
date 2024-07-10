@@ -5,8 +5,8 @@ import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 interface FilterProps {
-  setProducts: (products: Product[]) => void;
-  productCategory: string;
+  setProducts: (products:[]) => void;
+  productCategory: string| undefined;
 }
 
 const Filter = ({ setProducts, productCategory }: FilterProps) => {
@@ -148,12 +148,6 @@ const Filter = ({ setProducts, productCategory }: FilterProps) => {
             errMsg={errMsg}
           />
           <div className="w-full flex justify-end items-center space-x-5 pt-5">
-            <button
-              onClick={clearFilters}
-              className="p-2 font-semibold border border-black rounded-md text-lg"
-            >
-              Clear
-            </button>
             <button
               onClick={priceFilterer}
               className="bg-gray-800 text-white rounded-md py-2 px-3 hover:bg-black text-center disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:bg-gray-800"

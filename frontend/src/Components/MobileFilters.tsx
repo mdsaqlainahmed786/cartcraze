@@ -3,12 +3,11 @@ import { useEffect, useState } from "react";
 import PriceSlider from "../Components/PriceSlider";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
-import { on } from "events";
 
 interface FilterProps {
   onFilterOpen: () => void;
   category: string;
-  setProducts: (products: Product[]) => void;
+  setProducts: (products: []) => void;
 }
 
 function MobileFilters({ category, onFilterOpen, setProducts }: FilterProps) {

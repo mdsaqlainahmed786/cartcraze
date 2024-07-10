@@ -83,7 +83,7 @@ function Products() {
         </div>
       </div>
       <div className="flex flex-row justify-center">
-        <Filter productCategory={productCategory} category={category} setProducts={setProducts} />
+        <Filter productCategory={productCategory} setProducts={setProducts} />
         <div className="flex-1 flex gap-2 justify-center flex-wrap pb-10">
           {products.map((product) => (
             <CategoryProduct
@@ -104,7 +104,7 @@ function Products() {
           mobileFilter ? "sticky transform translate-y-0" : "hidden transform translate-y-full"
         } h-[60vh] w-full bg-white z-40 lg:hidden`}
       >
-        <MobileFilters productCategory={productCategory} category={category} onFilterOpen={onFilterOpen} setProducts={setProducts} />
+        <MobileFilters category={category} onFilterOpen={onFilterOpen} setProducts={setProducts} />
       </div>
       <FooterComp />
     </>
