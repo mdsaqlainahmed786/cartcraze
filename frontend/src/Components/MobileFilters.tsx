@@ -2,6 +2,8 @@ import { FaFilterCircleXmark } from "react-icons/fa6";
 import { useEffect, useState } from "react";
 import PriceSlider from "../Components/PriceSlider";
 import axios from "axios";
+import { useNavigate, useLocation } from "react-router-dom";
+import { on } from "events";
 
 interface FilterProps {
   onFilterOpen: () => void;
@@ -9,7 +11,7 @@ interface FilterProps {
   setProducts: (products: Product[]) => void;
 }
 
-function MobileFilters({category, onFilterOpen, setProducts }: FilterProps) {
+function MobileFilters({ category, onFilterOpen, setProducts }: FilterProps) {
   const [minVal, setMinVal] = useState(200);
   const [maxVal, setMaxVal] = useState(10000);
   const [errMsg, setErrMsg] = useState(false);
@@ -17,61 +19,70 @@ function MobileFilters({category, onFilterOpen, setProducts }: FilterProps) {
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const colorOptions = ["Blue", "Black", "Brown", "Green", "Grey"];
   const sizeOptions = ["S", "M", "L", "XL", "XXL"];
-  const localStorageKey = `filters-${category}`;
-  const toogleColors = (color: string) => {
-    setSelectedColors((prev) =>
-      prev.includes(color)
-        ? selectedColors.filter((c) => c !== color)
-        : [...prev, color]
-    );
-  };
+  const navigate = useNavigate();
+  const location = useLocation();
+
   useEffect(() => {
-    const savedFilters = localStorage.getItem(localStorageKey);
-    if (savedFilters) {
-      const filters = JSON.parse(savedFilters);
-      setMinVal(filters.minVal || 200);
-      setMaxVal(filters.maxVal || 10000);
-      setSelectedColors(filters.selectedColors || []);
-      setSelectedSizes(filters.selectedSizes || []);
+    const searchParams = new URLSearchParams(location.search);
+    const colors = searchParams.get('color');
+    const sizes = searchParams.get('size');
+
+    if (colors) {
+      setSelectedColors(colors.split(','));
+    } else {
+      setSelectedColors([]);
     }
-  }, [category, localStorageKey]);
-  const toogleSizes = (size: string) => {
-    setSelectedSizes((prev) =>
-      prev.includes(size)
-        ? selectedSizes.filter((s) => s !== size)
-        : [...prev, size]
+
+    if (sizes) {
+      setSelectedSizes(sizes.split(','));
+    } else {
+      setSelectedSizes([]);
+    }
+
+    setMinVal(200);
+    setMaxVal(10000);
+    setErrMsg(false);
+  }, [location.search, category]);
+
+  const priceFilterer = () => {
+    if (minVal <= 0 || maxVal <= 0 || minVal > maxVal) {
+      setErrMsg(true);
+    } else {
+      setErrMsg(false);
+      updateURLAndFetchProducts();
+    }
+  };
+
+  const toggleColor = (color: string) => {
+    setSelectedColors(prev =>
+      prev.includes(color) ? prev.filter(c => c !== color) : [...prev, color]
     );
   };
 
-  const clearFilters = async() => {
+  const toggleSize = (size: string) => {
+    setSelectedSizes(prev =>
+      prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]
+    );
+  };
+
+  const clearFilters = () => {
     setMinVal(200);
     setMaxVal(10000);
     setErrMsg(false);
     setSelectedColors([]);
     setSelectedSizes([]);
-    localStorage.removeItem(localStorageKey);
-     // const defaultProducts = await axios.get(`http://localhost:3000/api/v1/products/category/${category}`);
-    // setProducts(defaultProducts.data.categorySpecificProducts);
-   // Clear products as well when clearing filters
+    navigate(`/${category}`);
+    onFilterOpen();
   };
-  const onFilterPrice = () => {
-    console.log("PriceFilterer called"); // Debug log
-    console.log("minVal:", minVal, "maxVal:", maxVal);
-    if (minVal <= 0 || maxVal <= 0 || minVal > maxVal) return setErrMsg(true);
-    else {
-      setErrMsg(false);
-       onFilterOpen();
-      fetchFilteredProducts()
-    }
-  };
-  const fetchFilteredProducts = async (filteredProducts = null) => {
-    if (filteredProducts !== null) {
-      setProducts(filteredProducts);
-      return;
-    }
 
+  const updateURLAndFetchProducts = async () => {
     const colors = selectedColors.join(',');
     const sizes = selectedSizes.join(',');
+
+    const queryParams = new URLSearchParams();
+    if (colors) queryParams.append('color', colors);
+    if (sizes) queryParams.append('size', sizes);
+    navigate(`/${category}?${queryParams.toString()}`);
 
     try {
       const url = new URL(`http://localhost:3000/api/v1/products/category/${category}`);
@@ -84,19 +95,13 @@ function MobileFilters({category, onFilterOpen, setProducts }: FilterProps) {
 
       const response = await axios.get(url.toString());
       const data = await response.data;
-      console.log('Filtered products:', data.categorySpecificProducts);
-      setProducts(data.categorySpecificProducts); 
-      console.log("Filtered products:");
-      localStorage.setItem(localStorageKey, JSON.stringify({
-        minVal,
-        maxVal,
-        selectedColors,
-        selectedSizes,
-      }));
+      onFilterOpen();
+      setProducts(data.categorySpecificProducts);
     } catch (error) {
       console.error('Error fetching filtered products:', error);
     }
   };
+
   return (
     <>
       <div className="flex flex-col border-b-2 pb-3 border-black">
@@ -117,7 +122,12 @@ function MobileFilters({category, onFilterOpen, setProducts }: FilterProps) {
               key={color}
               className="inline-flex items-center cursor-pointer"
             >
-              <input className="accent-black h-4 w-4"   checked={selectedColors.includes(color)} onChange={()=>toogleColors(color)} type="checkbox" />
+              <input
+                className="accent-black h-4 w-4"
+                type="checkbox"
+                checked={selectedColors.includes(color)}
+                onChange={() => toggleColor(color)}
+              />
               <span className="text-md hover:text-black ml-2">{color}</span>
             </label>
           ))}
@@ -129,7 +139,12 @@ function MobileFilters({category, onFilterOpen, setProducts }: FilterProps) {
               key={size}
               className="inline-flex items-center cursor-pointer"
             >
-              <input className="accent-black h-4 w-4" checked={selectedSizes.includes(size)} onChange={()=>toogleSizes(size)} type="checkbox" />
+              <input
+                className="accent-black h-4 w-4"
+                type="checkbox"
+                checked={selectedSizes.includes(size)}
+                onChange={() => toggleSize(size)}
+              />
               <span className="text-md hover:text-black ml-2">{size}</span>
             </label>
           ))}
@@ -149,7 +164,7 @@ function MobileFilters({category, onFilterOpen, setProducts }: FilterProps) {
             Close
           </button>
           <button
-            onClick={onFilterPrice}
+            onClick={priceFilterer}
             className="bg-gray-800 text-white rounded-md py-2 px-3 hover:bg-black text-center disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:bg-gray-800"
           >
             Apply

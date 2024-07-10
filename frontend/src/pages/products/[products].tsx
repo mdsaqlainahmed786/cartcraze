@@ -104,7 +104,7 @@ function Products() {
           mobileFilter ? "sticky transform translate-y-0" : "hidden transform translate-y-full"
         } h-[60vh] w-full bg-white z-40 lg:hidden`}
       >
-        <MobileFilters onFilterOpen={onFilterOpen} category={category} setProducts={setProducts} />
+        <MobileFilters productCategory={productCategory} category={category} onFilterOpen={onFilterOpen} setProducts={setProducts} />
       </div>
       <FooterComp />
     </>

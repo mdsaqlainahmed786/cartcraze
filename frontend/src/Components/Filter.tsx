@@ -27,11 +27,19 @@ const Filter = ({ setProducts, productCategory }: FilterProps) => {
 
     if (colors) {
       setSelectedColors(colors.split(','));
+    } else {
+      setSelectedColors([]);
     }
 
     if (sizes) {
       setSelectedSizes(sizes.split(','));
+    } else {
+      setSelectedSizes([]);
     }
+
+    setMinVal(200);
+    setMaxVal(10000);
+    setErrMsg(false);
   }, [location.search, productCategory]);
 
   const priceFilterer = () => {
