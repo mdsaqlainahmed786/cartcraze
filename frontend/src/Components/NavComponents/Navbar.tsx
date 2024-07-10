@@ -30,6 +30,7 @@ function Navbar() {
   const [isHamOpen, setIsHamOpen] = useState(false);
   // const [wishListCount, setWishListCount] = useState(0)
   const [isOpen, setIsOpen] = useState(false);
+  const [isHamSymbolOpen, setIsHamSymbolOpen] = useState(false);
   const userEmail = useRecoilValue(emailState);
   const userName = useRecoilValue(usernameState);
   const [token, setToken] = useState("");
@@ -40,6 +41,10 @@ function Navbar() {
   const [isMdScreen, setIsMdScreen] = useState(window.innerWidth <= 1023);
   //console.log(isMdScreen)
   const cartCount = 0;
+  const onHandleHam = () => {
+    setIsHamOpen(!isHamOpen);
+    setIsHamSymbolOpen(!isHamSymbolOpen);
+  };
   useEffect(() => {
     const handleResize = () => {
       setIsMdScreen(window.innerWidth <= 1023);
@@ -103,28 +108,28 @@ function Navbar() {
           <div className="hidden custom-md-lg:flex space-x-5 flex-row justify-center items-center custom-lg:space-x-10">
             <div className="hidden font-semibold text-gray-600 lg:text-lg lg:block">
               <NavItem
-                link="menssuit"
-                isActive={isActive("/menssuit")}
+                link="Men-Suits"
+                isActive={isActive("/Men-Suits")}
                 navItem="Mens Suit"
               />
               <NavItem
-                link="mensshirt"
-                isActive={isActive("/mensshirt")}
+                link="Men-Shirt"
+                isActive={isActive("/Men-Shirt")}
                 navItem="Mens Shirt"
               />
               <NavItem
-                link="menstshirt"
-                isActive={isActive("/menstshirt")}
+                link="Men-Tshirt"
+                isActive={isActive("/Men-Tshirt")}
                 navItem="Mens Tshirt"
               />
               <NavItem
-                link="womenstees&tops"
-                isActive={isActive("/womenstees&tops")}
+                link="Women-Tops"
+                isActive={isActive("/Women-Tops")}
                 navItem="Women Tops"
               />
               <NavItem
-                link="womensshirt"
-                isActive={isActive("/womensshirt")}
+                link="Women-Shirt"
+                isActive={isActive("/Women-Shirt")}
                 navItem="Women Shirt"
               />
             </div>
@@ -174,7 +179,10 @@ function Navbar() {
             </div>
           </div>
           <div onClick={() => setIsHamOpen(!isHamOpen)}>
-            <HamburgerMenu />
+            <HamburgerMenu
+              setIsHamSymbolOpen={setIsHamSymbolOpen}
+              isHamsymbolOpen={isHamSymbolOpen}
+            />
           </div>
         </div>
 
@@ -186,7 +194,15 @@ function Navbar() {
           <Input />
         </div>
       </div>
-      {isHamOpen && isMdScreen && <div className="overlay lg:hidden"></div>}{" "}
+      {isHamOpen && isMdScreen && (
+        <div
+          onClick={() => {
+            setIsHamOpen(!isHamOpen);
+            setIsHamSymbolOpen(!isHamSymbolOpen);
+          }}
+          className="overlay lg:hidden"
+        ></div>
+      )}{" "}
       <div
         className={`fixed top-0 right-0 w-4/5 max-w-[20rem] h-full bg-white shadow-lg transition-transform duration-300 z-50 ${
           isHamOpen ? "transform translate-x-0" : "transform translate-x-full"
@@ -221,11 +237,20 @@ function Navbar() {
             </div>
             <div className="-mt-5"></div>
           </div>
-          <MobileNavcomp link="menssuit" navItems="Mens Suit" />
-          <MobileNavcomp link="mensshirt" navItems="Mens Shirt" />
-          <MobileNavcomp link="menstshirt" navItems="Mens Tshirt" />
-          <MobileNavcomp link="womenstees&tops" navItems="Women Tops" />
-          <MobileNavcomp link="womensshirt" navItems="Women Shirt" />
+          <div className="w-full" onClick={onHandleHam}>
+            <MobileNavcomp link="Men-Suits" navItems="Mens Suit" />
+          </div>
+          <div className="w-full" onClick={onHandleHam}>
+            <MobileNavcomp link="Men-Shirt" navItems="Mens Shirt" />
+          </div>
+          <MobileNavcomp link="Men-Tshirt" navItems="Mens Tshirt" />
+          <div className="w-full" onClick={onHandleHam}>
+            <MobileNavcomp link="Women-Tops" navItems="Women Tops" />
+          </div>
+          <div className="w-full" onClick={onHandleHam}>
+            <MobileNavcomp link="Women-Shirt" navItems="Women Shirt" />
+          </div>
+
           {token ? (
             <div
               onClick={onLogOut}
@@ -236,7 +261,7 @@ function Navbar() {
             </div>
           ) : (
             <div
-              onClick={onLogOut}
+              onClick={() => navigate("/signin")}
               className="hover:bg-gray-200 rounded-md w-full p-1 cursor-pointer flex justify-center items-center"
             >
               <CiLogout className="text-lg -mb-1" />

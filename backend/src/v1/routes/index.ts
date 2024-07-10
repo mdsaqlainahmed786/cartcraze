@@ -9,17 +9,17 @@ import rateLimit from "express-rate-limit"
 //import { wishListRouter } from "./wishlist"
 
 const app = express()
-const limiter = rateLimit({
-    max:100,
-    windowMs: 60 * 10 * 1000,
-    message:"Too many requests, Please try again shortly!"
-})
+// const limiter = rateLimit({
+//     max:100,
+//     windowMs: 60 * 10 * 1000,
+//     message:"Too many requests, Please try again shortly!"
+// })
 app.use(cookieParser());
 app.use(cors({
     credentials: true,
     origin: "http://localhost:5173"
 }));
-app.use('/api', limiter)
+//app.use('/api', limiter)
 app.use(express.json())
 app.use("/api/v1/user", userRouter)
 app.use("/api/v1/products", productsRouter)

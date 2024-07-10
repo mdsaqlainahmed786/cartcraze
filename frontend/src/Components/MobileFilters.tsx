@@ -1,12 +1,15 @@
 import { FaFilterCircleXmark } from "react-icons/fa6";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PriceSlider from "../Components/PriceSlider";
+import axios from "axios";
 
 interface FilterProps {
   onFilterOpen: () => void;
+  category: string;
+  setProducts: (products: Product[]) => void;
 }
 
-function MobileFilters({ onFilterOpen }: FilterProps) {
+function MobileFilters({category, onFilterOpen, setProducts }: FilterProps) {
   const [minVal, setMinVal] = useState(200);
   const [maxVal, setMaxVal] = useState(10000);
   const [errMsg, setErrMsg] = useState(false);
@@ -14,7 +17,7 @@ function MobileFilters({ onFilterOpen }: FilterProps) {
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const colorOptions = ["Blue", "Black", "Brown", "Green", "Grey"];
   const sizeOptions = ["S", "M", "L", "XL", "XXL"];
-
+  const localStorageKey = `filters-${category}`;
   const toogleColors = (color: string) => {
     setSelectedColors((prev) =>
       prev.includes(color)
@@ -22,7 +25,16 @@ function MobileFilters({ onFilterOpen }: FilterProps) {
         : [...prev, color]
     );
   };
-
+  useEffect(() => {
+    const savedFilters = localStorage.getItem(localStorageKey);
+    if (savedFilters) {
+      const filters = JSON.parse(savedFilters);
+      setMinVal(filters.minVal || 200);
+      setMaxVal(filters.maxVal || 10000);
+      setSelectedColors(filters.selectedColors || []);
+      setSelectedSizes(filters.selectedSizes || []);
+    }
+  }, [category, localStorageKey]);
   const toogleSizes = (size: string) => {
     setSelectedSizes((prev) =>
       prev.includes(size)
@@ -31,21 +43,58 @@ function MobileFilters({ onFilterOpen }: FilterProps) {
     );
   };
 
-  const clearFilters = () => {
+  const clearFilters = async() => {
     setMinVal(200);
     setMaxVal(10000);
     setErrMsg(false);
     setSelectedColors([]);
     setSelectedSizes([]);
+    localStorage.removeItem(localStorageKey);
+     // const defaultProducts = await axios.get(`http://localhost:3000/api/v1/products/category/${category}`);
+    // setProducts(defaultProducts.data.categorySpecificProducts);
+   // Clear products as well when clearing filters
   };
-
   const onFilterPrice = () => {
     console.log("PriceFilterer called"); // Debug log
     console.log("minVal:", minVal, "maxVal:", maxVal);
     if (minVal <= 0 || maxVal <= 0 || minVal > maxVal) return setErrMsg(true);
     else {
       setErrMsg(false);
-      onFilterOpen();
+       onFilterOpen();
+      fetchFilteredProducts()
+    }
+  };
+  const fetchFilteredProducts = async (filteredProducts = null) => {
+    if (filteredProducts !== null) {
+      setProducts(filteredProducts);
+      return;
+    }
+
+    const colors = selectedColors.join(',');
+    const sizes = selectedSizes.join(',');
+
+    try {
+      const url = new URL(`http://localhost:3000/api/v1/products/category/${category}`);
+      if (colors) {
+        url.searchParams.append('color', colors);
+      }
+      if (sizes) {
+        url.searchParams.append('size', sizes);
+      }
+
+      const response = await axios.get(url.toString());
+      const data = await response.data;
+      console.log('Filtered products:', data.categorySpecificProducts);
+      setProducts(data.categorySpecificProducts); 
+      console.log("Filtered products:");
+      localStorage.setItem(localStorageKey, JSON.stringify({
+        minVal,
+        maxVal,
+        selectedColors,
+        selectedSizes,
+      }));
+    } catch (error) {
+      console.error('Error fetching filtered products:', error);
     }
   };
   return (

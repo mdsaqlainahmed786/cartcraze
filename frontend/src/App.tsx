@@ -7,19 +7,13 @@ import WishList from "./pages/wishList";
 import Cart from "./pages/cart";
 import { RecoilRoot } from "recoil";
 import Signup from "./pages/Authentication/signup";
-import MenSuit from "./pages/products/mensuit";
-import MenShirt from "./pages/products/menshirt";
-import MensTshirt from "./pages/products/mentshirt";
-import MensBottom from "./pages/products/mensbottom";
-import WomenTeesTops from "./pages/products/womenteestops";
-import WomenShirt from "./pages/products/womenshirt";
 import ProductDetail from "./pages/products/[specificProduct]";
 import { Toaster } from "react-hot-toast";
 import Verify from "./pages/Authentication/verify";
-
 import ForgotPassword from "./pages/Authentication/forgotpassword";
 import ResetPassword from "./pages/Authentication/reset_password";
 import Checkout from "./pages/checkout";
+import Products from "./pages/products/[products]";
 function App() {
   return (
     <>
@@ -36,12 +30,7 @@ function App() {
             <Route path="/forgot_password" element={<ForgotPassword/>}></Route>
             <Route path="/verify/:Token" element={<Verify />}></Route>
             <Route path="/reset_password/:Token" element={<ResetPassword />}></Route>
-            <Route path="/womensshirt" element={<WomenShirt />}></Route>
-            <Route path="/womenstees&tops" element={<WomenTeesTops />}></Route>
-            <Route path="/mensbottom" element={<MensBottom />}></Route>
-            <Route path="/menssuit" element={<MenSuit />}></Route>
-            <Route path="/mensshirt" element={<MenShirt />}></Route>
-            <Route path="/menstshirt" element={<MensTshirt />}></Route>
+            <Route path="/:productCategory" element={<Products />}></Route>
             <Route
               path="/product/:productName"
               element={<ProductDetail />}

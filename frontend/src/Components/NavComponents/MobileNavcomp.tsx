@@ -5,11 +5,11 @@ interface MobileNavProps {
 }
 const MobileNavcomp = ({ navItems, link }: MobileNavProps) => {
   return (
-    <span className="hover:text-black cursor-pointer hover:bg-gray-200 rounded-md w-full flex justify-center p-1">
-      <Link to={`/${link}`}>
+    <div className="hover:text-black cursor-pointer text-center hover:bg-gray-200 rounded-md w-full flex justify-center p-1">
+      <Link className="w-full" to={`/${link}`}>
       {navItems}
       </Link>
-    </span>
+    </div>
   );
 };
 

@@ -10,20 +10,19 @@ const users_1 = require("./users");
 const products_1 = require("./products");
 const cart_1 = require("./cart");
 const authMiddleware_1 = __importDefault(require("./middlewares/authMiddleware"));
-const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 //import { wishListRouter } from "./wishlist"
 const app = (0, express_1.default)();
-const limiter = (0, express_rate_limit_1.default)({
-    max: 100,
-    windowMs: 60 * 10 * 1000,
-    message: "Too many requests, Please try again shortly!"
-});
+// const limiter = rateLimit({
+//     max:100,
+//     windowMs: 60 * 10 * 1000,
+//     message:"Too many requests, Please try again shortly!"
+// })
 app.use((0, cookie_parser_1.default)());
 app.use((0, cors_1.default)({
     credentials: true,
     origin: "http://localhost:5173"
 }));
-app.use('/api', limiter);
+//app.use('/api', limiter)
 app.use(express_1.default.json());
 app.use("/api/v1/user", users_1.userRouter);
 app.use("/api/v1/products", products_1.productsRouter);

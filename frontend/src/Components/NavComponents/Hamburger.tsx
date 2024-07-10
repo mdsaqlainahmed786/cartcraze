@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 
-const HamburgerMenu: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
+const HamburgerMenu: React.FC = ({isHamsymbolOpen, setIsHamSymbolOpen}) => {
+//  const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
-    setIsOpen(!isOpen);
+    setIsHamSymbolOpen(!isHamsymbolOpen);
   };
 
   return (
@@ -20,7 +20,7 @@ const HamburgerMenu: React.FC = () => {
           viewBox="0 0 24 24"
           xmlns="http://www.w3.org/2000/svg"
         >
-          {isOpen ? (
+          {isHamsymbolOpen ? (
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
