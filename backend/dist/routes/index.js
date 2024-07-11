@@ -18,10 +18,7 @@ const app = (0, express_1.default)();
 //     message:"Too many requests, Please try again shortly!"
 // })
 app.use((0, cookie_parser_1.default)());
-app.use((0, cors_1.default)({
-    credentials: true,
-    origin: "http://localhost:5173"
-}));
+app.use((0, cors_1.default)());
 //app.use('/api', limiter)
 app.use(express_1.default.json());
 app.use("/api/v1/user", users_1.userRouter);

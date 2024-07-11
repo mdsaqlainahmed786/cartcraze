@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import Filter from "../../Components/Filter";
 import MobileFilters from "../../Components/MobileFilters";
+import noProducts from "../../assets/noproducts.png";
 import axios from "axios";
 
 function Products() {
@@ -26,6 +27,7 @@ function Products() {
   const [mobileFilter, setMobileFilter] = useState(false);
   const [isMdScreen, setIsMdScreen] = useState(window.innerWidth <= 1023);
   const [products, setProducts] = useState<Product[]>([]);
+  const [productslength, setProductsLength] = useState<number>(0);
   const [error, setError] = useState(false);
   const [loader, setLoader] = useState(false);
   const location = useLocation();
@@ -38,6 +40,7 @@ function Products() {
           `http://localhost:3000/api/v1/products/category/${productCategory}${queryParams}`
         );
         setProducts(response.data.categorySpecificProducts);
+        setProductsLength(response.data.categorySpecificProducts.length);
         setError(false);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -67,13 +70,13 @@ function Products() {
       window.removeEventListener("resize", handleResize);
       document.body.classList.remove("no-scroll");
     };
-  }, [mobileFilter, isMdScreen, location.search, productCategory]);
+  }, [mobileFilter, isMdScreen, location.search, productCategory, products.length]);
 
   const onFilterOpen = () => {
     setMobileFilter(!mobileFilter);
   };
 
-  const category = products.length > 0 ? products[0].category : "";
+ // const category = products.length > 0 ? products[0].category : "";
 
   return (
     <>
@@ -83,6 +86,7 @@ function Products() {
           <img src={gifLoader} alt="loader" />
         </div>
       )}
+      
       {error && (
         <div className="flex flex-col justify-center items-center h-[80vh] mx-auto">
           <img
@@ -134,6 +138,14 @@ function Products() {
               color={product.color}
             />
           ))}
+          {productslength === 0 && !loader && !error && (
+        <div className="flex  flex-col justify-center items-center h-[80vh]">
+          <img  className="h-[25vh] md:h-[40vh]" src={noProducts} alt="no products" />
+          <span className="text-[18px] text-neutral-500">
+            No products found with these filters
+            </span>
+            </div>
+            )}
         </div>
       </div>
       <div
@@ -144,7 +156,7 @@ function Products() {
         } h-[60vh] w-full bg-white z-40 lg:hidden`}
       >
         <MobileFilters
-          category={category}
+          productCategory={productCategory}
           onFilterOpen={onFilterOpen}
           setProducts={setProducts}
         />

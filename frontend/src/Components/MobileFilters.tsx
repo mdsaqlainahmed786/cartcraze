@@ -5,11 +5,11 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 interface FilterProps {
   onFilterOpen: () => void;
-  category: string;
+  productCategory: string| undefined;
   setProducts: (products: []) => void;
 }
 
-function MobileFilters({ category, onFilterOpen, setProducts }: FilterProps) {
+function MobileFilters({ productCategory, onFilterOpen, setProducts }: FilterProps) {
   // const [minVal, setMinVal] = useState(200);
   // const [maxVal, setMaxVal] = useState(10000);
   // const [errMsg, setErrMsg] = useState(false);
@@ -40,7 +40,7 @@ function MobileFilters({ category, onFilterOpen, setProducts }: FilterProps) {
     // setMinVal(200);
     // setMaxVal(10000);
     // setErrMsg(false);
-  }, [location.search, category]);
+  }, [location.search, productCategory]);
 
   const priceFilterer = () => {
     // if (minVal <= 0 || maxVal <= 0 || minVal > maxVal) {
@@ -69,7 +69,7 @@ function MobileFilters({ category, onFilterOpen, setProducts }: FilterProps) {
     // setErrMsg(false);
     setSelectedColors([]);
     setSelectedSizes([]);
-    navigate(`/${category}`);
+    navigate(`/${productCategory}`);
     onFilterOpen();
   };
 
@@ -80,10 +80,10 @@ function MobileFilters({ category, onFilterOpen, setProducts }: FilterProps) {
     const queryParams = new URLSearchParams();
     if (colors) queryParams.append('color', colors);
     if (sizes) queryParams.append('size', sizes);
-    navigate(`/${category}?${queryParams.toString()}`);
+    navigate(`/${productCategory}?${queryParams.toString()}`);
 
     try {
-      const url = new URL(`http://localhost:3000/api/v1/products/category/${category}`);
+      const url = new URL(`http://localhost:3000/api/v1/products/category/${productCategory}`);
       if (colors) {
         url.searchParams.append('color', colors);
       }

@@ -24,14 +24,15 @@ function Signup() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-const handleCaptchaChange = (token: string | null) => {
-  setCaptchaToken(token);
-  setCaptchaVerified(true);
-};
+  const handleCaptchaChange = (token: string | null) => {
+    setCaptchaToken(token);
+    setCaptchaVerified(true);
+  };
 
   const verifyCaptcha = async () => {
     try {
-      const response = await axios.post('http://localhost:3001/verify-recaptcha', { token: captchaToken });
+      const response = await axios.post('http://localhost:3001/verify-recaptcha', { token: captchaToken }
+      );
       return response.data.success;
     } catch (error) {
       console.error("Error verifying captcha", error);
@@ -44,8 +45,6 @@ const handleCaptchaChange = (token: string | null) => {
       navigate("/");
     }
   }, [navigate]);
-
-  
 
   const onSubmitSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -80,13 +79,16 @@ const handleCaptchaChange = (token: string | null) => {
 
     setLoading(true);
     try {
-      const captchaSuccess = await verifyCaptcha();
-      if (!captchaSuccess) {
-        throw new Error('Captcha verification failed');
-      }
+      // const captchaSuccess = await verifyCaptcha();
+      // if (!captchaSuccess) {
+      //   throw new Error("Captcha verification failed");
+      // }
 
-      const response = await axios.post("http://localhost:3000/api/v1/user/signup", userDetails);
-     
+      const response = await axios.post(
+        "http://localhost:3000/api/v1/user/signup",
+        userDetails
+      );
+
       if (response) {
         toast.success(response.data.message, {
           style: {
@@ -210,8 +212,14 @@ const handleCaptchaChange = (token: string | null) => {
                   )}
                 </button>
               </div>
-              <NotRobot handleCaptchaChange={handleCaptchaChange} />
-              <button className={`w-[14rem] md:w-72 lg:w-72 mx-2 bg-gray-800 text-white p-1.5 flex justify-center items-center rounded-md hover:bg-black ${loading?'opacity-80 cursor-not-allowed hover:bg-gray-800':''}`}>
+              {/* <NotRobot handleCaptchaChange={handleCaptchaChange} /> */}
+              <button
+                className={`w-[14rem] md:w-72 lg:w-72 mx-2 bg-gray-800 text-white p-1.5 flex justify-center items-center rounded-md hover:bg-black ${
+                  loading
+                    ? "opacity-80 cursor-not-allowed hover:bg-gray-800"
+                    : ""
+                }`}
+              >
                 {loading && (
                   <div role="status">
                     <svg
