@@ -13,34 +13,34 @@ function FooterComp() {
         <div className="flex flex-col space-y-1 justify-center items-center lg:justify-start lg:items-start lg:pt-[2rem]">
         <span className="font-semibold text-xl text-gray-600">SHOP</span>
           <a
-            href="/"
+            href="/Men-Suits"
             className="text-md text-neutral-600 hover:text-black cursor-pointer hover:underline"
           >
-            Foot Wear
+            Men Suit
           </a>
           <a
-            href="/"
+            href="/Men-Shirt"
             className="text-md text-neutral-600 hover:text-black cursor-pointer hover:underline"
           >
-            Furniture
+            Men Shirt
           </a>
           <a
-            href="/"
+            href="/Men-Tshirt"
             className="text-md text-neutral-600 hover:text-black cursor-pointer hover:underline"
           >
-            Men's Wear
+            Men T-shirt
           </a>
           <a
-            href="/"
+            href="/Women-Tops"
             className="text-md text-neutral-600 hover:text-black cursor-pointer hover:underline"
           >
-            Women's Wear
+            Women's Tops
           </a>
           <a
-            href="/"
+            href="/Women-Shirt"
             className="text-md text-neutral-600 hover:text-black cursor-pointer hover:underline"
           >
-            Kid's Wear
+            Women Shirt
           </a>
         </div>
         <div className="flex flex-col space-y-1 justify-center items-center lg:justify-start lg:items-start">

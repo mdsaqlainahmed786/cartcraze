@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const defaultImages = [
   "https://codeswear.nyc3.cdn.digitaloceanspaces.com/constants/landing/squarebanner/2.webp",
@@ -12,6 +13,7 @@ const lgImages = [
 
 const Carousel: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const navigate = useNavigate();
   const [images, setImages] = useState(() => {
     return window.innerWidth >= 770 ? lgImages : defaultImages;
   });
@@ -80,7 +82,7 @@ const Carousel: React.FC = () => {
         &#10095;
       </button>
       <div className="absolute left-1/2 bottom-10 transform -translate-x-1/2 z-10">
-        <button className="bg-white hover:bg-gray-200 text-black font-bold py-2 px-6 md:py-2 md:px-8 rounded-xl text-base md:text-lg xl:text-2xl shadow-lg">
+        <button onClick={()=>navigate("/Men-Suits")} className="bg-white hover:bg-gray-200 text-black font-bold py-2 px-6 md:py-2 md:px-8 rounded-xl text-base md:text-lg xl:text-2xl shadow-lg">
           Shop Now
         </button>
       </div>
