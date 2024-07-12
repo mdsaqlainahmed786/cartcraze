@@ -3,10 +3,47 @@ import CartSummary from "../Components/CartSummary";
 import FooterComp from "../Components/FooterComp";
 import Navbar from "../Components/NavComponents/Navbar";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import loginCart from "../assets/loginCart.png";
 function Cart() {
+  const [gotoLogin, setGotoLogin] = useState<boolean | null>(null);
   const navigate = useNavigate();
   const toCheckout = () => {
     navigate("/checkout");
+  }
+  useEffect(() => {
+    const token = Cookies.get("Secret_Auth_token");
+    setGotoLogin(!token);
+  }, []);
+
+  if (gotoLogin === null) {
+    return null; // Or a loading spinner or any placeholder
+  }
+
+  if (gotoLogin) {
+    return (
+      <>
+        <Navbar />
+        <div className="flex flex-col justify-center items-center h-[80vh] mx-auto">
+          <img
+            className="h-[25vh] md:h-[40vh]"
+            src={loginCart}
+            alt="server down"
+          />
+          <span className="text-neutral-500 text-[18px] text-center px-5">
+            Please SignIn/SignUp to view or add items in your cart.
+          </span>
+          <button
+            onClick={() => navigate("/signup")}
+            className="bg-gray-800 hover:bg-black text-white p-2 rounded-md mt-5"
+          >
+            Go to SignUp &#10095;
+          </button>
+        </div>
+        <FooterComp />
+      </>
+    );
   }
   return (
     <>

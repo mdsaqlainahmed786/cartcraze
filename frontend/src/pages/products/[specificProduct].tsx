@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useSwipeable } from "react-swipeable";
 import loader from "../../assets/loader.gif";
@@ -11,6 +11,8 @@ import ImageThumbnail from "../../Components/ProductDetails/ImageThumbnail";
 import ProductDescription from "../../Components/ProductDetails/ProductDescription";
 import BenefitsOfStore from "../../Components/BenefitsOfStore/BenefitsOfStore";
 import axios from "axios";
+import Cookies from "js-cookie";
+import toast from "react-hot-toast";
 interface Product {
   title: string;
   description: string;
@@ -19,18 +21,49 @@ interface Product {
   sizes: string[];
   color: string;
   images: string[];
-
 }
 
 function ProductDetail() {
   const [product, setProduct] = useState<Product | null>(null); // Use `null` instead of an empty array
   const [slideImages, setSlideImages] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [error, setError] = useState(false);
- // const [loader, setLoader] = useState(false)
+  const navigate = useNavigate();
+  // const [loader, setLoader] = useState(false)
   const [image, setImage] = useState<string>(""); // Set initial value as an empty string
   const { productName } = useParams();
-
+  const onAddtoCart = () => {
+    if(userLoggedIn){
+      toast.success("Product added to cart", {
+        style: {
+          border: "1px solid black",
+          padding: "16px",
+          color: "black",
+          marginTop: "75px",
+        },
+        iconTheme: {
+          primary: "black",
+          secondary: "white",
+        },
+      });
+    }
+    else{
+      toast.error("Please login to add product to cart", {
+        style: {
+          border: "1px solid black",
+          padding: "16px",
+          color: "black",
+          marginTop: "75px",
+        },
+        iconTheme: {
+          primary: "black",
+          secondary: "white",
+        },
+      });
+      navigate("/signin");
+    }
+  }
   const nextImg = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % slideImages.length);
   };
@@ -50,6 +83,10 @@ function ProductDetail() {
   });
 
   useEffect(() => {
+    const token = Cookies.get("Secret_Auth_token");
+    if (token) {
+      setUserLoggedIn(true);
+    }
     const productFetcher = async () => {
       try {
         const response = await axios.get(
@@ -82,7 +119,7 @@ function ProductDetail() {
       <>
         <Navbar />
         <div className="flex justify-center items-center min-h-screen">
-         <img className="md:h-[25rem]" src={loader} alt="loader"/>
+          <img className="md:h-[25rem]" src={loader} alt="loader" />
         </div>
         <FooterComp />
       </>
@@ -95,14 +132,13 @@ function ProductDetail() {
       {error && (
         <div className="flex flex-col justify-center items-center h-[80vh] mx-auto">
           <img
-            className="h-[25vh] md:h-[40vh]" 
+            className="h-[25vh] md:h-[40vh]"
             src={serverDown}
             alt="server down"
           />
           <h1 className="text-3xl mt-5">Product not found</h1>
         </div>
-      )
-          }
+      )}
       <div className="flex flex-row justify-between items-center mx-5">
         <div>Home &#10095; Products &#10095; Mens'wear</div>
       </div>
@@ -121,6 +157,7 @@ function ProductDetail() {
           sizes={product.sizes}
           color={product.color}
           colorImages={product?.images[0]}
+          onAddtoCart={onAddtoCart}
         />
       </div>
       <div className="flex flex-col md:flex-row mx-3 mt-3 lg:hidden">
@@ -160,6 +197,7 @@ function ProductDetail() {
           sizes={product.sizes}
           color={product.color}
           colorImages={product?.images[0]}
+          onAddtoCart={onAddtoCart}
         />
       </div>
       <BenefitsOfStore />

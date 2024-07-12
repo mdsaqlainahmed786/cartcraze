@@ -13,6 +13,9 @@ function Signin() {
   const [loading, setLoading] = useState(false);
   const [currentUserEmail, setCurrentUserEmail] = useRecoilState(emailState);
   const [currentUsername, setCurrentUsername] = useRecoilState(usernameState);
+  const [isAlreadyLoggedIn, setIsAlreadyLoggedIn] = useState<string | null>(
+    null
+  );
   const [userObj, setUserobj] = useState({
     email: "",
     password: "",
@@ -22,9 +25,15 @@ function Signin() {
   useEffect(() => {
     const token = Cookies.get("Secret_Auth_token");
     if (token) {
-      navigate("/");
+      setIsAlreadyLoggedIn(token);
     }
-  }, [navigate]);
+    if(isAlreadyLoggedIn){
+      navigate("/")
+    }
+    if(isAlreadyLoggedIn === null){
+      return;
+    }
+  }, [isAlreadyLoggedIn, navigate]);
   const onSubmitSignin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // if (!captchaVerified) {

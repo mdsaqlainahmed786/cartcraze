@@ -8,11 +8,11 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
-import NotRobot from "../../Components/NotRobot";
+//import NotRobot from "../../Components/NotRobot";
 
 function Signup() {
-  const [captchaVerified, setCaptchaVerified] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  // const [captchaVerified, setCaptchaVerified] = useState(false);
+  // const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [userDetails, setUserDetails] = useState({
     username: "",
     email: "",
@@ -21,30 +21,39 @@ function Signup() {
   const [confirmingPassword, setConfirmingPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+  const [isAlreadyLoggedIn, setIsAlreadyLoggedIn] = useState<string | null>(
+    null
+  );
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleCaptchaChange = (token: string | null) => {
-    setCaptchaToken(token);
-    setCaptchaVerified(true);
-  };
+  // const handleCaptchaChange = (token: string | null) => {
+  //   setCaptchaToken(token);
+  //   setCaptchaVerified(true);
+  // };
 
-  const verifyCaptcha = async () => {
-    try {
-      const response = await axios.post('http://localhost:3001/verify-recaptcha', { token: captchaToken }
-      );
-      return response.data.success;
-    } catch (error) {
-      console.error("Error verifying captcha", error);
-      return false;
-    }
-  };
+  // const verifyCaptcha = async () => {
+  //   try {
+  //     const response = await axios.post('http://localhost:3001/verify-recaptcha', { token: captchaToken }
+  //     );
+  //     return response.data.success;
+  //   } catch (error) {
+  //     console.error("Error verifying captcha", error);
+  //     return false;
+  //   }
+  // };
   useEffect(() => {
     const token = Cookies.get("Secret_Auth_token");
     if (token) {
-      navigate("/");
+      setIsAlreadyLoggedIn(token);
     }
-  }, [navigate]);
+    if(isAlreadyLoggedIn){
+      navigate("/")
+    }
+    if(isAlreadyLoggedIn === null){
+      return;
+    }
+  }, [isAlreadyLoggedIn, navigate]);
 
   const onSubmitSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -62,20 +71,20 @@ function Signup() {
         },
       });
     }
-    if (!captchaVerified) {
-      return toast.error("Please verify the captcha", {
-        style: {
-          border: "1px solid black",
-          padding: "16px",
-          color: "black",
-          marginTop: "75px",
-        },
-        iconTheme: {
-          primary: "black",
-          secondary: "white",
-        },
-      });
-    }
+    // if (!captchaVerified) {
+    //   return toast.error("Please verify the captcha", {
+    //     style: {
+    //       border: "1px solid black",
+    //       padding: "16px",
+    //       color: "black",
+    //       marginTop: "75px",
+    //     },
+    //     iconTheme: {
+    //       primary: "black",
+    //       secondary: "white",
+    //     },
+    //   });
+    // }
 
     setLoading(true);
     try {

@@ -1,6 +1,5 @@
-import toast from "react-hot-toast";
 import { useState } from "react";
-
+//import { useNavigate } from "react-router-dom";
 interface ProductProps {
   productName: string;
   sizes?: string[];
@@ -9,6 +8,7 @@ interface ProductProps {
   newPrice: number;
   color: string;
   colorImages: string;
+  onAddtoCart: () => void;
 }
 
 function ProductDescription({
@@ -19,27 +19,11 @@ function ProductDescription({
   sizes = [], // Provide a default empty array
   color,
   colorImages,
+  onAddtoCart,
 }: ProductProps) {
   const [selectedSize, setSelectedSize] = useState<string | undefined>(sizes[0]);
+ //const navigate = useNavigate();
 
-  const onAddtoCart = () => {
-    const existingWishlist = JSON.parse(
-      localStorage.getItem("wishlist") || "[]"
-    );
-    toast.success("Product added to wishlist", {
-      style: {
-        border: "1px solid black",
-        padding: "16px",
-        color: "black",
-        marginTop: "75px",
-      },
-      iconTheme: {
-        primary: "black",
-        secondary: "white",
-      },
-    });
-    localStorage.setItem("wishlist", JSON.stringify(existingWishlist));
-  };
 
   return (
     <div className="flex flex-col mt-2 space-y-1 pb-10 md:mt-0 md:mx-4 md:w-[50%]">

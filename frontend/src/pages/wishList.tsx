@@ -24,7 +24,7 @@ function WishList() {
     ) as WishlistItem[];
     setWishList(storedWishlist);
     setWishlistCount(storedWishlist.length);
-  }, []);
+  }, [setWishlistCount]);
 
   const onRemoveHandler = (title: string) => {
     console.log(wishlistCount);

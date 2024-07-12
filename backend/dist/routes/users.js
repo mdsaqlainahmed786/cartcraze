@@ -263,7 +263,7 @@ exports.userRouter.get('/logout', (req, res) => __awaiter(void 0, void 0, void 0
     });
 }));
 exports.userRouter.post('/verify-recaptcha', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const secretKey = "6LeNAA4qAAAAAA53CKcUYntzDwzMg6uh_f7Pcz6b"; // Replace with your actual secret key
+    const secretKey = process.env.SECRET_KEY; // Replace with your actual secret key
     const token = req.body.token;
     try {
         const response = yield axios_1.default.post(`https://www.google.com/recaptcha/api/siteverify`, null, {
@@ -275,11 +275,11 @@ exports.userRouter.post('/verify-recaptcha', (req, res) => __awaiter(void 0, voi
         const data = response.data;
         if (data.success) {
             // CAPTCHA was successfully verified
-            res.status(200).json({ success: true, response: data });
+            res.status(200).json({ success: true });
         }
         else {
             // CAPTCHA verification failed
-            res.status(400).json({ success: false, response: data, error: data['error-codes'] });
+            res.status(400).json({ success: false, error: data['error-codes'] });
         }
     }
     catch (error) {
