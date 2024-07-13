@@ -30,7 +30,7 @@ function App() {
             <Route path="/forgot_password" element={<ForgotPassword/>}></Route>
             <Route path="/verify/:Token" element={<Verify />}></Route>
             <Route path="/reset_password/:Token" element={<ResetPassword />}></Route>
-            <Route path="/:productCategory" element={<Products />}></Route>
+            <Route path="/products/:productCategory" element={<Products />}></Route>
             <Route
               path="/product/:productName"
               element={<ProductDetail />}

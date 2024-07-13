@@ -69,7 +69,7 @@ function MobileFilters({ productCategory, onFilterOpen, setProducts }: FilterPro
     // setErrMsg(false);
     setSelectedColors([]);
     setSelectedSizes([]);
-    navigate(`/${productCategory}`);
+    navigate(`/products/${productCategory}`);
     onFilterOpen();
   };
 
@@ -80,7 +80,7 @@ function MobileFilters({ productCategory, onFilterOpen, setProducts }: FilterPro
     const queryParams = new URLSearchParams();
     if (colors) queryParams.append('color', colors);
     if (sizes) queryParams.append('size', sizes);
-    navigate(`/${productCategory}?${queryParams.toString()}`);
+    navigate(`/products/${productCategory}?${queryParams.toString()}`);
 
     try {
       const url = new URL(`http://localhost:3000/api/v1/products/category/${productCategory}`);

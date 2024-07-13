@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+//import img1 from '../assets/smallCaruosel';
 
 const defaultImages = [
-  "https://codeswear.nyc3.cdn.digitaloceanspaces.com/constants/landing/squarebanner/2.webp",
+ "https://codeswear.nyc3.cdn.digitaloceanspaces.com/constants/landing/squarebanner/2.webp",
   "https://codeswear.nyc3.cdn.digitaloceanspaces.com/constants/landing/squarebanner/1.webp",
 ];
 
@@ -82,7 +83,7 @@ const Carousel: React.FC = () => {
         &#10095;
       </button>
       <div className="absolute left-1/2 bottom-10 transform -translate-x-1/2 z-10">
-        <button onClick={()=>navigate("/Men-Suits")} className="bg-white hover:bg-gray-200 text-black font-bold py-2 px-6 md:py-2 md:px-8 rounded-xl text-base md:text-lg xl:text-2xl shadow-lg">
+        <button onClick={()=>navigate("/products/Men-Suits")} className="bg-white hover:bg-gray-200 text-black font-bold py-2 px-6 md:py-2 md:px-8 rounded-xl text-base md:text-lg xl:text-2xl shadow-lg">
           Shop Now
         </button>
       </div>

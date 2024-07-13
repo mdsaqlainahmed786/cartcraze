@@ -68,7 +68,7 @@ const Filter = ({ setProducts, productCategory }: FilterProps) => {
     // setErrMsg(false);
     setSelectedColors([]);
     setSelectedSizes([]);
-    navigate(`/${productCategory}`);
+    navigate(`/products/${productCategory}`);
   };
 
   const updateURLAndFetchProducts = async () => {
@@ -78,7 +78,7 @@ const Filter = ({ setProducts, productCategory }: FilterProps) => {
     const queryParams = new URLSearchParams();
     if (colors) queryParams.append('color', colors);
     if (sizes) queryParams.append('size', sizes);
-    navigate(`/${productCategory}?${queryParams.toString()}`);
+    navigate(`/products/${productCategory}?${queryParams.toString()}`);
 
     try {
       const url = new URL(`http://localhost:3000/api/v1/products/category/${productCategory}`);

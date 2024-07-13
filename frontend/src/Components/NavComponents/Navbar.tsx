@@ -26,10 +26,12 @@ import {
   emailState,
   usernameState,
 } from "../../RecoilStateProviders/UserDetails";
+import { CartCountState } from "../../RecoilStateProviders/CartCount";
 function Navbar() {
   const [isHamOpen, setIsHamOpen] = useState(false);
   // const [wishListCount, setWishListCount] = useState(0)
   const [isOpen, setIsOpen] = useState(false);
+
   const [isHamSymbolOpen, setIsHamSymbolOpen] = useState(false);
   const userEmail = useRecoilValue(emailState);
   const userName = useRecoilValue(usernameState);
@@ -37,10 +39,11 @@ function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const wishlistCount = useRecoilValue(wishlistState);
+  const cartCount = useRecoilValue(CartCountState)
   // const existingWishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");// Get the current path
   const [isMdScreen, setIsMdScreen] = useState(window.innerWidth <= 1023);
   //console.log(isMdScreen)
-  const cartCount = 0;
+ 
   const onHandleHam = () => {
     setIsHamOpen(!isHamOpen);
     setIsHamSymbolOpen(!isHamSymbolOpen);
@@ -109,27 +112,27 @@ function Navbar() {
             <div className="hidden font-semibold text-gray-600 lg:text-lg lg:block">
               <NavItem
                 link="Men-Suits"
-                isActive={isActive("/Men-Suits")}
+                isActive={isActive("/products/Men-Suits")}
                 navItem="Mens Suit"
               />
               <NavItem
                 link="Men-Shirt"
-                isActive={isActive("/Men-Shirt")}
+                isActive={isActive("/products/Men-Shirt")}
                 navItem="Mens Shirt"
               />
               <NavItem
                 link="Men-Tshirt"
-                isActive={isActive("/Men-Tshirt")}
+                isActive={isActive("/products/Men-Tshirt")}
                 navItem="Mens Tshirt"
               />
               <NavItem
                 link="Women-Tops"
-                isActive={isActive("/Women-Tops")}
+                isActive={isActive("/products/Women-Tops")}
                 navItem="Women Tops"
               />
               <NavItem
                 link="Women-Shirt"
-                isActive={isActive("/Women-Shirt")}
+                isActive={isActive("/products/Women-Shirt")}
                 navItem="Women Shirt"
               />
             </div>

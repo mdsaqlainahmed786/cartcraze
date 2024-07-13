@@ -68,20 +68,8 @@ exports.cartRouter.post("/add", (req, res) => __awaiter(void 0, void 0, void 0, 
         });
         if (existingProduct) {
             //  console.log(existingProduct)
-            const updatedProduct = yield prisma.cart.update({
-                where: {
-                    id: existingProduct.id
-                },
-                data: {
-                    quantity: existingProduct.quantity + 1
-                },
-                include: {
-                    product: true
-                }
-            });
-            res.status(200).json({
-                message: "The product is been updated!",
-                updatedProduct
+            res.status(400).json({
+                message: "The product already exists in the cart!",
             });
             //   console.log(updatedProduct)
         }

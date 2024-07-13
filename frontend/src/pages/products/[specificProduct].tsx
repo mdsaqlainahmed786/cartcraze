@@ -13,7 +13,10 @@ import BenefitsOfStore from "../../Components/BenefitsOfStore/BenefitsOfStore";
 import axios from "axios";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
+import { useRecoilState } from "recoil";
+import { CartCountState } from "../../RecoilStateProviders/CartCount";
 interface Product {
+  id: string;
   title: string;
   description: string;
   newPrice: number;
@@ -24,29 +27,73 @@ interface Product {
 }
 
 function ProductDetail() {
-  const [product, setProduct] = useState<Product | null>(null); // Use `null` instead of an empty array
+  const [product, setProduct] = useState<Product | null>(null); 
   const [slideImages, setSlideImages] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+//  const [quantity, setQuantity] = useState(1); 
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [error, setError] = useState(false);
   const navigate = useNavigate();
   // const [loader, setLoader] = useState(false)
-  const [image, setImage] = useState<string>(""); // Set initial value as an empty string
+  const [image, setImage] = useState<string>(""); 
+  const [cartCount, setCartCount] = useRecoilState(CartCountState)
+  const [loading, setLoading] = useState(false)
   const { productName } = useParams();
-  const onAddtoCart = () => {
+  const onAddtoCart = async() => {
     if(userLoggedIn){
-      toast.success("Product added to cart", {
-        style: {
-          border: "1px solid black",
-          padding: "16px",
-          color: "black",
-          marginTop: "75px",
-        },
-        iconTheme: {
-          primary: "black",
-          secondary: "white",
-        },
-      });
+      try {
+        setLoading(true)
+        const response = await axios.post(
+           "http://localhost:3000/api/v1/cart/add",
+           {
+             productId: product?.id,
+             quantity: 1,
+           },
+           {
+             withCredentials: true,
+           }
+         );
+         toast.success("Product added to cart", {
+          style: {
+            border: "1px solid black",
+            padding: "16px",
+            color: "black",
+            marginTop: "75px",
+          },
+          iconTheme: {
+            primary: "black",
+            secondary: "white",
+          },
+        });
+         console.log(response.data.message);
+         const cartResponse = await axios.get(
+          "http://localhost:3000/api/v1/cart/getcart",
+          {
+            withCredentials: true,
+          }
+        );
+        setCartCount(cartResponse.data.cartItems.length);
+       } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          console.error("Error adding product to cart", error.response.data.message);
+          toast.error(error.response.data.message, {
+            style: {
+              border: "1px solid black",
+              padding: "16px",
+              color: "black",
+              marginTop: "75px",
+            },
+            iconTheme: {
+              primary: "black",
+              secondary: "white",
+            },
+          });
+        } else {
+          console.error("Error adding product to cart", error);
+        }
+      }finally{
+        setLoading(false)
+      }
     }
     else{
       toast.error("Please login to add product to cart", {
@@ -158,6 +205,8 @@ function ProductDetail() {
           color={product.color}
           colorImages={product?.images[0]}
           onAddtoCart={onAddtoCart}
+          loading={loading}
+          
         />
       </div>
       <div className="flex flex-col md:flex-row mx-3 mt-3 lg:hidden">
@@ -198,6 +247,7 @@ function ProductDetail() {
           color={product.color}
           colorImages={product?.images[0]}
           onAddtoCart={onAddtoCart}
+          loading={loading}
         />
       </div>
       <BenefitsOfStore />
