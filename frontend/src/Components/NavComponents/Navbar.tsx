@@ -26,7 +26,7 @@ import {
   emailState,
   usernameState,
 } from "../../RecoilStateProviders/UserDetails";
-import { CartCountState } from "../../RecoilStateProviders/CartCount";
+import useCartCount from "../../useCartCount";
 function Navbar() {
   const [isHamOpen, setIsHamOpen] = useState(false);
   // const [wishListCount, setWishListCount] = useState(0)
@@ -39,7 +39,7 @@ function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const wishlistCount = useRecoilValue(wishlistState);
-  const cartCount = useRecoilValue(CartCountState)
+  const cartCount = useCartCount();
   // const existingWishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");// Get the current path
   const [isMdScreen, setIsMdScreen] = useState(window.innerWidth <= 1023);
   //console.log(isMdScreen)

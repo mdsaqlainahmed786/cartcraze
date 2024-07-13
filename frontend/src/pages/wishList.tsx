@@ -5,11 +5,6 @@ import { useState, useEffect } from "react";
 import NotFound from "../Components/NotFound";
 import { wishlistState } from "../RecoilStateProviders/WishListCount";
 import { useRecoilState } from "recoil";
-import { CartCountState } from "../RecoilStateProviders/CartCount";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
-import Cookies from "js-cookie";
 interface WishlistItem {
   title: string;
   imageSrc: string;
@@ -21,9 +16,6 @@ interface WishlistItem {
 function WishList() {
   const [wishList, setWishList] = useState<WishlistItem[]>([]);
   const [wishlistCount, setWishlistCount] = useRecoilState(wishlistState);
-  const [userLoggedIn, setUserLoggedIn] = useState(false);
-  const [cartCount, setCartCount] = useRecoilState(CartCountState)
-  const navigate = useNavigate()
  
 
   useEffect(() => {

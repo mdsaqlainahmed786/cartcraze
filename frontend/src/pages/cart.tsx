@@ -29,8 +29,10 @@ function Cart() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [totalPrice, setTotalPrice] = useState<number>(0);
+ // const cartCount = useCartCount()
   const [_, setCartCount] = useRecoilState(CartCountState)
   const navigate = useNavigate();
+ // console.log(cartCount)
   const toCheckout = () => {
     navigate("/checkout");
   };
@@ -61,7 +63,7 @@ function Cart() {
     const token = Cookies.get("Secret_Auth_token");
     setGotoLogin(!token);
     fetchProducts();
-    
+   // console.log(cartCount)
   }, []);
 
   if (gotoLogin === null) {

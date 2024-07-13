@@ -40,6 +40,7 @@ function ProductDetail() {
   const [loading, setLoading] = useState(false)
   const { productName } = useParams();
   const onAddtoCart = async() => {
+    console.log(cartCount)
     if(userLoggedIn){
       try {
         setLoading(true)

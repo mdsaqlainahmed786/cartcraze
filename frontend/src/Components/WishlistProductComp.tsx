@@ -32,6 +32,7 @@ function WishlistProductComp({
     if(userLoggedIn){
       try {
         setLoading(true)
+        console.log(cartCount)
         const response = await axios.post(
            "http://localhost:3000/api/v1/cart/add",
            {
