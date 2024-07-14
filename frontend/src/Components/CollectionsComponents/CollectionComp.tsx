@@ -12,7 +12,7 @@ function CollectionComp({ collectionImg, collectionName, link}: CollectionProps)
   // }, []);
   return (
     <>
-    <Link to={`/${link}`}>
+    <Link to={`/products/${link}`}>
     <div
       className="flex flex-col object-cover justify-center items-center transition-transform duration-300 hover:scale-110 hover:opacity-90 hover:cursor-pointer"
       // data-aos="zoom-in-up"
