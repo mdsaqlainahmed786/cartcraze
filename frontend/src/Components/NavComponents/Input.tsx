@@ -3,7 +3,7 @@ export const Input: React.FC = () =>{
     return(
         <>
         <input
-        type="text"
+        type="search"
         className="border-2 mx-2 w-[50vw] p-1 focus-none outline-none rounded-md lg:w-72"
         placeholder="Search anything..."
       />

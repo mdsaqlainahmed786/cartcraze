@@ -112,6 +112,42 @@ productsRouter.get('/category/:category', async (req: Request, res: Response) =>
     }
 });
 
+productsRouter.get("/search", async (req: Request, res: Response) => {
+    const { productQuery } = req.query;
+  const searchWords = (productQuery as string).split(' ');
+
+  const whereClause = searchWords.map(word => ({
+    title: {
+      contains: word,
+      mode: 'insensitive' as const
+    }
+  }));
+
+  try {
+    const products = await prisma.product.findMany({
+      where: {
+        AND: whereClause
+      }
+    });
+
+    if (products.length === 0) {
+      return res.status(404).json({
+        message: "No products found matching your query"
+      });
+    }
+
+    res.status(200).json({
+      message: "Products found",
+      products
+    });
+    }catch(err){
+        console.error(err);
+        res.status(500).json({
+          error: "An error occurred while searching for products",
+          err
+        });
+    }
+})
 
 // productsRouter.get('/filter_price', async (req: Request, res: Response) => {
 //     const minPrice = parseInt(req.query?.min as string)
