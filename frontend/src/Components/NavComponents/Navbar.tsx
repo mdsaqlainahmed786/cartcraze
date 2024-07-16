@@ -181,7 +181,10 @@ function Navbar() {
               )}
             </div>
           </div>
-          <div onClick={() => setIsHamOpen(!isHamOpen)}>
+          <div onClick={() =>{ 
+            setIsHamOpen(!isHamOpen)
+            setIsOpen(false)
+          }}>
             <HamburgerMenu
               setIsHamSymbolOpen={setIsHamSymbolOpen}
               isHamsymbolOpen={isHamSymbolOpen}
@@ -197,11 +200,12 @@ function Navbar() {
           <Input />
         </div>
       </div>
-      {isHamOpen && isMdScreen && (
+      {(isHamOpen || isOpen) && isMdScreen && (
         <div
           onClick={() => {
-            setIsHamOpen(!isHamOpen);
-            setIsHamSymbolOpen(!isHamSymbolOpen);
+            setIsHamOpen(false);
+            setIsHamSymbolOpen(false);
+            setIsOpen(false);
           }}
           className="overlay lg:hidden"
         ></div>
@@ -279,7 +283,11 @@ function Navbar() {
         </Link>
         <button
           className="cursor-pointer hover:bg-gray-200 rounded-full p-2"
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={() => {
+            setIsOpen(!isOpen)
+            setIsHamOpen(false)
+            setIsHamSymbolOpen(false)
+          }}
         >
           {!isOpen ? <IoMdSearch /> : <BiSolidSearchAlt2 />}
         </button>
