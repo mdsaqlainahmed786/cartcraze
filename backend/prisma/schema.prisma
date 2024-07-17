@@ -29,7 +29,7 @@ model Product {
   oldPrice    Int
   newPrice    Int
   category    String
-  color      String
+  color       String
   sizes       String[]
   images      String[]
   createdAt   DateTime @default(now())
@@ -42,7 +42,15 @@ model Cart {
   userId    String
   product   Product  @relation(fields: [productId], references: [id])
   productId String
+  size      Size @default(S)
   quantity  Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+enum Size {
+  S
+  M
+  L
+  XL
+  XXL
 }

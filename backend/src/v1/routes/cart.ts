@@ -45,7 +45,7 @@ cartRouter.post("/add", async (req: AuthenticatedRequest, res: Response) => {
     const userId = req.user?.userId
     if (!userId) return res.status(401).json({ message: "unauthorized!" })
     try {
-        const { productId, quantity } = req.body
+        const { productId, quantity, size } = req.body
         const existingProduct = await prisma.cart.findFirst({
             where: {
                 productId,
@@ -67,7 +67,8 @@ cartRouter.post("/add", async (req: AuthenticatedRequest, res: Response) => {
                 data: {
                     userId,
                     productId,
-                    quantity
+                    quantity,
+                    size
                 },
                 include: {
                     product: true
@@ -93,7 +94,7 @@ cartRouter.put("/update/:id", async (req: AuthenticatedRequest, res: Response) =
         message: "The user is not authenticated"
     })
     try {
-        const { productId, quantity } = req.body
+        const { productId, quantity, size } = req.body
         const ifExistProductToUpdate = await prisma.cart.findFirst({
             where: {
                 productId,
@@ -111,7 +112,8 @@ cartRouter.put("/update/:id", async (req: AuthenticatedRequest, res: Response) =
             },
             data: {
                 productId,
-                quantity
+                quantity,
+                size
             }
         })
         //  console.log(updatedQuantityItem)

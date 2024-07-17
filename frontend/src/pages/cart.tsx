@@ -14,6 +14,8 @@ import { CartCountState } from "../RecoilStateProviders/CartCount";
 interface CartItem {
   id: string;
   quantity: number;
+  size: string;
+  selectedSize: string;
   product: {
     id: string;
     title: string;
@@ -22,6 +24,7 @@ interface CartItem {
     newPrice: number;
     color: string;
     images: string[];
+    sizes: string[];
   };
 }
 function Cart() {
@@ -32,6 +35,7 @@ function Cart() {
  // const cartCount = useCartCount()
   const [_, setCartCount] = useRecoilState(CartCountState)
   const navigate = useNavigate();
+  //console.log(cartItems)
  // console.log(cartCount)
   const toCheckout = () => {
     navigate("/checkout");
@@ -46,8 +50,8 @@ function Cart() {
           withCredentials: true,
         }
       );
-       console.log(response.data.cartItems);
-       console.log(response.data.totalAmount)
+       // console.log(response.data.cartItems.size);
+      //  console.log(response.data.totalAmount)
        const total = response.data.totalAmount;
        setTotalPrice(total);
       const cart = response.data.cartItems;
@@ -117,6 +121,7 @@ function Cart() {
             <span className="text-3xl font-medium font-sans md:text-4xl">
               Your Shopping Cart ({cartItems.length})
             </span>
+            <div></div>
           </div>
           {cartItems.length === 0 && (
             <div className="flex flex-col justify-center items-center h-[80vh] mx-auto">
@@ -148,12 +153,11 @@ function Cart() {
                 color={item.product.color}
                 imageSrc={item.product.images[0]}
                 initialQuantity={item.quantity}
+                initialSelectedSize={item.size}
+                sizes={item.product.sizes}
                 fetchProducts={fetchProducts}
               />
             ))}
-            {/* <CartProductComp />
-            <CartProductComp />
-            <CartProductComp /> */}
           </div>
         </div>
        {cartItems.length!==0 && <div className="">

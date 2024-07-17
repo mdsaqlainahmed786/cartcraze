@@ -35,6 +35,7 @@ function ProductDetail() {
   const [error, setError] = useState(false);
   const navigate = useNavigate();
   // const [loader, setLoader] = useState(false)
+  const [selectedSize, setSelectedSize] = useState<string | undefined>("S");
   const [image, setImage] = useState<string>(""); 
   const [cartCount, setCartCount] = useRecoilState(CartCountState)
   const [loading, setLoading] = useState(false)
@@ -49,6 +50,7 @@ function ProductDetail() {
            {
              productId: product?.id,
              quantity: 1,
+             size: selectedSize,
            },
            {
              withCredentials: true,
@@ -66,7 +68,9 @@ function ProductDetail() {
             secondary: "white",
           },
         });
-         console.log(response.data.message);
+          console.log(response.data)
+        setSelectedSize(response.data.item.size);
+     //    console.log(response.data.message);
          const cartResponse = await axios.get(
           "http://localhost:3000/api/v1/cart/getcart",
           {
@@ -207,6 +211,9 @@ function ProductDetail() {
           colorImages={product?.images[0]}
           onAddtoCart={onAddtoCart}
           loading={loading}
+          setSelectedSize={setSelectedSize}
+          selectedSize={selectedSize}
+
           
         />
       </div>
@@ -249,6 +256,8 @@ function ProductDetail() {
           colorImages={product?.images[0]}
           onAddtoCart={onAddtoCart}
           loading={loading}
+          setSelectedSize={setSelectedSize}
+          selectedSize={selectedSize}
         />
       </div>
       <BenefitsOfStore />

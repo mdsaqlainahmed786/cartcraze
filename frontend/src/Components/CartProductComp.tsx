@@ -12,37 +12,76 @@ interface CartProductCompProps {
   color: string;
   imageSrc: string;
   category: string;
-  productId:string;
-  fetchProducts:()=>void
+  productId: string;
+  fetchProducts: () => void;
+  initialSelectedSize: string;
+  sizes: string[];
 }
 
-function CartProductComp({productId, id, title, price, initialQuantity, category, color, imageSrc, fetchProducts }: CartProductCompProps) {
+function CartProductComp({
+  productId,
+  id,
+  title,
+  price,
+  initialQuantity,
+  category,
+  color,
+  imageSrc,
+  fetchProducts,
+  initialSelectedSize,
+  sizes,
+}: CartProductCompProps) {
   const [quantity, setQuantity] = useState<number>(initialQuantity);
+  //const [selectedSize, setSelectedSize] = useState<string>(initialSelectedSize);
   const loweredCaseColor = color.toLowerCase();
-
+  console.log(initialSelectedSize)
   const handleQuantityChange = async (newQuantity: number) => {
     setQuantity(newQuantity);
     try {
-      await axios.put(`http://localhost:3000/api/v1/cart/update/${id}`, {
-        productId: productId,
-        quantity: newQuantity
-      }, {
-        withCredentials: true
-      });
-      fetchProducts()
+      await axios.put(
+        `http://localhost:3000/api/v1/cart/update/${id}`,
+        {
+          productId: productId,
+          quantity: newQuantity
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      fetchProducts();
     } catch (error) {
       console.error(error);
     }
-    console.log(id)
-    console.log(newQuantity)
+  };
+
+  const handleSizeChange = async (newSize: string) => {
+    try {
+         await axios.put(
+        `http://localhost:3000/api/v1/cart/update/${id}`,
+        {
+          productId: productId,
+          quantity: quantity,
+          size: newSize,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      fetchProducts();
+   //   setSelectedSize(newSize);
+      // console.log(response.data);
+    //  console.log(selectedSize)
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleRemove = async () => {
     try {
       await axios.delete(`http://localhost:3000/api/v1/cart/delete/${id}`, {
-        withCredentials: true
+        withCredentials: true,
       });
-      fetchProducts()
+      fetchProducts();
       toast.success("Product removed from cart", {
         style: {
           border: "1px solid black",
@@ -59,11 +98,10 @@ function CartProductComp({productId, id, title, price, initialQuantity, category
       console.error(error);
     }
   };
-  // useEffect(() => {
-  //   setQuantity(initialQuantity);
-  //   console.log(quantity)
-  // }, [quantity, initialQuantity]);
-
+// useEffect(() => {
+//   console.log(selectedSize
+//   )
+// }, [selectedSize])
   return (
     <>
       <div className="flex w-full md:max-w-[60vw] border-2 space-y-2 rounded-md shadow-md">
@@ -89,7 +127,6 @@ function CartProductComp({productId, id, title, price, initialQuantity, category
                 <select
                   id="quantity"
                   name="quantity"
-                  defaultValue={quantity}
                   value={quantity}
                   onChange={(e) => handleQuantityChange(Number(e.target.value))}
                   className="mt-1 w-[73px] py-2 px-4 border cursor-pointer border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm flex justify-between"
@@ -104,10 +141,11 @@ function CartProductComp({productId, id, title, price, initialQuantity, category
                 <select
                   id="size"
                   name="size"
-                  defaultValue="S"
+                  value={initialSelectedSize}
+                  onChange={(e) => handleSizeChange(e.target.value)}
                   className="mt-1 w-[73px] py-2 px-3 border cursor-pointer border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm flex justify-center items-center"
                 >
-                  {["S", "M", "L", "XL", "XXL"].map((size) => (
+                  {sizes.map((size) => (
                     <option className="" key={size} value={size}>{size}</option>
                   ))}
                 </select>

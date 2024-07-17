@@ -1,8 +1,8 @@
-import { useState } from "react";
 //import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 interface ProductProps {
   productName: string;
-  sizes?: string[];
+  sizes?: string[]|undefined;
   productDescription?: string;
   oldPrice: number;
   newPrice: number;
@@ -10,6 +10,8 @@ interface ProductProps {
   colorImages: string;
   onAddtoCart: () => void;
   loading: boolean;
+  setSelectedSize: (size: string) => void;
+  selectedSize: string | undefined;
 }
 
 function ProductDescription({
@@ -22,11 +24,15 @@ function ProductDescription({
   colorImages,
   loading,
   onAddtoCart,
+  setSelectedSize,
+  selectedSize
 }: ProductProps) {
-  const [selectedSize, setSelectedSize] = useState<string | undefined>(sizes[0]);
+ // const [selectedSize, setSelectedSize] = useState<string | undefined>(sizes[0]);
  //const navigate = useNavigate();
 
-
+ useEffect(() => {
+  console.log(selectedSize)
+  }, [selectedSize])
   return (
     <div className="flex flex-col mt-2 space-y-1 pb-10 md:mt-0 md:mx-4 md:w-[50%]">
       <div className="text-2xl flex justify-between font-semibold">
@@ -53,7 +59,10 @@ function ProductDescription({
             {sizes.map((size, index) => (
               <div
                 key={index}
-                onClick={() => setSelectedSize(size)}
+                onClick={() =>{ 
+                  setSelectedSize(size)
+                  console.log(size)
+                }}
                 className={`p-1 px-3 border-2 rounded-lg cursor-pointer hover:bg-black hover:text-white ${
                   selectedSize === size ? "bg-black text-white" : ""
                 }`}

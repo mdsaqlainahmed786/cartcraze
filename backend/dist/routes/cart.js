@@ -56,7 +56,7 @@ exports.cartRouter.post("/add", (req, res) => __awaiter(void 0, void 0, void 0, 
     if (!userId)
         return res.status(401).json({ message: "unauthorized!" });
     try {
-        const { productId, quantity } = req.body;
+        const { productId, quantity, size } = req.body;
         const existingProduct = yield prisma.cart.findFirst({
             where: {
                 productId,
@@ -78,7 +78,8 @@ exports.cartRouter.post("/add", (req, res) => __awaiter(void 0, void 0, void 0, 
                 data: {
                     userId,
                     productId,
-                    quantity
+                    quantity,
+                    size
                 },
                 include: {
                     product: true
@@ -106,7 +107,7 @@ exports.cartRouter.put("/update/:id", (req, res) => __awaiter(void 0, void 0, vo
             message: "The user is not authenticated"
         });
     try {
-        const { productId, quantity } = req.body;
+        const { productId, quantity, size } = req.body;
         const ifExistProductToUpdate = yield prisma.cart.findFirst({
             where: {
                 productId,
@@ -125,7 +126,8 @@ exports.cartRouter.put("/update/:id", (req, res) => __awaiter(void 0, void 0, vo
             },
             data: {
                 productId,
-                quantity
+                quantity,
+                size
             }
         });
         //  console.log(updatedQuantityItem)
