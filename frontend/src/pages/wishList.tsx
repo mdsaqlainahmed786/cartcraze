@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import NotFound from "../Components/NotFound";
 import { wishlistState } from "../RecoilStateProviders/WishListCount";
 import { useRecoilState } from "recoil";
+import { TiDeleteOutline } from "react-icons/ti";
+import toast from "react-hot-toast";
 interface WishlistItem {
   title: string;
   imageSrc: string;
@@ -33,21 +35,37 @@ function WishList() {
     localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
     setWishlistCount(updatedWishlist.length);
   };
-
+   const onClearWishlist = () => {
+    setWishList([]);
+    localStorage.setItem("wishlist", JSON.stringify([]));
+    setWishlistCount(0);
+    toast.success("Wishlist cleared!", {
+      style: {
+        border: "1px solid black",
+        padding: "16px",
+        color: "black",
+        marginTop: "75px",
+      },
+      iconTheme: {
+        primary: "black",
+        secondary: "white",
+      },
+    });
+  }
   return (
     <>
       <Navbar />
       <div className="pb-24">
-        <div className="mt-5 space-y-3">
-          <span className="flex justify-center text-3xl font-medium font-sans md:text-4xl">
-            Your Wishlist
-          </span>
-          <span className="flex text-sm text-gray-600 font-light justify-center px-2 pb-10 text-center mx-auto md:text-lg">
-            Keep a track of your choices, Save your Favorite items in the
-            wishlist and buy them any time you like!
-          </span>
-        </div>
-        <div className="flex flex-col justify-center items-center space-y-5  mx-auto max-w-[95vw]">
+
+      <div className={`w-full flex my-4 space-y-2 ${wishList.length==0?'justify-center':'justify-between'} items-center max-w-[80vw] md:max-w-[60vw] pb-2 mx-auto`}>
+            <span className="text-3xl font-medium font-sans md:text-4xl">
+              Your Wishlist ({wishList.length})
+            </span>
+            <div onClick={onClearWishlist} className={`${wishList.length==0?'hidden':'flex'} items-center flex-col cursor-pointer mx-2`} title="Clear Wishlist">
+            <TiDeleteOutline className="text-4xl" />
+            </div>
+          </div>
+        <div className="flex flex-col justify-center items-center space-y-5 mx-auto max-w-[95vw]">
           {wishList.map((item, index) => (
             <WishlistProductComp
               key={index}

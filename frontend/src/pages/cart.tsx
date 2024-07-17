@@ -11,6 +11,8 @@ import emptyCart from "../assets/not.png";
 import axios from "axios";
 import { useRecoilState } from "recoil";
 import { CartCountState } from "../RecoilStateProviders/CartCount";
+import { TiDeleteOutline } from "react-icons/ti";
+import toast from "react-hot-toast";
 interface CartItem {
   id: string;
   quantity: number;
@@ -63,6 +65,35 @@ function Cart() {
       setLoading(false);
     }
   };
+  const onClearCart = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.delete(
+        "http://localhost:3000/api/v1/cart/deleteall",
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(response.data);
+      fetchProducts();
+      toast.success("Cart cleared!", {
+        style: {
+          border: "1px solid black",
+          padding: "16px",
+          color: "black",
+          marginTop: "75px",
+        },
+        iconTheme: {
+          primary: "black",
+          secondary: "white",
+        },
+      });
+    } catch (error) {
+      console.error(error);
+    }finally{
+      setLoading(false);
+    }
+  }
   useEffect(() => {
     const token = Cookies.get("Secret_Auth_token");
     setGotoLogin(!token);
@@ -113,15 +144,16 @@ function Cart() {
   return (
     <>
       <Navbar />
-
       <div className="flex flex-col lg:flex-row mx-auto justify-center max-w-[95vw] pb-24">
         <div className="lg:w-[70%]">
           {/*This is shopping list*/}
-          <div className="w-full flex flex-col my-4 space-y-2 justify-center items-center">
+          <div className={`w-full flex my-4 space-y-2 ${cartItems.length==0?'justify-center':'justify-between'} items-center max-w-[80vw] md:max-w-[60vw] pb-2 mx-auto`}>
             <span className="text-3xl font-medium font-sans md:text-4xl">
               Your Shopping Cart ({cartItems.length})
             </span>
-            <div></div>
+            <div onClick={onClearCart} className={`${cartItems.length==0?'hidden':'flex'} items-center flex-col cursor-pointer mx-2`} title="Clear Cart">
+            <TiDeleteOutline className="text-4xl" />
+            </div>
           </div>
           {cartItems.length === 0 && (
             <div className="flex flex-col justify-center items-center h-[80vh] mx-auto">

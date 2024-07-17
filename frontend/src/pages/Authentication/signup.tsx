@@ -8,11 +8,10 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
-//import NotRobot from "../../Components/NotRobot";
+import NotRobot from "../../Components/NotRobot";
 
 function Signup() {
-  // const [captchaVerified, setCaptchaVerified] = useState(false);
-  // const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaVerified, setCaptchaVerified] = useState(false);
   const [userDetails, setUserDetails] = useState({
     username: "",
     email: "",
@@ -27,21 +26,10 @@ function Signup() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // const handleCaptchaChange = (token: string | null) => {
-  //   setCaptchaToken(token);
-  //   setCaptchaVerified(true);
-  // };
+  const handleCaptchaChange = () => {
+    setCaptchaVerified(true);
+  };
 
-  // const verifyCaptcha = async () => {
-  //   try {
-  //     const response = await axios.post('http://localhost:3001/verify-recaptcha', { token: captchaToken }
-  //     );
-  //     return response.data.success;
-  //   } catch (error) {
-  //     console.error("Error verifying captcha", error);
-  //     return false;
-  //   }
-  // };
   useEffect(() => {
     const token = Cookies.get("Secret_Auth_token");
     if (token) {
@@ -71,20 +59,20 @@ function Signup() {
         },
       });
     }
-    // if (!captchaVerified) {
-    //   return toast.error("Please verify the captcha", {
-    //     style: {
-    //       border: "1px solid black",
-    //       padding: "16px",
-    //       color: "black",
-    //       marginTop: "75px",
-    //     },
-    //     iconTheme: {
-    //       primary: "black",
-    //       secondary: "white",
-    //     },
-    //   });
-    // }
+    if (!captchaVerified) {
+      return toast.error("Please verify the captcha", {
+        style: {
+          border: "1px solid black",
+          padding: "16px",
+          color: "black",
+          marginTop: "75px",
+        },
+        iconTheme: {
+          primary: "black",
+          secondary: "white",
+        },
+      });
+    }
 
     setLoading(true);
     try {
@@ -221,7 +209,7 @@ function Signup() {
                   )}
                 </button>
               </div>
-              {/* <NotRobot handleCaptchaChange={handleCaptchaChange} /> */}
+              <NotRobot handleCaptchaChange={handleCaptchaChange} />
               <button
                 className={`w-[14rem] md:w-72 lg:w-72 mx-2 bg-gray-800 text-white p-1.5 flex justify-center items-center rounded-md hover:bg-black ${
                   loading
