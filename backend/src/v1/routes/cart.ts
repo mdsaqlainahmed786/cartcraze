@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import express, { Request, Response } from "express";
 export const cartRouter = express.Router()
+const stripe = require('stripe')("sk_test_51PdkvCAvBpizqBWZNPKsJ9odNwuml1kTx5qQ7nbuZ13DtIxvWSn4kIlA9XiotRSLZ6SksEHQezN2kkzVQqtP2Qcm00bQ4UON3F")
 const prisma = new PrismaClient()
 cartRouter.use(express.json())
 interface AuthenticatedRequest extends Request {
@@ -10,6 +11,7 @@ interface AuthenticatedRequest extends Request {
     }
 }
 
+//("sk_test_51PdkvCAvBpizqBWZNPKsJ9odNwuml1kTx5qQ7nbuZ13DtIxvWSn4kIlA9XiotRSLZ6SksEHQezN2kkzVQqtP2Qcm00bQ4UON3F")
 
 cartRouter.get('/getcart', async (req: AuthenticatedRequest, res: Response) => {
     const authenticatedUser = req as AuthenticatedRequest
@@ -182,3 +184,24 @@ cartRouter.delete("/deleteall", async(req:AuthenticatedRequest, res:Response)=>{
         })
     }
 })
+cartRouter.post("/create-checkout-session", async (req: AuthenticatedRequest, res: Response) => {
+    const products = req.body.products
+    const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: products.map((item:any)=>({
+            price_data:{
+                currency: 'inr',
+                product_data:{
+                    name: item.product.title
+                },
+                unit_amount: item.product.newPrice * 100,
+            },
+            quantity: item.quantity
+        })),
+        mode: 'payment',
+        success_url: 'http://localhost:5173/success',
+        cancel_url: 'http://localhost:5173/cancel'
+    })
+    res.json({sessionId: session.id})
+    });
+    

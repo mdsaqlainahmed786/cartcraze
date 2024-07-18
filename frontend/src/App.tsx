@@ -15,6 +15,8 @@ import ResetPassword from "./pages/Authentication/reset_password";
 import Checkout from "./pages/checkout";
 import Products from "./pages/products/[products]";
 import NotFoundPage from "./pages/NotFoundPage";
+import Success from "./pages/success";
+import Cancel from "./pages/cancel";
 function App() {
   return (
     <>
@@ -32,6 +34,8 @@ function App() {
             <Route path="/verify/:Token" element={<Verify />}></Route>
             <Route path="/reset_password/:Token" element={<ResetPassword />}></Route>
             <Route path="*" element={<NotFoundPage />} />
+            <Route path="/success" element={<Success />} />
+            <Route path="/cancel" element={<Cancel />} />
             <Route path="/products/:productCategory" element={<Products />}></Route>
             <Route
               path="/product/:productName"

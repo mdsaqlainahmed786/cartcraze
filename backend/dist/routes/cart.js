@@ -16,8 +16,10 @@ exports.cartRouter = void 0;
 const client_1 = require("@prisma/client");
 const express_1 = __importDefault(require("express"));
 exports.cartRouter = express_1.default.Router();
+const stripe = require('stripe')("sk_test_51PdkvCAvBpizqBWZNPKsJ9odNwuml1kTx5qQ7nbuZ13DtIxvWSn4kIlA9XiotRSLZ6SksEHQezN2kkzVQqtP2Qcm00bQ4UON3F");
 const prisma = new client_1.PrismaClient();
 exports.cartRouter.use(express_1.default.json());
+//("sk_test_51PdkvCAvBpizqBWZNPKsJ9odNwuml1kTx5qQ7nbuZ13DtIxvWSn4kIlA9XiotRSLZ6SksEHQezN2kkzVQqtP2Qcm00bQ4UON3F")
 exports.cartRouter.get('/getcart', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const authenticatedUser = req;
@@ -197,4 +199,24 @@ exports.cartRouter.delete("/deleteall", (req, res) => __awaiter(void 0, void 0, 
             error
         });
     }
+}));
+exports.cartRouter.post("/create-checkout-session", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const products = req.body.products;
+    const session = yield stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: products.map((item) => ({
+            price_data: {
+                currency: 'inr',
+                product_data: {
+                    name: item.product.title
+                },
+                unit_amount: item.product.newPrice * 100,
+            },
+            quantity: item.quantity
+        })),
+        mode: 'payment',
+        success_url: 'http://localhost:5173/success',
+        cancel_url: 'http://localhost:5173/cancel'
+    });
+    res.json({ sessionId: session.id });
 }));

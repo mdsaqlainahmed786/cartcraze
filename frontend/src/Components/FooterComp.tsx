@@ -1,5 +1,5 @@
 import titlePng from "../assets/Title.png";
-import pay from "../assets/pay.png";
+
 function FooterComp() {
   return (
     <div className="pb-24 bg-white border-t-2">
@@ -87,7 +87,7 @@ function FooterComp() {
             Terms and Conditions
           </a>
           
-          <img className="pt-2 w-44" src={pay} alt="pay.png"/>
+        
         </div>
       </div>
       {/*bg-[#F1F5F9]*/}

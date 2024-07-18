@@ -261,26 +261,3 @@ exports.userRouter.get('/logout', (req, res) => __awaiter(void 0, void 0, void 0
         message: "logout successful"
     });
 }));
-// userRouter.post('/verify-recaptcha', async (req, res) => {
-//     const secretKey = process.env.SECRET_KEY; // Replace with your actual secret key
-//     const token = req.body.token;
-//     try {
-//       const response = await axios.post(`https://www.google.com/recaptcha/api/siteverify`, null, {
-//         params: {
-//           secret: secretKey,
-//           response: token,
-//         },
-//       });
-//       const data = response.data;
-//       if (data.success) {
-//         // CAPTCHA was successfully verified
-//         res.status(200).json({ success: true });
-//       } else {
-//         // CAPTCHA verification failed
-//         res.status(400).json({ success: false, error: data['error-codes'] });
-//       }
-//     } catch (error) {
-//       console.error(error);
-//       res.status(500).json({ success: false, error: 'Internal server error' });
-//     }
-//   });

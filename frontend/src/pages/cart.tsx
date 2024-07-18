@@ -12,6 +12,7 @@ import axios from "axios";
 import { useRecoilState } from "recoil";
 import { CartCountState } from "../RecoilStateProviders/CartCount";
 import { TiDeleteOutline } from "react-icons/ti";
+import {loadStripe} from '@stripe/stripe-js';
 import toast from "react-hot-toast";
 interface CartItem {
   id: string;
@@ -39,8 +40,26 @@ function Cart() {
   const navigate = useNavigate();
   //console.log(cartItems)
  // console.log(cartCount)
-  const toCheckout = () => {
-    navigate("/checkout");
+  const toCheckout = async() => {
+    console.log(cartItems)
+    const stripe = await loadStripe('pk_test_51PdkvCAvBpizqBWZvkfGWGU8GQykOVPc8vSfC4ijadcQMKJ0J6fyx3Gukxs3IOwuJmRZU7Rxe13GCH9OLmudtySw006oADq8fm');
+    const body = { products: cartItems };
+    const response = await axios.post(
+      "http://localhost:3000/api/v1/cart/create-checkout-session",
+      body,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      }
+    );
+    const session = await response.data;
+    const result = stripe?.redirectToCheckout({
+      sessionId: session.sessionId,
+    });
+    console.log(result)
+    //navigate("/checkout");
   };
   const fetchProducts = async () => {
     console.log(_)
@@ -56,6 +75,8 @@ function Cart() {
       //  console.log(response.data.totalAmount)
        const total = response.data.totalAmount;
        setTotalPrice(total);
+      // console.log(response.data.cartItems, "cartItems")
+       
       const cart = response.data.cartItems;
       setCartItems(cart);
       setCartCount(cart.length);
