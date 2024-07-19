@@ -43,6 +43,7 @@ function Navbar() {
   // const existingWishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");// Get the current path
   const [isMdScreen, setIsMdScreen] = useState(window.innerWidth <= 1023);
   //console.log(isMdScreen)
+  
  
   const onHandleHam = () => {
     setIsHamOpen(!isHamOpen);
@@ -250,7 +251,9 @@ function Navbar() {
           <div className="w-full" onClick={onHandleHam}>
             <MobileNavcomp link="Men-Shirt" navItems="Mens Shirt" />
           </div>
+          <div className="w-full" onClick={onHandleHam}>
           <MobileNavcomp link="Men-Tshirt" navItems="Mens Tshirt" />
+          </div>
           <div className="w-full" onClick={onHandleHam}>
             <MobileNavcomp link="Women-Tops" navItems="Women Tops" />
           </div>

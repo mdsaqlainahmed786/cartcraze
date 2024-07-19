@@ -20,6 +20,9 @@ const stripe = require('stripe')("sk_test_51PdkvCAvBpizqBWZNPKsJ9odNwuml1kTx5qQ7
 const prisma = new client_1.PrismaClient();
 exports.cartRouter.use(express_1.default.json());
 //("sk_test_51PdkvCAvBpizqBWZNPKsJ9odNwuml1kTx5qQ7nbuZ13DtIxvWSn4kIlA9XiotRSLZ6SksEHQezN2kkzVQqtP2Qcm00bQ4UON3F")
+// const pincodeData: Record<string, [string, string]> = JSON.parse(
+//     fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'v1', 'routes', 'pincodeData.json'), 'utf8')
+// );
 exports.cartRouter.get('/getcart', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const authenticatedUser = req;
@@ -202,21 +205,56 @@ exports.cartRouter.delete("/deleteall", (req, res) => __awaiter(void 0, void 0, 
 }));
 exports.cartRouter.post("/create-checkout-session", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const products = req.body.products;
-    const session = yield stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        line_items: products.map((item) => ({
+    try {
+        const lineItems = products.map((item) => ({
             price_data: {
                 currency: 'inr',
                 product_data: {
-                    name: item.product.title
+                    name: item.product.title,
                 },
                 unit_amount: item.product.newPrice * 100,
             },
-            quantity: item.quantity
-        })),
-        mode: 'payment',
-        success_url: 'http://localhost:5173/success',
-        cancel_url: 'http://localhost:5173/cancel'
-    });
-    res.json({ sessionId: session.id });
+            quantity: item.quantity,
+        }));
+        const taxPercentage = 0.05;
+        //@ts-ignore
+        const totalAmount = lineItems.reduce((total, item) => {
+            return total + item.price_data.unit_amount * item.quantity;
+        }, 0);
+        const taxAmount = totalAmount * taxPercentage;
+        lineItems.push({
+            price_data: {
+                currency: 'inr',
+                product_data: {
+                    name: 'Tax',
+                },
+                unit_amount: Math.round(taxAmount),
+            },
+            quantity: 1,
+        });
+        const session = yield stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: lineItems,
+            mode: 'payment',
+            success_url: 'http://localhost:5173/success',
+            cancel_url: 'http://localhost:5173/cancel',
+        });
+        res.json({ sessionId: session.id });
+    }
+    catch (error) {
+        console.error("Stripe session error:", error);
+        res.status(500).send("Error creating session");
+    }
 }));
+// cartRouter.get("/pincode", async (req, res) => {
+//     const pincode = req.query.pincode as string;
+//     if (!pincode) {
+//       return res.status(400).json({ error: "Pincode is required" });
+//     }
+//     const location = pincodeData[pincode];
+//     if (!location) {
+//       return res.status(404).json({ error: "Pincode not found" });
+//     }
+//     const [city, state] = location;
+//     return res.json({ city, state });
+// });

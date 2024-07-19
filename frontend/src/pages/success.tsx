@@ -1,31 +1,33 @@
 import { FaDownload } from "react-icons/fa6";
 import FooterComp from "../Components/FooterComp";
 import Navbar from "../Components/NavComponents/Navbar";
-import successPayment from "../assets/success.png";
-
+import { SiTicktick } from "react-icons/si";
 function Success() {
   return (
     <>
       <Navbar />
       <div className="flex flex-col justify-center items-center mt-11 mx-auto pb-24">
-        <span className="text-3xl font-medium pb-10">Payment Successful!</span>
+        {/* <span className="text-3xl font-medium pb-10">Payment Successful!</span>
         <div>
           <img
             src={successPayment}
             alt="cancel payment"
             className="h-[25vh] md:h-[40vh]"
           />
-        </div>
-        <span className="text-neutral-500 text-[18px] text-center px-10">
+        </div> */}
+        <div className="flex items-center justify-center space-x-2">
+        <SiTicktick className="text-xl md:text-4xl" />
+        <span className="text-sm  md:text-lg text-center font-medium">
           Your Payment was successful! Thank you for shopping with us.
         </span>
+        </div>
         {/* <button
             onClick={() => navigate("/")}
             className="bg-gray-800 hover:bg-black text-white p-2 rounded-md mt-5"
           >
             Go to Home &#10095;
           </button> */}
-        <div className="flex justify-between space-x-10 mx-auto items-center mt-12">
+        <div className="flex justify-between space-x-10 mx-auto items-center mt-10">
           <span className="text-3xl font-medium">Order Summary</span>
           <FaDownload
             className="text-2xl cursor-pointer"
@@ -43,6 +45,20 @@ function Success() {
                 <p className="text-gray-600 text-xs">
                   Order Number: 0000000001
                 </p>
+                <p className="text-gray-600 text-xs">
+                  To: John Doe
+                </p>
+                <p className="text-gray-600 text-xs">
+                  Email: johndoe@gmail.com
+                </p>
+                <p className="text-gray-600 text-xs">
+                  Phone: +91 9876543210
+                </p>
+                
+                <p className="text-gray-600 text-xs">
+                  Address: 123, Lorem Ipsum, Dolor Sit Amet, 123456
+                </p>
+
               </div>
               <hr className="my-4" />
               <div>

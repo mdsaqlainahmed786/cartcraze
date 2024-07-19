@@ -7,12 +7,12 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import toast from "react-hot-toast";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useRecoilState } from 'recoil'
-import { emailState, usernameState } from "../../RecoilStateProviders/UserDetails";
+// import { useRecoilState } from 'recoil'
+// import { emailState, usernameState } from "../../RecoilStateProviders/UserDetails";
 function Signin() {
   const [loading, setLoading] = useState(false);
-  const [currentUserEmail, setCurrentUserEmail] = useRecoilState(emailState);
-  const [currentUsername, setCurrentUsername] = useRecoilState(usernameState);
+  //const [currentUserEmail, setCurrentUserEmail] = useRecoilState(emailState);
+ // const [currentUsername, setCurrentUsername] = useRecoilState(usernameState);
   const [isAlreadyLoggedIn, setIsAlreadyLoggedIn] = useState<string | null>(
     null
   );
@@ -62,15 +62,15 @@ function Signin() {
         { withCredentials: true }
       );
      // console.log(response.data.username);
-     const username = response.data.username
-      setCurrentUsername(username)
-      localStorage.setItem('username', username)
-       console.log(currentUsername)
-     // console.log(response.data.userEmail);
-     const usersEmail = response.data.userEmail
-      setCurrentUserEmail(usersEmail)
-      localStorage.setItem('email', usersEmail)
-      console.log(currentUserEmail)
+    //  const username = response.data.username
+    //   setCurrentUsername(username)
+    //   localStorage.setItem('username', username)
+    //    console.log(currentUsername)
+    //   console.log(response.data.userEmail);
+    //  const usersEmail = response.data.userEmail
+    //   setCurrentUserEmail(usersEmail)
+    //  localStorage.setItem('email', usersEmail)
+    //   console.log(currentUserEmail)
       if (response.status === 200) {
         toast.success("SignIn Successful", {
           style: {

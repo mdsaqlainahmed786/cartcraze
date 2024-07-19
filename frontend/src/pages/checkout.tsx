@@ -1,16 +1,128 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../Components/NavComponents/Navbar";
 import FooterComp from "../Components/FooterComp";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+import { loadStripe } from "@stripe/stripe-js";
+import axios from "axios";
+import toast from "react-hot-toast";
 function Checkout() {
   const navigate = useNavigate();
+  const [cartItems, setCartItems] = useState([]);
+  const [disableSaveBtn, setDisableSaveBtn] = useState(true);
+  const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [enableProceedToPay, setEnableProceedToPay] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [deliveryDetails, setDeliveryDetails] = useState({
+    address: "",
+    phoneNumber: "",
+    pinCode: "",
+    state: "Telangana",
+    district: "Hyderabad",
+  });
+  const onDetailsHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (disableSaveBtn) return;
+    setLoading(true);
+    try {
+      const response = await axios.put(
+        "http://localhost:3000/api/v1/user/delivery",
+        {
+          address: deliveryDetails.address,
+          District: deliveryDetails.district,
+          state: deliveryDetails.state,
+          pincode: Number(deliveryDetails.pinCode),
+          phoneNumber: deliveryDetails.phoneNumber,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      if (response.status === 200) {
+        setEnableProceedToPay(true);
+        toast.success("Delivery info saved!", {
+          style: {
+            border: "1px solid black",
+            padding: "16px",
+            color: "black",
+            marginTop: "75px",
+          },
+          iconTheme: {
+            primary: "black",
+            secondary: "white",
+          },
+        });
+      }
+        toast.success("Delivery Details Saved Successfully");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    if (
+      deliveryDetails.address !== "" &&
+      deliveryDetails.phoneNumber !== "" &&
+      deliveryDetails.pinCode !== ""
+    ) {
+      setDisableSaveBtn(false);
+    } else {
+      setDisableSaveBtn(true);
+    }
+  }, [deliveryDetails]);
+  const onProceedToPay = async () => {
+    const stripe = await loadStripe(
+      "pk_test_51PdkvCAvBpizqBWZvkfGWGU8GQykOVPc8vSfC4ijadcQMKJ0J6fyx3Gukxs3IOwuJmRZU7Rxe13GCH9OLmudtySw006oADq8fm"
+    );
+    const body = { products: cartItems };
+    const response = await axios.post(
+      "http://localhost:3000/api/v1/cart/create-checkout-session",
+      body,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      }
+    );
+    const session = await response.data;
+    const result = stripe?.redirectToCheckout({
+      sessionId: session.sessionId,
+    });
+    console.log(result);
+  };
   useEffect(() => {
     const token = Cookies.get("Secret_Auth_token");
     if (!token) {
       navigate("/");
     }
+    fetchProducts();
   }, [navigate]);
+  const taxRate = 0.05;
+  const taxAmount = totalPrice * taxRate;
+  const payableAmount = totalPrice + taxAmount;
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/v1/cart/getcart",
+        {
+          withCredentials: true,
+        }
+      );
+      // console.log(response.data.cartItems.size);
+      //  console.log(response.data.totalAmount)
+      const total = response.data.totalAmount;
+      console.log(total, "total");
+      setTotalPrice(total);
+      // console.log(response.data.cartItems, "cartItems")
+
+      const cart = response.data.cartItems;
+      setCartItems(cart);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <>
       <Navbar />
@@ -29,207 +141,195 @@ function Checkout() {
           <span className="text-xl flex font-semibold">
             1. Delivery Details
           </span>
-          <div className="flex max-w-[85vw] mx-auto space-x-4 lg:w-full">
-            <div className="flex flex-col w-full space-y-4">
-              <div className="flex flex-row space-x-2">
-                <div className="w-full">
-                  <label className="text-sm text-neutral-700">Name</label>
-                  <input
-                    type="text"
-                    placeholder="Enter your name"
-                    className="w-full border-2 p-1 focus-none outline-none rounded-md pr-10 md:py-2"
-                  />
+          <form onSubmit={onDetailsHandler}>
+            <div className="flex max-w-[85vw] mx-auto space-x-4 lg:w-full">
+              <div className="flex flex-col w-full space-y-4">
+                <div className="flex flex-row space-x-2">
+                  <div className="w-full">
+                    <label className="text-sm text-neutral-700">Name</label>
+                    <input
+                      type="text"
+                      placeholder="Enter your name"
+                      className="w-full border-2 p-1 focus-none outline-none rounded-md pr-10 md:py-2 read-only:bg-gray-100"
+                      value={localStorage.getItem("username")!}
+                      readOnly
+                    />
+                  </div>
+                  <div className="w-full">
+                    <label className="text-sm text-neutral-700">Email</label>
+                    <input
+                      type="email"
+                      placeholder="Enter your Email"
+                      className="w-full border-2 p-1 focus-none outline-none rounded-md pr-10 md:py-2 read-only:bg-gray-100"
+                      value={localStorage.getItem("email")!}
+                      readOnly
+                    />
+                  </div>
                 </div>
                 <div className="w-full">
-                  <label className="text-sm text-neutral-700">Email</label>
-                  <input
-                    type="text"
-                    placeholder="Enter your Email"
+                  <label className="text-sm text-neutral-700">Address</label>
+                  <textarea
+                    placeholder="Enter your Address"
                     className="w-full border-2 p-1 focus-none outline-none rounded-md pr-10 md:py-2"
+                    onChange={(e) => {
+                      setDeliveryDetails({
+                        ...deliveryDetails,
+                        address: e.target.value,
+                      });
+                    }}
+                    required
                   />
                 </div>
-              </div>
-              <div className="w-full">
-                <label className="text-sm text-neutral-700">Address</label>
-                <textarea
-                  placeholder="Enter your Address"
-                  className="w-full border-2 p-1 focus-none outline-none rounded-md pr-10 md:py-2"
-                />
-              </div>
-              <div className="flex flex-row space-x-2">
-                <div className="w-full">
-                  <label className="text-sm text-neutral-700">
-                    Phone number
-                  </label>
-                  <input
-                    type="tel"
-                    placeholder="Phone number"
-                    className="w-full border-2 p-1 focus-none outline-none rounded-md pr-10 md:py-2"
-                  />
+                <div className="flex flex-row space-x-2">
+                  <div className="w-full">
+                    <label className="text-sm text-neutral-700">
+                      Phone number
+                    </label>
+                    <input
+                      type="tel"
+                      id="phone"
+                      pattern="[0-9]{10}"
+                      placeholder="Phone number"
+                      className="w-full border-2 p-1 focus-none outline-none rounded-md pr-10 md:py-2"
+                      onChange={(e) => {
+                        setDeliveryDetails({
+                          ...deliveryDetails,
+                          phoneNumber: e.target.value,
+                        });
+                      }}
+                      required
+                    />
+                  </div>
+                  <div className="w-full">
+                    <label className="text-sm text-neutral-700">PinCode</label>
+                    <input
+                      type="text"
+                      pattern="[0-9]{6}"
+                      placeholder="Enter PinCode"
+                      className="w-full border-2 p-1 focus-none outline-none rounded-md pr-10 md:py-2"
+                      onChange={(e) => {
+                        setDeliveryDetails({
+                          ...deliveryDetails,
+                          pinCode: e.target.value,
+                        });
+                      }}
+                      required
+                    />
+                  </div>
                 </div>
-                <div className="w-full">
-                  <label className="text-sm text-neutral-700">PinCode</label>
-                  <input
-                    type="text"
-                    placeholder="Enter PinCode"
-                    className="w-full border-2 p-1 focus-none outline-none rounded-md pr-10 md:py-2"
-                  />
-                </div>
-              </div>
-              <div className="flex flex-row space-x-2">
-                <div className="w-full">
-                  <label className="text-sm text-neutral-700">State</label>
-                  <input
-                    type="text"
-                    placeholder=""
-                    value={"Telangana"}
-                    readOnly
-                    className="w-full border-2 p-1 focus-none outline-none rounded-md pr-10 md:py-2"
-                  />
-                </div>
-                <div className="w-full">
-                  <label className="text-sm text-neutral-700">District</label>
-                  <input
-                    type="text"
-                    placeholder=""
-                    value={"Hyderabad"}
-                    readOnly
-                    className="w-full border-2 p-1 focus-none outline-none rounded-md pr-10 md:py-2"
-                  />
+                <div className="flex flex-row space-x-2">
+                  <div className="w-full">
+                    <label className="text-sm text-neutral-700">State</label>
+                    <input
+                      type="text"
+                      value={deliveryDetails.state}
+                      readOnly
+                      className="w-full border-2 p-1 focus-none outline-none rounded-md pr-10 md:py-2 read-only:bg-gray-100"
+                    />
+                  </div>
+                  <div className="w-full">
+                    <label className="text-sm text-neutral-700">District</label>
+                    <input
+                      type="text"
+                      placeholder=""
+                      value={deliveryDetails.district}
+                      readOnly
+                      className="w-full border-2 p-1 focus-none outline-none rounded-md pr-10 md:py-2 read-only:bg-gray-100"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          {/* <div className="flex max-w-[85vw] space-x-4 lg:w-full md:mx-auto">
-            <div className="w-full">
-            </div>
-          </div> */}
-          {/* <div className="flex max-w-[85vw] justify-between mx-auto space-x-4 pt-5 lg:w-full">
-           
-          </div> */}
-          {/* <div className="flex max-w-[85vw] justify-between mx-auto space-x-4 pt-5 lg:w-full"></div> */}
-        </div>
-        <div className="mx-8 my-5">
-          <span className="text-xl pb-5 flex font-semibold">
-            2. Review Cart & Payment
-          </span>
-          <div className="mx-auto flex flex-col justify-center items-center bg-gray-100 rounded-md md:justify-start md:items-start md:max-w-[70vw]">
-            <div className="flex justify-center w-full">
-              <img
-                src="https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
-                alt="product"
-                className="h-36 my-5 ml-5 rounded-md md:h-48"
-              />
-              <div className="flex flex-col mt-5 px-3 w-full md:space-y-3">
-                <span className="text-md font-semibold md:text-xl ">
-                  Men Black Solid Ultra Slim Fit Formal Four Piece Suit
-                </span>
-                <span className="text-sm text-neutral-600">Mens suit</span>
-                <div className="flex flex-col md:flex-row md:justify-between w-[100%] pr-5">
-                  <span className="font-semibold md:text-xl">₹12999/-</span>
-                  <span className="text-md md:font-semibold md:text-xl">
-                    Qty: 10
-                  </span>
+            <div className="flex justify-center py-10">
+              <button
+                disabled={disableSaveBtn || loading
+                }
+                className={`bg-gray-800 text-white p-0.5 px-4 w-28 flex justify-center items-center rounded-lg hover:bg-black disabled:opacity-70 disabled:cursor-not-allowed ${ loading
+                  ? "opacity-80 cursor-not-allowed hover:bg-gray-800"
+                  : ""}`}
+              >{loading && (
+                <div role="status">
+                  <svg
+                    aria-hidden="true"
+                    className="inline w-5 h-5  text-gray-200 animate-spin dark:text-gray-600 fill-gray-600 dark:fill-gray-300"
+                    viewBox="0 0 100 101"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                      fill="currentColor"
+                    />
+                    <path
+                      d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                      fill="currentFill"
+                    />
+                  </svg>
+                  <span className="sr-only">Loading...</span>
                 </div>
-              </div>
-            </div>
-            <div className="flex justify-center w-full">
-              <img
-                src="https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
-                alt="product"
-                className="h-36 my-5 ml-5 rounded-md md:h-48"
-              />
-              <div className="flex flex-col mt-5 px-3 w-full md:space-y-3">
-                <span className="text-md font-semibold md:text-xl ">
-                  Men Black Solid Ultra Slim Fit Formal Four Piece Suit
-                </span>
-                <span className="text-sm text-neutral-600">Mens suit</span>
-                <div className="flex flex-col md:flex-row md:justify-between w-[100%] pr-5">
-                  <span className="font-semibold md:text-xl">₹12999/-</span>
-                  <span className="text-md md:font-semibold md:text-xl">
-                    Qty: 10
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-center w-full">
-              <img
-                src="https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
-                alt="product"
-                className="h-36 my-5 ml-5 rounded-md md:h-48"
-              />
-              <div className="flex flex-col mt-5 px-3 w-full md:space-y-3">
-                <span className="text-md font-semibold md:text-xl ">
-                  Men Black Solid Ultra Slim Fit Formal Four Piece Suit
-                </span>
-                <span className="text-sm text-neutral-600">Mens suit</span>
-                <div className="flex flex-col md:flex-row md:justify-between w-[100%] pr-5">
-                  <span className="font-semibold md:text-xl">₹12999/-</span>
-                  <span className="text-md md:font-semibold md:text-xl">
-                    Qty: 10
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-center w-full">
-              <img
-                src="https://imagescdn.vanheusenindia.com/img/app/product/9/934972-11906967.jpg?auto=format&w=390"
-                alt="product"
-                className="h-36 my-5 ml-5 rounded-md md:h-48"
-              />
-              <div className="flex flex-col mt-5 px-3 w-full md:space-y-3">
-                <span className="text-md font-semibold md:text-xl ">
-                  Men Black Solid Ultra Slim Fit Formal Four Piece Suit
-                </span>
-                <span className="text-sm text-neutral-600">Mens suit</span>
-                <div className="flex flex-col md:flex-row md:justify-between w-[100%] pr-5">
-                  <span className="font-semibold md:text-xl">₹12999/-</span>
-                  <span className="text-md md:font-semibold md:text-xl">
-                    Qty: 10
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="flex w-full p-5 justify-center">
-              <button onClick={()=>navigate('/cart')} className="bg-gray-800 text-white p-3 rounded-lg hover:bg-black">
-                Go to Cart
+              )}{" "}
+              <span className="mx-3">Save</span>
               </button>
             </div>
-          </div>
-          <div className="max-w-[85vw] mx-auto w-full flex justify-center items-center md:max-w-[70vw]">
-            <div className="w-full space-y-2 border-2 mt-5 p-4 rounded-md shadow-md">
-              <div className="flex w-full justify-between text-sm">
-                <span>Cart Total (3)</span>
-                <span>₹12,999/-</span>
+          </form>
+        </div>
+        <div className="mx-8">
+          <span className="text-xl font-semibold">2.Review & pay</span>
+        </div>
+        <div className="max-w-[85vw] mx-auto w-full flex justify-center items-center md:max-w-[50vw]">
+          <div className="w-full space-y-2 border-2 mt-5 p-4 rounded-md shadow-md">
+            <div className="flex w-full justify-between text-sm">
+              <span>Cart Total ({cartItems?.length})</span>
+              <span>₹{totalPrice}/-</span>
+            </div>
+            <div className="flex w-full justify-between text-sm">
+              <span>Tax (5%)</span>
+              <span>₹{taxAmount.toFixed(0)}/-</span>
+            </div>
+            <div className="flex w-full justify-between text-sm">
+              <span>Shipping</span>
+              <span>FREE</span>
+            </div>
+            <div className="flex space-x-1 pt-3 justify-center items-center">
+              <button className="bg-gray-800 text-white p-0.5 px-4 rounded-sm hover:bg-black">
+                Apply
+              </button>
+              <input
+                className="text-center border-2 focus-none outline-none"
+                type="text"
+                placeholder="Coupon Code"
+              />
+            </div>
+            <div className="hidden justify-center items-center">
+              <span className="text-sm text-red-500">Invalid Coupon</span>
+            </div>
+            <div className="flex w-full justify-between text-sm text-green-600">
+              <span>Coupon Discount</span>
+              <span>-₹1299/-</span>
+            </div>
+            <hr />
+            <div className="flex justify-between w-full font-semibold text-lg">
+              <div className="flex flex-col justify-center items-center -space-y-1.5">
+                <span>Payable Amount</span>
+                <span className="text-[13px] text-neutral-600">
+                  (Includes Taxes)
+                </span>
               </div>
-              <div className="flex w-full justify-between text-sm">
-                <span>Tax (5%)</span>
-                <span>₹649.95/-</span>
-              </div>
-              <div className="flex w-full justify-between text-sm">
-                <span>Shipping</span>
-                <span>FREE</span>
-              </div>
-              <hr />
-              <div className="flex justify-between w-full font-semibold text-lg">
-                <div className="flex flex-col justify-center items-center -space-y-1.5">
-                  <span>Payable Amount</span>
-                  <span className="text-[13px] text-neutral-600">
-                    (Includes Taxes)
-                  </span>
-                </div>
-                <span>₹13,648.5/-</span>
-              </div>
-              <hr />
-              <div className="flex bg-white pt-1 justify-center max-w-[90vw]">
-                <div className="flex justify-between space-x-3 items-center md:space-x-16">
-                  <span className="font-semibold">
-                    Total Payment: ₹13,648.5/-
-                  </span>
-                  <button className="bg-gray-800 text-[13px] px-2 w-36 text-white py-2 rounded-full hover:bg-black md:text-lg">
-                   Proceed to Pay
-                  </button>
-                </div>
+              <span>₹{payableAmount.toFixed(0)}/-</span>
+            </div>
+            <hr />
+            <div className="flex bg-white pt-1 justify-center max-w-[90vw]">
+              <div className="flex justify-between space-x-3 items-center md:space-x-16">
+                <span className="font-semibold">
+                  Total Payment: ₹{payableAmount.toFixed(0)}/-
+                </span>
+                <button
+                  disabled={!enableProceedToPay}
+                  onClick={onProceedToPay}
+                  className="bg-gray-800 text-[13px] px-2 w-36 text-white py-2 rounded-full hover:bg-black md:text-lg disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  Proceed to Pay
+                </button>
               </div>
             </div>
           </div>

@@ -14,12 +14,17 @@ datasource db {
 }
 
 model User {
-  id         String  @id @default(uuid())
-  username   String?
-  email      String  @unique
-  password   String
-  isVerified Boolean @default(false)
-  Cart       Cart[]
+  id          String  @id @default(uuid())
+  username    String?
+  email       String  @unique
+  password    String
+  isVerified  Boolean @default(false)
+  address     String?
+  phoneNumber String?
+  pincode     Int?
+  state       String?
+  District    String?
+  Cart        Cart[]
 }
 
 model Product {
@@ -42,12 +47,11 @@ model Cart {
   userId    String
   product   Product  @relation(fields: [productId], references: [id])
   productId String
-  size      Size @default(S)
+  size      Size     @default(S)
   quantity  Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-
 
 enum Size {
   S

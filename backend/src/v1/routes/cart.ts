@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import express, { Request, Response } from "express";
+import fs from "fs";
+import path from "path";
 export const cartRouter = express.Router()
 const stripe = require('stripe')("sk_test_51PdkvCAvBpizqBWZNPKsJ9odNwuml1kTx5qQ7nbuZ13DtIxvWSn4kIlA9XiotRSLZ6SksEHQezN2kkzVQqtP2Qcm00bQ4UON3F")
 const prisma = new PrismaClient()
@@ -12,7 +14,9 @@ interface AuthenticatedRequest extends Request {
 }
 
 //("sk_test_51PdkvCAvBpizqBWZNPKsJ9odNwuml1kTx5qQ7nbuZ13DtIxvWSn4kIlA9XiotRSLZ6SksEHQezN2kkzVQqtP2Qcm00bQ4UON3F")
-
+// const pincodeData: Record<string, [string, string]> = JSON.parse(
+//     fs.readFileSync(path.join(__dirname, '..', '..', 'src', 'v1', 'routes', 'pincodeData.json'), 'utf8')
+// );
 cartRouter.get('/getcart', async (req: AuthenticatedRequest, res: Response) => {
     const authenticatedUser = req as AuthenticatedRequest
     if (!authenticatedUser) return res.status(400).json({ message: "The user is not authenticated!" })
@@ -152,7 +156,7 @@ cartRouter.delete("/delete/:id", async (req: AuthenticatedRequest, res: Response
                 userId
             }
         })
-        if(!cartId) return res.json({msg:"The cart doesn't exist!!!"})
+        if (!cartId) return res.json({ msg: "The cart doesn't exist!!!" })
         res.status(200).json({
             message: "The cart has been deleted!"
         })
@@ -165,13 +169,13 @@ cartRouter.delete("/delete/:id", async (req: AuthenticatedRequest, res: Response
     }
 })
 
-cartRouter.delete("/deleteall", async(req:AuthenticatedRequest, res:Response)=>{
-      const userId = req.user?.userId
+cartRouter.delete("/deleteall", async (req: AuthenticatedRequest, res: Response) => {
+    const userId = req.user?.userId
     try {
         await prisma.cart.deleteMany({
-          where:{
-            userId
-          }
+            where: {
+                userId
+            }
         })
         res.status(200).json({
             message: "The complete cart has been deleted"
@@ -185,23 +189,65 @@ cartRouter.delete("/deleteall", async(req:AuthenticatedRequest, res:Response)=>{
     }
 })
 cartRouter.post("/create-checkout-session", async (req: AuthenticatedRequest, res: Response) => {
-    const products = req.body.products
-    const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        line_items: products.map((item:any)=>({
-            price_data:{
+    const products = req.body.products;
+
+    try {
+        const lineItems = products.map((item: any) => ({
+            price_data: {
                 currency: 'inr',
-                product_data:{
-                    name: item.product.title
+                product_data: {
+                    name: item.product.title,
                 },
                 unit_amount: item.product.newPrice * 100,
             },
-            quantity: item.quantity
-        })),
-        mode: 'payment',
-        success_url: 'http://localhost:5173/success',
-        cancel_url: 'http://localhost:5173/cancel'
-    })
-    res.json({sessionId: session.id})
-    });
-    
+            quantity: item.quantity,
+        }));
+
+        const taxPercentage = 0.05;
+        //@ts-ignore
+        const totalAmount = lineItems.reduce((total: number, item) => {
+            return total + item.price_data.unit_amount * item.quantity;
+        }, 0);
+        const taxAmount = totalAmount * taxPercentage;
+
+        lineItems.push({
+            price_data: {
+                currency: 'inr',
+                product_data: {
+                    name: 'Tax',
+                },
+                unit_amount: Math.round(taxAmount),
+            },
+            quantity: 1,
+        });
+
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: lineItems,
+            mode: 'payment',
+            success_url: 'http://localhost:5173/success',
+            cancel_url: 'http://localhost:5173/cancel',
+        });
+
+        res.json({ sessionId: session.id });
+    } catch (error) {
+        console.error("Stripe session error:", error);
+        res.status(500).send("Error creating session");
+    }
+});
+
+// cartRouter.get("/pincode", async (req, res) => {
+//     const pincode = req.query.pincode as string;
+
+//     if (!pincode) {
+//       return res.status(400).json({ error: "Pincode is required" });
+//     }
+//     const location = pincodeData[pincode];
+  
+//     if (!location) {
+//       return res.status(404).json({ error: "Pincode not found" });
+//     }
+  
+//     const [city, state] = location;
+//     return res.json({ city, state });
+// });

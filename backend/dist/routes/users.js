@@ -22,6 +22,7 @@ const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const mail_1 = __importDefault(require("@sendgrid/mail"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const authMiddleware_1 = __importDefault(require("./middlewares/authMiddleware"));
 exports.userRouter = express_1.default.Router();
 exports.userRouter.use((0, cookie_parser_1.default)());
 mail_1.default.setApiKey(process.env.SENDGRID_API_KEY);
@@ -259,5 +260,61 @@ exports.userRouter.get('/logout', (req, res) => __awaiter(void 0, void 0, void 0
     res.clearCookie("Secret_Auth_token");
     res.status(200).json({
         message: "logout successful"
+    });
+}));
+exports.userRouter.put("/delivery", authMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _c;
+    const { address, District, state, pincode, phoneNumber } = req.body;
+    try {
+        const userId = (_c = req.user) === null || _c === void 0 ? void 0 : _c.userId;
+        const user = yield prisma.user.findUnique({
+            where: {
+                id: userId
+            }
+        });
+        if (!user)
+            return res.status(404).json({ message: "No user found" });
+        const delivery = yield prisma.user.update({
+            where: {
+                id: userId
+            },
+            data: {
+                address: address,
+                District: District,
+                state: state,
+                pincode: pincode,
+                phoneNumber: phoneNumber
+            },
+        });
+        res.status(200).json({
+            message: "Delivery address added successfully",
+            delivery
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(400).json({
+            error
+        });
+    }
+}));
+exports.userRouter.get("/getuser", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = yield prisma.user.findMany({
+        select: {
+            id: true
+        }
+    });
+    //console.log(user)
+    if (!user)
+        return res.status(404).json({ message: "No user found" });
+    const userObj = yield prisma.user.findUnique({
+        where: {
+            id: user[0].id
+        }
+    });
+    //console.log(userObj)
+    res.status(200).json({
+        userName: userObj === null || userObj === void 0 ? void 0 : userObj.username,
+        userEmail: userObj === null || userObj === void 0 ? void 0 : userObj.email
     });
 }));

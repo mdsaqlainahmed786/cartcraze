@@ -17,11 +17,11 @@ function CartSummary({ toCheckout,cartItemsLength, totalAmount}: CartSummaryProp
     <div className="space-y-2 border-2 mt-5 p-4 rounded-md shadow-md">
       <div className="flex w-full justify-between text-sm">
         <span>Cart Total ({cartItemsLength})</span>
-        <span>₹{totalAmount.toFixed(2)}/-</span>
+        <span>₹{totalAmount.toFixed(0)}/-</span>
       </div>
       <div className="flex w-full justify-between text-sm">
         <span>Tax (5%)</span>
-        <span>₹{taxAmount.toFixed(2)}/-</span>
+        <span>₹{taxAmount.toFixed(0)}/-</span>
       </div>
       <div className="flex w-full justify-between text-sm">
         <span>Shipping</span>
@@ -33,12 +33,12 @@ function CartSummary({ toCheckout,cartItemsLength, totalAmount}: CartSummaryProp
           <span>Payable Amount</span>
           <span className="text-[13px] text-neutral-600">(Includes Taxes)</span>
         </div>
-        <span>₹{payableAmount.toFixed(2)}/-</span>
+        <span>₹{payableAmount.toFixed(0)}/-</span>
       </div>
       <hr />
       <div className="flex bg-white pt-1 justify-center max-w-[90vw]">
         <div className="flex justify-between items-center space-x-16">
-          <span className="font-semibold">Total Payment: ₹{payableAmount.toFixed(2)}/-</span>
+          <span className="font-semibold">Total Payment: ₹{payableAmount.toFixed(0)}/-</span>
           <button
             onClick={toCheckout}
             className="bg-gray-700 text-white px-8 p-1 rounded-full hover:bg-black"

@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import express, { Request, Response } from "express";
-import z from "zod";
+import express, { Request, Response } from "express"; import z from "zod";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import bcrypt from "bcrypt"
 import axios from "axios"
@@ -10,6 +9,7 @@ import dotenv from 'dotenv';
 import sgMail from "@sendgrid/mail"
 import cookieParser from "cookie-parser"
 import path from "path"
+import authMiddleware from "./middlewares/authMiddleware";
 export const userRouter = express.Router();
 userRouter.use(cookieParser())
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
@@ -17,6 +17,12 @@ userRouter.use(cors({
     credentials: true,
     origin: "http://localhost:5173"
 }))
+interface AuthenticatedRequest extends Request {
+    user?: {
+        userId: string,
+        email: string
+    }
+}
 const prisma = new PrismaClient();
 dotenv.config();
 const userSignupInput = z.object({
@@ -79,7 +85,7 @@ userRouter.post("/signup", async (req: Request, res: Response) => {
                     id: user.id
                 }
             })
-        
+
             if (!userCheck || !userCheck.isVerified) {
                 await prisma.user.delete({
                     where: {
@@ -116,13 +122,13 @@ userRouter.get("/verify/:token", async (req: Request, res: Response) => {
             process.env.JWT_SECRET as string
         );
         // console.log(newToken)
-        
+
         res.clearCookie("Secret_Auth_token");
         res.cookie("Secret_Auth_token", newToken)
 
         const userName = await prisma.user.findUnique({
-            where:{
-                email:decodedToken.email
+            where: {
+                email: decodedToken.email
             }
         })
         res.status(200).json({
@@ -165,8 +171,8 @@ userRouter.post("/signin", async (req: Request, res: Response) => {
             message: "The user has been successfully found!",
             UserId: user.id,
             token,
-            username:user.username,
-            userEmail:user.email
+            username: user.username,
+            userEmail: user.email
 
         });
     } catch (error) {
@@ -215,9 +221,9 @@ userRouter.post("/reset_password/:token", async (req: Request, res: Response) =>
     const token = req.params?.token
     if (!token) return res.status(404).json({ message: "No token found" })
     const bodyParser = resetPasswordInput.safeParse(req.body)
-       if(!bodyParser.success) return res.status(400).json({
-        message:"Invalid input, password must contain at least 8 characters"
-       })
+    if (!bodyParser.success) return res.status(400).json({
+        message: "Invalid input, password must contain at least 8 characters"
+    })
     try {
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload
         if (!decodedToken) return res.status(400).json({ message: "token is invalid" })
@@ -245,11 +251,64 @@ userRouter.post("/reset_password/:token", async (req: Request, res: Response) =>
     }
 })
 
-userRouter.get('/logout', async(req:Request, res:Response)=>{
+userRouter.get('/logout', async (req: Request, res: Response) => {
     res.clearCookie("Secret_Auth_token")
     res.status(200).json({
         message: "logout successful"
     })
 })
 
-  
+userRouter.put("/delivery", authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+   
+    const { address, District, state, pincode, phoneNumber } = req.body;
+    try {
+        const userId = req.user?.userId
+        const user = await prisma.user.findUnique({
+            where: {
+                id: userId
+            }
+        })
+        if (!user) return res.status(404).json({ message: "No user found" })
+        const delivery = await prisma.user.update({
+            where: {
+                id: userId
+            },
+            data: {
+                address:address,
+                District:District,
+                state:state,
+                pincode:pincode,
+                phoneNumber:phoneNumber
+            },
+        })
+        res.status(200).json({
+            message: "Delivery address added successfully",
+            delivery
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(400).json({
+            error
+        })
+    }
+})
+
+userRouter.get("/getuser", async(req, res)=>{
+    const user = await prisma.user.findMany({
+        select:{
+            id:true
+        }
+    })
+    //console.log(user)
+    if(!user) return res.status(404).json({message:"No user found"})
+    const userObj = await prisma.user.findUnique({
+        where:{
+            id:user[0].id
+        }
+    })
+    //console.log(userObj)
+    res.status(200).json({
+        userName:userObj?.username,
+        userEmail:userObj?.email
+    })
+})
