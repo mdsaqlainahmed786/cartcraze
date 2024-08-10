@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import FooterComp from "../Components/FooterComp";
 import Navbar from "../Components/NavComponents/Navbar";
 import { SiTicktick } from "react-icons/si";
-// import OrderSummary from "../Components/OrderSummary";
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import gifLoader from "../assets/loader.gif";
@@ -23,7 +22,11 @@ function Success() {
         }
       );
       console.log(response.data);
-    } catch (error) {
+      
+    } catch (error:unknown) {
+      if(error?.response.status === 400){
+        window.location.href = "/";
+      }
       console.error(error);
     } finally {
       setLoader(false);

@@ -118,7 +118,7 @@ userRouter.get("/verify/:token", async (req: Request, res: Response) => {
             }
         })
         const newToken = jwt.sign(
-            { userId: decodedToken.userId, email: decodedToken.email, isVerified: true },
+            { userId: decodedToken.userId, email: decodedToken.email, isVerified: true, paymentSession: decodedToken.paymentSession },
             process.env.JWT_SECRET as string
         );
         // console.log(newToken)
@@ -164,7 +164,7 @@ userRouter.post("/signin", async (req: Request, res: Response) => {
             return res.status(400).json({ message: "The user has an incorrect password!" });
         }
         if (!user.isVerified) return res.status(401).json({ message: "Please verify your account!" })
-        const token = jwt.sign({ userId: user.id, email: user.email, isVerified: user.isVerified }, process.env.JWT_SECRET as string)
+        const token = jwt.sign({ userId: user.id, email: user.email, isVerified: user.isVerified, paymentSession:user.paymentSession }, process.env.JWT_SECRET as string)
         // console.log(token)
         res.cookie("Secret_Auth_token", token)
         res.status(200).json({

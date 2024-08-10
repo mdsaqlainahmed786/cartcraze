@@ -239,7 +239,7 @@ exports.cartRouter.post("/create-checkout-session", (req, res) => __awaiter(void
             line_items: lineItems,
             mode: 'payment',
             success_url: 'http://localhost:5173/success',
-            cancel_url: 'http://localhost:5173/cancel',
+            cancel_url: 'http://localhost:5173',
         });
         res.json({ sessionId: session.id });
     }

@@ -55,7 +55,6 @@ cartRouter.post("/add", async (req: AuthenticatedRequest, res: Response) => {
     if (!userId) return res.status(401).json({ message: "unauthorized!" })
     try {
         const { productId, quantity, size } = req.body
-        console.log(req.body, "THIS IS SHIT GODDY")
         const existingProduct = await prisma.cart.findFirst({
             where: {
                 productId,
@@ -232,134 +231,23 @@ cartRouter.post("/create-checkout-session", async (req: AuthenticatedRequest, re
             line_items: lineItems,
             mode: 'payment',
             success_url: 'http://localhost:5173/success',
-            cancel_url: 'http://localhost:5173/cancel',
+            cancel_url: 'http://localhost:5173',
         });
-
         res.json({ sessionId: session.id });
     } catch (error) {
         console.error("Stripe session error:", error);
         res.status(500).send("Error creating session");
     }
 });
-// cartRouter.get("/pincode", async (req, res) => {
-//     const pincode = req.query.pincode as string;
+cartRouter.get("/buy-now", async (req: AuthenticatedRequest, res: Response) => {
+    const userId = req.user?.userId
+    if (!userId) return res.status(401).json({ message: "unauthorized!" })
+        try{
 
-//     if (!pincode) {
-//       return res.status(400).json({ error: "Pincode is required" });
-//     }
-//     const location = pincodeData[pincode];
-
-//     if (!location) {
-//       return res.status(404).json({ error: "Pincode not found" });
-//     }
-
-//     const [city, state] = location;
-//     return res.json({ city, state });
-// });
-// cartRouter.post('/apply-coupon', async (req: AuthenticatedRequest, res) => {
-//     const userId = req.user?.userId;
-//     const { code } = req.body;
-
-//     try {
-//         // Find the user
-//         const user = await prisma.user.findUnique({
-//             where: { id: userId },
-//         });
-
-//         if (!user) {
-//             return res.status(404).json({ error: 'User not found' });
-//         }
-
-//         // Check if the user has already used the coupon
-//         if (user.isCouponUsed) {
-//             return res.status(400).json({ error: 'Coupon already used' });
-//         }
-
-//         // Find the coupon
-//         const coupon = await prisma.coupon.findUnique({
-//             where: { code },
-//         });
-
-//         if (!coupon || !coupon.isActive) {
-//             return res.status(400).json({ error: 'Invalid coupon code' });
-//         }
-
-//         // Mark the coupon as used by the user
-//         await prisma.user.update({
-//             where: { id: userId },
-//             data: { isCouponUsed: true },
-//         });
-
-//         const cartItems = await prisma.cart.findMany({
-//             orderBy: { createdAt: 'desc' },
-//             where: { userId },
-//             include: { product: true }
-//         });
-//         let totalAmount = cartItems.reduce((total, item) => {
-//             return total + item.product.newPrice * item.quantity;
-//         }, 0);
-//         const taxAmount = totalAmount * 0.05;
-//         const discountAmount = totalAmount * coupon.discount;
-//         const finalTotalAmount = totalAmount + taxAmount - discountAmount;
-
-//         res.status(200).json({
-//             success: true,
-//             discountAmount: coupon.discount,
-//             cartItems,
-//             totalAmount: finalTotalAmount,
-//             taxAmount
-//         });
-//     } catch (error) {
-//         console.error('Failed to apply coupon:', error);
-//         res.status(500).json({ error: 'Failed to apply coupon' });
-//     }
-// });
-
-// cartRouter.post('/create-coupon', async (req, res) => {
-//     const { code, discount } = req.body;
-
-//     try {
-//         const coupon = await prisma.coupon.create({
-//             data: {
-//                 code,
-//                 discount,
-//                 isActive: true,
-//             },
-//         });
-
-//         res.json({ success: true, coupon });
-//     } catch (error) {
-//         console.error('Error creating coupon:', error);
-//         res.status(500).json({ error: 'Failed to create coupon' });
-//     }
-// });
-
-// cartRouter.put('/update-price', async (req: AuthenticatedRequest, res: Response) => {
-//     const userId = req.user?.userId;
-//     const { totalAmount } = req.body;
-//     const user = await prisma.user.findUnique({
-//         where:
-//             { id: userId },
-//     })
-//     if (user?.isCouponUsed) {
-//         try {
-//             const updatedPrice = await prisma.cart.update({
-//                 where: {
-//                     id: userId
-//                 },
-//                 data: {
-//                     totalAmount: totalAmount
-//                 } as any
-//             })
-//             res.json({ success: true, updatedPrice })
-//             console.log(updatedPrice)
-//         } catch (error) {
-//             console.error('Error updating price:', error);
-//             res.status(500).json({ error: 'Failed to update price' });
-//         }
-//     }
-//     else {
-//         res.json({ message: "The user has not applied the coupon!" })
-//     }
-// });
-
+    }catch(error){
+        res.json({
+            message: "There was a error",
+            error
+        })
+    }
+})

@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import express, { Request, Response } from "express";
+import { paymentMiddleware } from "./middlewares/paymentMiddleware";
 import fs from "fs";
 import path from "path";
 export const orderRouter = express.Router()
@@ -35,11 +36,11 @@ orderRouter.get("/getorders", async (req: AuthenticatedRequest, res: Response) =
     }
 })
 
-orderRouter.post("/add", async (req: AuthenticatedRequest, res: Response) => {
-    const userId = req.user?.userId
-    if (!userId) return res.status(401).json({ message: "unauthorized!" })
+orderRouter.post("/add", paymentMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+    const userId = req.user?.userId;
+    if (!userId) return res.status(401).json({ message: "unauthorized!" });
+
     try {
-      
         const cartItems = await prisma.cart.findMany({
             where: { userId },
             include: { product: true },
@@ -50,32 +51,49 @@ orderRouter.post("/add", async (req: AuthenticatedRequest, res: Response) => {
         }
 
         const orders = await prisma.$transaction(
-            cartItems?.map((item) => 
+            cartItems?.map((item) =>
                 prisma.order.create({
                     data: {
                         userId,
                         productId: item.productId,
                         size: item.size,
                         quantity: item.quantity,
-                      
                     },
                 })
             )
         );
-        // await prisma.recentOrder.upsert({
-        //     where: { id:userId },
-        //     update: { orders: orders },
-        //     create: {
-        //         userId,
-        //         orders: orders,
-        //     },
-        // });
+
+        await prisma.user.update({
+            where: { id: userId },
+            data: { paymentSession: false },
+        });
+
         await prisma.cart.deleteMany({
             where: { userId },
         });
-        res.status(200).json({ message: "Order placed successfully!", orders});
+
+        res.status(200).json({ message: "Order placed successfully!", orders });
     } catch (error) {
         console.error("Error placing order:", error);
         res.status(500).json({ message: "Internal Server Error" });
+    }
+});
+orderRouter.post('/update-payment-status', async (req, res) => {
+    const { userId, paymentStatus } = req.body;
+
+    if (!userId || !paymentStatus) {
+        return res.status(400).json({ error: 'Missing userId or paymentStatus' });
+    }
+    try {
+        // Update the user's payment status in the database
+        const updatedUser = await prisma.user.update({
+            where: { id: userId },
+            data: { paymentSession: true },
+        });
+
+        res.status(200).json({ message: 'Payment status updated successfully', user: updatedUser });
+    } catch (error) {
+        console.error('Error updating payment status:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });

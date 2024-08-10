@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.orderRouter = void 0;
 const client_1 = require("@prisma/client");
 const express_1 = __importDefault(require("express"));
+const paymentMiddleware_1 = require("./middlewares/paymentMiddleware");
 exports.orderRouter = express_1.default.Router();
 const prisma = new client_1.PrismaClient();
 exports.orderRouter.use(express_1.default.json());
@@ -44,7 +45,7 @@ exports.orderRouter.get("/getorders", (req, res) => __awaiter(void 0, void 0, vo
         res.status(500).json({ message: "Internal Server Error" });
     }
 }));
-exports.orderRouter.post("/add", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.orderRouter.post("/add", paymentMiddleware_1.paymentMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _b;
     const userId = (_b = req.user) === null || _b === void 0 ? void 0 : _b.userId;
     if (!userId)
@@ -65,14 +66,10 @@ exports.orderRouter.post("/add", (req, res) => __awaiter(void 0, void 0, void 0,
                 quantity: item.quantity,
             },
         })));
-        // await prisma.recentOrder.upsert({
-        //     where: { id:userId },
-        //     update: { orders: orders },
-        //     create: {
-        //         userId,
-        //         orders: orders,
-        //     },
-        // });
+        yield prisma.user.update({
+            where: { id: userId },
+            data: { paymentSession: false },
+        });
         yield prisma.cart.deleteMany({
             where: { userId },
         });
@@ -81,5 +78,23 @@ exports.orderRouter.post("/add", (req, res) => __awaiter(void 0, void 0, void 0,
     catch (error) {
         console.error("Error placing order:", error);
         res.status(500).json({ message: "Internal Server Error" });
+    }
+}));
+exports.orderRouter.post('/update-payment-status', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userId, paymentStatus } = req.body;
+    if (!userId || !paymentStatus) {
+        return res.status(400).json({ error: 'Missing userId or paymentStatus' });
+    }
+    try {
+        // Update the user's payment status in the database
+        const updatedUser = yield prisma.user.update({
+            where: { id: userId },
+            data: { paymentSession: true },
+        });
+        res.status(200).json({ message: 'Payment status updated successfully', user: updatedUser });
+    }
+    catch (error) {
+        console.error('Error updating payment status:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 }));

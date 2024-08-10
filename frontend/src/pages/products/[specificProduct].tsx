@@ -30,21 +30,83 @@ function ProductDetail() {
   const [product, setProduct] = useState<Product | null>(null); 
   const [slideImages, setSlideImages] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-//  const [quantity, setQuantity] = useState(1); 
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [error, setError] = useState(false);
   const navigate = useNavigate();
-  // const [loader, setLoader] = useState(false)
   const [selectedSize, setSelectedSize] = useState<string | undefined>("S");
   const [image, setImage] = useState<string>(""); 
   const [cartCount, setCartCount] = useRecoilState(CartCountState)
-  const [loading, setLoading] = useState(false)
+  const [buyNowLoading, setBuyNowLoading] = useState<boolean>(false);
+   const [cartLoading, setCartLoading] = useState<boolean>(false);
   const { productName } = useParams();
+  const onBuyNow = async() => {
+    if(userLoggedIn){
+      try {
+        setBuyNowLoading(true)
+        const response = await axios.post(
+           "http://localhost:3000/api/v1/cart/add",
+           {
+             productId: product?.id,
+             quantity: 1,
+             size: selectedSize,
+           },
+           {
+             withCredentials: true,
+           }
+         );
+        setSelectedSize(response.data.item.size);
+     //    console.log(response.data.message);
+         const cartResponse = await axios.get(
+          "http://localhost:3000/api/v1/cart/getcart",
+          {
+            withCredentials: true,
+          }
+        );
+        setCartCount(cartResponse.data.cartItems.length);
+        navigate("/checkout");
+       } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          console.error("Error adding product to cart", error.response.data.message);
+          toast.error(error.response.data.message, {
+            style: {
+              border: "1px solid black",
+              padding: "16px",
+              color: "black",
+              marginTop: "75px",
+            },
+            iconTheme: {
+              primary: "black",
+              secondary: "white",
+            },
+          });
+        } else {
+          console.error("Error adding product to cart", error);
+        }
+      }finally{
+        setBuyNowLoading(false)
+      }
+    }
+    else{
+      toast.error("Please login to add product to cart", {
+        style: {
+          border: "1px solid black",
+          padding: "16px",
+          color: "black",
+          marginTop: "75px",
+        },
+        iconTheme: {
+          primary: "black",
+          secondary: "white",
+        },
+      });
+      navigate("/signin");
+    }
+  }
   const onAddtoCart = async() => {
     console.log(cartCount)
     if(userLoggedIn){
       try {
-        setLoading(true)
+        setCartLoading(true)
         const response = await axios.post(
            "http://localhost:3000/api/v1/cart/add",
            {
@@ -97,7 +159,7 @@ function ProductDetail() {
           console.error("Error adding product to cart", error);
         }
       }finally{
-        setLoading(false)
+        setCartLoading(false)
       }
     }
     else{
@@ -210,10 +272,11 @@ function ProductDetail() {
           color={product.color}
           colorImages={product?.images[0]}
           onAddtoCart={onAddtoCart}
-          loading={loading}
+          onBuyLoading={buyNowLoading}
+          onCartLoading={cartLoading}
           setSelectedSize={setSelectedSize}
           selectedSize={selectedSize}
-
+          onBuyNow={onBuyNow}
           
         />
       </div>
@@ -255,9 +318,11 @@ function ProductDetail() {
           color={product.color}
           colorImages={product?.images[0]}
           onAddtoCart={onAddtoCart}
-          loading={loading}
+          onBuyLoading={buyNowLoading}
+          onCartLoading={cartLoading}
           setSelectedSize={setSelectedSize}
           selectedSize={selectedSize}
+          onBuyNow={onBuyNow}
         />
       </div>
       <BenefitsOfStore />

@@ -127,7 +127,7 @@ exports.userRouter.get("/verify/:token", (req, res) => __awaiter(void 0, void 0,
                 isVerified: true
             }
         });
-        const newToken = jsonwebtoken_1.default.sign({ userId: decodedToken.userId, email: decodedToken.email, isVerified: true }, process.env.JWT_SECRET);
+        const newToken = jsonwebtoken_1.default.sign({ userId: decodedToken.userId, email: decodedToken.email, isVerified: true, paymentSession: decodedToken.paymentSession }, process.env.JWT_SECRET);
         // console.log(newToken)
         res.clearCookie("Secret_Auth_token");
         res.cookie("Secret_Auth_token", newToken);
@@ -169,7 +169,7 @@ exports.userRouter.post("/signin", (req, res) => __awaiter(void 0, void 0, void 
         }
         if (!user.isVerified)
             return res.status(401).json({ message: "Please verify your account!" });
-        const token = jsonwebtoken_1.default.sign({ userId: user.id, email: user.email, isVerified: user.isVerified }, process.env.JWT_SECRET);
+        const token = jsonwebtoken_1.default.sign({ userId: user.id, email: user.email, isVerified: user.isVerified, paymentSession: user.paymentSession }, process.env.JWT_SECRET);
         // console.log(token)
         res.cookie("Secret_Auth_token", token);
         res.status(200).json({
