@@ -300,26 +300,41 @@ exports.userRouter.put("/delivery", authMiddleware_1.default, (req, res) => __aw
 }));
 exports.userRouter.get("/getuser", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _d;
-    const token = (_d = req.cookies) === null || _d === void 0 ? void 0 : _d.Secret_Auth_token;
-    //console.log(token)
-    if (!token)
-        return res.status(200).json({
-            message: "No token found!"
-        });
-    const decodedToken = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
-    const userObj = yield prisma.user.findUnique({
-        where: {
-            id: decodedToken.userId
+    try {
+        const token = (_d = req.cookies) === null || _d === void 0 ? void 0 : _d.Secret_Auth_token;
+        if (!token) {
+            return res.status(200).json({
+                message: "No token found!"
+            });
         }
-    });
-    //console.log(userObj)
-    res.status(200).json({
-        userName: userObj === null || userObj === void 0 ? void 0 : userObj.username,
-        userEmail: userObj === null || userObj === void 0 ? void 0 : userObj.email,
-        userAddress: userObj === null || userObj === void 0 ? void 0 : userObj.address,
-        userDistrict: userObj === null || userObj === void 0 ? void 0 : userObj.District,
-        userState: userObj === null || userObj === void 0 ? void 0 : userObj.state,
-        userPincode: userObj === null || userObj === void 0 ? void 0 : userObj.pincode,
-        userPhoneNumber: userObj === null || userObj === void 0 ? void 0 : userObj.phoneNumber
-    });
+        const decodedToken = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
+        if (!decodedToken) {
+            return res.status(401).json({
+                message: "Invalid token!"
+            });
+        }
+        const userObj = yield prisma.user.findUnique({
+            where: {
+                id: decodedToken.userId
+            }
+        });
+        if (!userObj) {
+            return res.status(404).json({
+                message: "User not found!"
+            });
+        }
+        res.status(200).json({
+            userName: userObj.username,
+            userEmail: userObj.email,
+            userAddress: userObj.address,
+            userDistrict: userObj.District,
+            userState: userObj.state,
+            userPincode: userObj.pincode,
+            userPhoneNumber: userObj.phoneNumber
+        });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
 }));

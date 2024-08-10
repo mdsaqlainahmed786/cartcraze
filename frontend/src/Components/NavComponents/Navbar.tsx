@@ -15,7 +15,7 @@ import MobileNavcomp from "../NavComponents/MobileNavcomp";
 import MobileNavIcons from "../NavComponents/MobileNavIcons";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { wishlistState } from "../../RecoilStateProviders/WishListCount";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import Cookies from "js-cookie";
 import axios from "axios";
 import toast from "react-hot-toast";
@@ -43,7 +43,29 @@ function Navbar() {
   // const existingWishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");// Get the current path
   const [isMdScreen, setIsMdScreen] = useState(window.innerWidth <= 1023);
   //console.log(isMdScreen)
+  const setUserName = useSetRecoilState(usernameState);
+  const setUserEmail = useSetRecoilState(emailState);
   
+  useEffect(() => {
+    const tokenCookie = Cookies.get("Secret_Auth_token");
+    
+    if (tokenCookie) {
+      const getUser = async () => {
+        try {
+          const res = await axios.get("http://localhost:3000/api/v1/user/getuser", {
+            withCredentials: true, // Token will be automatically sent with cookies
+          });
+          
+          setUserName(res.data.userName);
+          setUserEmail(res.data.userEmail);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+
+      getUser();
+    }
+  },[token, setUserName, setUserEmail]);
  
   const onHandleHam = () => {
     setIsHamOpen(!isHamOpen);
@@ -84,6 +106,7 @@ function Navbar() {
         secondary: "white",
       },
     });
+  
     navigate("/signup");
     localStorage.removeItem("username");
     localStorage.removeItem("email");

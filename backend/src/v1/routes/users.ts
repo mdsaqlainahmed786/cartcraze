@@ -293,27 +293,47 @@ userRouter.put("/delivery", authMiddleware, async (req: AuthenticatedRequest, re
     }
 })
 
-userRouter.get("/getuser", async(req, res)=>{
-    const token = req.cookies?.Secret_Auth_token
-    //console.log(token)
-    if (!token) return res.status(200).json({
-        message: "No token found!"
-    })
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload
-    const userObj = await prisma.user.findUnique({
-        where:{
-            id:decodedToken.userId
-        }
-    })
-    //console.log(userObj)
-    res.status(200).json({
-        userName:userObj?.username,
-        userEmail:userObj?.email,
-        userAddress:userObj?.address,
-        userDistrict:userObj?.District,
-        userState:userObj?.state,
-        userPincode:userObj?.pincode,
-        userPhoneNumber:userObj?.phoneNumber
+userRouter.get("/getuser", async (req, res) => {
+    try {
+        const token = req.cookies?.Secret_Auth_token;
         
-    })
- })
+        if (!token) {
+            return res.status(200).json({
+                message: "No token found!"
+            });
+        }
+
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+
+        if (!decodedToken) {
+            return res.status(401).json({
+                message: "Invalid token!"
+            });
+        }
+
+        const userObj = await prisma.user.findUnique({
+            where: {
+                id: decodedToken.userId
+            }
+        });
+
+        if (!userObj) {
+            return res.status(404).json({
+                message: "User not found!"
+            });
+        }
+
+        res.status(200).json({
+            userName: userObj.username,
+            userEmail: userObj.email,
+            userAddress: userObj.address,
+            userDistrict: userObj.District,
+            userState: userObj.state,
+            userPincode: userObj.pincode,
+            userPhoneNumber: userObj.phoneNumber
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
