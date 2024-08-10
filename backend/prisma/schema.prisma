@@ -24,7 +24,9 @@ model User {
   pincode     Int?
   state       String?
   District    String?
-  Cart        Cart[]
+  paymentSession Boolean @default(false)
+  cartItems   Cart[]
+  orders      Order[]
 }
 
 model Product {
@@ -39,6 +41,7 @@ model Product {
   images      String[]
   createdAt   DateTime @default(now())
   cartItems   Cart[]
+  orders       Order[]
 }
 
 model Cart {
@@ -60,3 +63,16 @@ enum Size {
   XL
   XXL
 }
+
+model Order {
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  product    Product  @relation(fields: [productId], references: [id])
+  productId  String
+  size       Size
+  quantity   Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+

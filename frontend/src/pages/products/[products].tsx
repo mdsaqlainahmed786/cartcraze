@@ -33,7 +33,7 @@ function Products() {
   const location = useLocation();
   const { productCategory } = useParams();
   useEffect(() => {
-    const fetchProducts = async (queryParams: string) => {
+    const fetchProducts = async(queryParams: string) => {
       setLoader(true);
       try {
         const response = await axios.get(

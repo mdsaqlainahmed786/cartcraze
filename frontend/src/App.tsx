@@ -20,13 +20,14 @@ import NotFoundPage from "./pages/NotFoundPage";
 import Success from "./pages/success";
 import Cancel from "./pages/cancel";
 import { emailState, usernameState } from "./RecoilStateProviders/UserDetails";
+import Orders from "./pages/orders"
 function App() {
   
   const setUserName = useSetRecoilState(usernameState);
   const setUserEmail = useSetRecoilState(emailState);
   const getUser = async () => {
     try {
-      const res = await axios.get("http://localhost:3000/api/v1/user/getuser");
+      const res = await axios.get("http://localhost:3000/api/v1/user/getuser", {withCredentials:true});
       //console.log(res.data);
       setUserName(res.data.userName);
       setUserEmail(res.data.userEmail);
@@ -58,6 +59,7 @@ function App() {
             <Route path="*" element={<NotFoundPage />} />
             <Route path="/success" element={<Success />} />
             <Route path="/cancel" element={<Cancel />} />
+            <Route path="/orders" element={<Orders/>} />
             <Route
               path="/products/:productCategory"
               element={<Products />}

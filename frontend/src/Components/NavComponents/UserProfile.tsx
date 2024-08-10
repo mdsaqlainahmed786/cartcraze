@@ -1,5 +1,6 @@
 
 import { CiLogout } from "react-icons/ci";
+import { Link } from "react-router-dom";
 
 interface className {
   className: string;
@@ -25,7 +26,12 @@ function UserProfile({ className, username, email, onLogOut }: className) {
               <span className="text-sm pb-10">{email}</span>
             </div>
           </div>
-          <div className="w-full -mt-5 px-5">
+          <div className="w-full space-y-2 -mt-7 px-5">
+          <Link to='/orders'>
+            <div className="flex border-2 rounded-lg cursor-pointer border-gray-500 items-center justify-center hover:bg-slate-100">
+             <span className="text-sm py-1.5">Your Orders</span>
+            </div>
+            </Link>
             <div
               onClick={onLogOut}
               className="flex justify-center w-full items-center bg-gray-800 text-white rounded-lg hover:bg-black cursor-pointer"

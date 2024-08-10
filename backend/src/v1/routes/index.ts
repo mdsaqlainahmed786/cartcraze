@@ -6,6 +6,7 @@ import { productsRouter } from "./products"
 import { cartRouter } from "./cart"
 import authMiddleware from "./middlewares/authMiddleware"
 import rateLimit from "express-rate-limit"
+import { orderRouter } from "./orders"
 //import { wishListRouter } from "./wishlist"
 
 const app = express()
@@ -24,6 +25,7 @@ app.use(express.json())
 app.use("/api/v1/user", userRouter)
 app.use("/api/v1/products", productsRouter)
 app.use("/api/v1/cart",authMiddleware, cartRouter)
+app.use("/api/v1/orders",authMiddleware, orderRouter)
 //app.use("/api/v1/wishlist", wishListRouter)
 
 

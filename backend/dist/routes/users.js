@@ -299,22 +299,27 @@ exports.userRouter.put("/delivery", authMiddleware_1.default, (req, res) => __aw
     }
 }));
 exports.userRouter.get("/getuser", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = yield prisma.user.findMany({
-        select: {
-            id: true
-        }
-    });
-    //console.log(user)
-    if (!user)
-        return res.status(404).json({ message: "No user found" });
+    var _d;
+    const token = (_d = req.cookies) === null || _d === void 0 ? void 0 : _d.Secret_Auth_token;
+    //console.log(token)
+    if (!token)
+        return res.status(200).json({
+            message: "No token found!"
+        });
+    const decodedToken = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
     const userObj = yield prisma.user.findUnique({
         where: {
-            id: user[0].id
+            id: decodedToken.userId
         }
     });
     //console.log(userObj)
     res.status(200).json({
         userName: userObj === null || userObj === void 0 ? void 0 : userObj.username,
-        userEmail: userObj === null || userObj === void 0 ? void 0 : userObj.email
+        userEmail: userObj === null || userObj === void 0 ? void 0 : userObj.email,
+        userAddress: userObj === null || userObj === void 0 ? void 0 : userObj.address,
+        userDistrict: userObj === null || userObj === void 0 ? void 0 : userObj.District,
+        userState: userObj === null || userObj === void 0 ? void 0 : userObj.state,
+        userPincode: userObj === null || userObj === void 0 ? void 0 : userObj.pincode,
+        userPhoneNumber: userObj === null || userObj === void 0 ? void 0 : userObj.phoneNumber
     });
 }));

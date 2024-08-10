@@ -3,6 +3,8 @@ import FooterComp from "../Components/FooterComp";
 import WishlistProductComp from "../Components/WishlistProductComp";
 import { useState, useEffect } from "react";
 import NotFound from "../Components/NotFound";
+import emptyCart from "../assets/not.png";
+import { useNavigate } from "react-router-dom";
 import { wishlistState } from "../RecoilStateProviders/WishListCount";
 import { useRecoilState } from "recoil";
 import { TiDeleteOutline } from "react-icons/ti";
@@ -18,7 +20,7 @@ interface WishlistItem {
 function WishList() {
   const [wishList, setWishList] = useState<WishlistItem[]>([]);
   const [wishlistCount, setWishlistCount] = useRecoilState(wishlistState);
- 
+ const navigate = useNavigate();
 
   useEffect(() => {
     const storedWishlist = JSON.parse(
@@ -77,7 +79,22 @@ function WishList() {
               onRemove={() => onRemoveHandler(item.title)}
             />
           ))}
-          {wishList.length == 0 && <NotFound />}
+          {wishList.length == 0 &&  <div className="flex flex-col justify-center items-center h-[80vh] mx-auto">
+              <img
+                className="h-[25vh] md:h-[40vh]"
+                src={emptyCart}
+                alt="server down"
+              />
+              <span className="text-neutral-500 text-[18px] text-center px-5">
+                No products in wishlist.Start adding them now!
+              </span>
+              <button
+                onClick={() => navigate("/products/Men-Suits")}
+                className="bg-gray-800 hover:bg-black text-white p-2 rounded-md mt-5"
+              >
+                Go to Products &#10095;
+              </button>
+            </div>}
         </div>
       </div>
       <FooterComp />

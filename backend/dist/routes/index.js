@@ -10,6 +10,7 @@ const users_1 = require("./users");
 const products_1 = require("./products");
 const cart_1 = require("./cart");
 const authMiddleware_1 = __importDefault(require("./middlewares/authMiddleware"));
+const orders_1 = require("./orders");
 //import { wishListRouter } from "./wishlist"
 const app = (0, express_1.default)();
 // const limiter = rateLimit({
@@ -27,6 +28,7 @@ app.use(express_1.default.json());
 app.use("/api/v1/user", users_1.userRouter);
 app.use("/api/v1/products", products_1.productsRouter);
 app.use("/api/v1/cart", authMiddleware_1.default, cart_1.cartRouter);
+app.use("/api/v1/orders", authMiddleware_1.default, orders_1.orderRouter);
 //app.use("/api/v1/wishlist", wishListRouter)
 app.listen(3000, () => {
     console.log("The server is listening on port 3000");

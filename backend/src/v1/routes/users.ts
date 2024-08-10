@@ -294,21 +294,26 @@ userRouter.put("/delivery", authMiddleware, async (req: AuthenticatedRequest, re
 })
 
 userRouter.get("/getuser", async(req, res)=>{
-    const user = await prisma.user.findMany({
-        select:{
-            id:true
-        }
+    const token = req.cookies?.Secret_Auth_token
+    //console.log(token)
+    if (!token) return res.status(200).json({
+        message: "No token found!"
     })
-    //console.log(user)
-    if(!user) return res.status(404).json({message:"No user found"})
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload
     const userObj = await prisma.user.findUnique({
         where:{
-            id:user[0].id
+            id:decodedToken.userId
         }
     })
     //console.log(userObj)
     res.status(200).json({
         userName:userObj?.username,
-        userEmail:userObj?.email
+        userEmail:userObj?.email,
+        userAddress:userObj?.address,
+        userDistrict:userObj?.District,
+        userState:userObj?.state,
+        userPincode:userObj?.pincode,
+        userPhoneNumber:userObj?.phoneNumber
+        
     })
-})
+ })

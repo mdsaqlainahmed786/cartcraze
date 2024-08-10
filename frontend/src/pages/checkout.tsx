@@ -6,19 +6,25 @@ import { useNavigate } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useRecoilState } from "recoil";
+import { emailState, usernameState } from "../RecoilStateProviders/UserDetails";
+import ReviewAndPay from "../Components/ReviewAndPay";
 function Checkout() {
   const navigate = useNavigate();
+  const userName = useRecoilState(usernameState);
+  const userEmail = useRecoilState(emailState)
   const [cartItems, setCartItems] = useState([]);
   const [disableSaveBtn, setDisableSaveBtn] = useState(true);
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [enableProceedToPay, setEnableProceedToPay] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [priceAfterDiscount, setPriceAfterDiscount] = useState(0);
   const [deliveryDetails, setDeliveryDetails] = useState({
     address: "",
     phoneNumber: "",
     pinCode: "",
-    state: "Telangana",
-    district: "Hyderabad",
+    state: "",
+    district: "",
   });
   const onDetailsHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -53,7 +59,6 @@ function Checkout() {
           },
         });
       }
-        toast.success("Delivery Details Saved Successfully");
     } catch (error) {
       console.error(error);
     } finally {
@@ -91,6 +96,7 @@ function Checkout() {
       sessionId: session.sessionId,
     });
     console.log(result);
+
   };
   useEffect(() => {
     const token = Cookies.get("Secret_Auth_token");
@@ -133,7 +139,7 @@ function Checkout() {
 
         <div className="flex justify-center items-center">
           <div className="flex justify-center items-center bg-gray-800 mx-5 text-white rounded-full p-2 px-5 my-5 md:max-w-[40vw] text-[10px] lg:text-lg">
-            Get Flat 10% off on any orders, Use coupon CARTCRAZE10
+            Get Flat 20% OFF on first order, Use coupon CARTCRAZE20
           </div>
         </div>
 
@@ -151,7 +157,7 @@ function Checkout() {
                       type="text"
                       placeholder="Enter your name"
                       className="w-full border-2 p-1 focus-none outline-none rounded-md pr-10 md:py-2 read-only:bg-gray-100"
-                      value={localStorage.getItem("username")!}
+                      value={userName[0]}
                       readOnly
                     />
                   </div>
@@ -161,7 +167,7 @@ function Checkout() {
                       type="email"
                       placeholder="Enter your Email"
                       className="w-full border-2 p-1 focus-none outline-none rounded-md pr-10 md:py-2 read-only:bg-gray-100"
-                      value={localStorage.getItem("email")!}
+                      value={userEmail[0]}
                       readOnly
                     />
                   </div>
@@ -223,7 +229,14 @@ function Checkout() {
                     <input
                       type="text"
                       value={deliveryDetails.state}
-                      readOnly
+                      onChange={(e)=>{
+                         setDeliveryDetails({
+                          ...deliveryDetails,
+                          state: e.target.value,
+                        }); 
+                      }}
+                      required
+                      placeholder="State"
                       className="w-full border-2 p-1 focus-none outline-none rounded-md pr-10 md:py-2 read-only:bg-gray-100"
                     />
                   </div>
@@ -231,9 +244,16 @@ function Checkout() {
                     <label className="text-sm text-neutral-700">District</label>
                     <input
                       type="text"
-                      placeholder=""
+                      placeholder="District"
                       value={deliveryDetails.district}
-                      readOnly
+                      onChange={(e)=>{
+                         setDeliveryDetails({
+                          ...deliveryDetails,
+                          district: e.target.value,
+                        }); 
+                      }}
+                      required
+                    
                       className="w-full border-2 p-1 focus-none outline-none rounded-md pr-10 md:py-2 read-only:bg-gray-100"
                     />
                   </div>
@@ -276,64 +296,15 @@ function Checkout() {
         <div className="mx-8">
           <span className="text-xl font-semibold">2.Review & pay</span>
         </div>
-        <div className="max-w-[85vw] mx-auto w-full flex justify-center items-center md:max-w-[50vw]">
-          <div className="w-full space-y-2 border-2 mt-5 p-4 rounded-md shadow-md">
-            <div className="flex w-full justify-between text-sm">
-              <span>Cart Total ({cartItems?.length})</span>
-              <span>₹{totalPrice}/-</span>
-            </div>
-            <div className="flex w-full justify-between text-sm">
-              <span>Tax (5%)</span>
-              <span>₹{taxAmount.toFixed(0)}/-</span>
-            </div>
-            <div className="flex w-full justify-between text-sm">
-              <span>Shipping</span>
-              <span>FREE</span>
-            </div>
-            <div className="flex space-x-1 pt-3 justify-center items-center">
-              <button className="bg-gray-800 text-white p-0.5 px-4 rounded-sm hover:bg-black">
-                Apply
-              </button>
-              <input
-                className="text-center border-2 focus-none outline-none"
-                type="text"
-                placeholder="Coupon Code"
-              />
-            </div>
-            <div className="hidden justify-center items-center">
-              <span className="text-sm text-red-500">Invalid Coupon</span>
-            </div>
-            <div className="flex w-full justify-between text-sm text-green-600">
-              <span>Coupon Discount</span>
-              <span>-₹1299/-</span>
-            </div>
-            <hr />
-            <div className="flex justify-between w-full font-semibold text-lg">
-              <div className="flex flex-col justify-center items-center -space-y-1.5">
-                <span>Payable Amount</span>
-                <span className="text-[13px] text-neutral-600">
-                  (Includes Taxes)
-                </span>
-              </div>
-              <span>₹{payableAmount.toFixed(0)}/-</span>
-            </div>
-            <hr />
-            <div className="flex bg-white pt-1 justify-center max-w-[90vw]">
-              <div className="flex justify-between space-x-3 items-center md:space-x-16">
-                <span className="font-semibold">
-                  Total Payment: ₹{payableAmount.toFixed(0)}/-
-                </span>
-                <button
-                  disabled={!enableProceedToPay}
-                  onClick={onProceedToPay}
-                  className="bg-gray-800 text-[13px] px-2 w-36 text-white py-2 rounded-full hover:bg-black md:text-lg disabled:opacity-70 disabled:cursor-not-allowed"
-                >
-                  Proceed to Pay
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+      <ReviewAndPay
+      onProceedToPay={onProceedToPay}
+      totalPrice={totalPrice}
+      priceAfterDiscount={priceAfterDiscount}
+      setPriceAfterDiscount={setPriceAfterDiscount} 
+      taxAmount={taxAmount}
+      payableAmount={payableAmount}
+      enableProceedToPay={enableProceedToPay}
+      />
       </div>
       <FooterComp />
     </>

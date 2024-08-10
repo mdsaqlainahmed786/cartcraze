@@ -172,7 +172,7 @@ function Navbar() {
                 <>
                   <UserProfile
                     className={
-                      "hidden -right-28 bg-white z-[999] h-40 w-[20rem] absolute pl-4 py-2 text-[19px] -ml-5 mt-1 shadow-xl rounded-lg group-hover:block"
+                      "hidden -right-28 bg-white z-[999] h-48 w-[20rem] absolute pl-4 py-2 text-[19px] -ml-5 mt-1 shadow-xl rounded-lg group-hover:block"
                     }
                     username={userName}
                     email={userEmail}

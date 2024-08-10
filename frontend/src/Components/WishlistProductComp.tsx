@@ -13,7 +13,7 @@ interface WishListProps {
   imgSrc: string;
   newPrice: number;
   oldPrice: number;
-  onRemove:()=>void
+  onRemove?:()=>void
 }
 function WishlistProductComp({
   title,
