@@ -7,8 +7,33 @@ import axios from "axios";
 import gifLoader from "../assets/loader.gif";
 function Success() {
   const [loader, setLoader] = useState<boolean>(true);
+  const [isPaymentSession, setIsPaymentSession]=useState(false);
 
-  const isMounted = useRef(false);
+  const userDetails = async () => {
+    try {
+      
+      const response = await axios.get(
+        "http://localhost:3000/api/v1/user/getuser",
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(response.data);
+      if(!response.data.userPaymentSession) {
+       console.log("No payment session found")
+       setIsPaymentSession(false)
+       window.location.href = "/";
+       return;
+      }
+      setIsPaymentSession(true) 
+    } catch (error: unknown) {
+      if (error?.response.status === 400) {
+        window.location.href = "/";
+        console.log(error)
+      }
+      console.error(error);
+    } 
+  }
   const orderRouter = async () => {
     try {
       setLoader(true);
@@ -25,7 +50,7 @@ function Success() {
       
     } catch (error:unknown) {
       if(error?.response.status === 400){
-        window.location.href = "/";
+       window.location.href = "/";
       }
       console.error(error);
     } finally {
@@ -34,11 +59,17 @@ function Success() {
   };
 
   useEffect(() => {
-    if (!isMounted.current) {
-      orderRouter();
-      isMounted.current = true;
-    }
+      userDetails()
+    
   }, []);
+
+  useEffect(()=>{
+    if(isPaymentSession){
+      orderRouter()
+    }
+  },[isPaymentSession])
+
+
   if (loader) {
     return (
       <>

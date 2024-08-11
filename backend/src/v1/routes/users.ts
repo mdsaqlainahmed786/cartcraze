@@ -330,7 +330,8 @@ userRouter.get("/getuser", async (req, res) => {
             userDistrict: userObj.District,
             userState: userObj.state,
             userPincode: userObj.pincode,
-            userPhoneNumber: userObj.phoneNumber
+            userPhoneNumber: userObj.phoneNumber,
+            userPaymentSession: userObj.paymentSession
         });
     } catch (error) {
         console.error(error);

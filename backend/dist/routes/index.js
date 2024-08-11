@@ -28,7 +28,7 @@ app.use(express_1.default.json());
 app.use("/api/v1/user", users_1.userRouter);
 app.use("/api/v1/products", products_1.productsRouter);
 app.use("/api/v1/cart", authMiddleware_1.default, cart_1.cartRouter);
-app.use("/api/v1/orders", authMiddleware_1.default, orders_1.orderRouter);
+app.use("/api/v1/orders", orders_1.orderRouter);
 //app.use("/api/v1/wishlist", wishListRouter)
 app.listen(3000, () => {
     console.log("The server is listening on port 3000");

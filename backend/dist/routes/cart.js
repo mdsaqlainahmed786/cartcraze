@@ -205,7 +205,9 @@ exports.cartRouter.delete("/deleteall", (req, res) => __awaiter(void 0, void 0, 
     }
 }));
 exports.cartRouter.post("/create-checkout-session", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _h, _j;
     const products = req.body.products;
+    console.log((_h = req.user) === null || _h === void 0 ? void 0 : _h.userId, "THIS IS SHIT>>>>>>>>");
     try {
         const lineItems = products.map((item) => ({
             price_data: {
@@ -239,6 +241,9 @@ exports.cartRouter.post("/create-checkout-session", (req, res) => __awaiter(void
             mode: 'payment',
             success_url: 'http://localhost:5173/success',
             cancel_url: 'http://localhost:5173',
+            metadata: {
+                userId: (_j = req.user) === null || _j === void 0 ? void 0 : _j.userId
+            }
         });
         res.json({ sessionId: session.id });
     }
@@ -248,8 +253,8 @@ exports.cartRouter.post("/create-checkout-session", (req, res) => __awaiter(void
     }
 }));
 exports.cartRouter.get("/buy-now", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _h;
-    const userId = (_h = req.user) === null || _h === void 0 ? void 0 : _h.userId;
+    var _k;
+    const userId = (_k = req.user) === null || _k === void 0 ? void 0 : _k.userId;
     if (!userId)
         return res.status(401).json({ message: "unauthorized!" });
     try {

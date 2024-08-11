@@ -25,18 +25,17 @@ export const paymentMiddleware = async (req: AuthenticatedRequest, res: Response
             isVerified: decodedToken.isVerified,
         };
 
-        console.log(req.user);
-
-        // Check if the user is verified
         if (!req.user.isVerified) return res.status(401).json({ message: "Unauthorized" });
 
-        // Retrieve the paymentSession directly from the database
         const user = await prisma.user.findUnique({
             where: { id: req.user.userId },
             select: { paymentSession: true },
         });
+        console.log(user?.paymentSession);
 
-        if (!user) return res.status(401).json({ message: "Please pay to proceed" });
+        if (!user) {
+            return res.status(401).json({ message: "Please pay to proceed" });
+        }
 
         next();
     } catch (err) {

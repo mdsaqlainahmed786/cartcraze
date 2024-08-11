@@ -330,7 +330,8 @@ exports.userRouter.get("/getuser", (req, res) => __awaiter(void 0, void 0, void 
             userDistrict: userObj.District,
             userState: userObj.state,
             userPincode: userObj.pincode,
-            userPhoneNumber: userObj.phoneNumber
+            userPhoneNumber: userObj.phoneNumber,
+            userPaymentSession: userObj.paymentSession
         });
     }
     catch (error) {

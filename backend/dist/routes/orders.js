@@ -16,9 +16,29 @@ exports.orderRouter = void 0;
 const client_1 = require("@prisma/client");
 const express_1 = __importDefault(require("express"));
 const paymentMiddleware_1 = require("./middlewares/paymentMiddleware");
+const authMiddleware_1 = __importDefault(require("./middlewares/authMiddleware"));
 exports.orderRouter = express_1.default.Router();
 const prisma = new client_1.PrismaClient();
 exports.orderRouter.use(express_1.default.json());
+exports.orderRouter.post('/update-payment-status', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userId, paymentStatus } = req.body;
+    console.log(req.body, "THIS IS DSMNN REQUEST BODY");
+    if (!userId || !paymentStatus) {
+        return res.status(400).json({ error: 'Missing userId or paymentStatus' });
+    }
+    try {
+        const updatedUser = yield prisma.user.update({
+            where: { id: userId },
+            data: { paymentSession: true },
+        });
+        res.status(200).json({ message: 'Payment status updated successfully', user: updatedUser });
+    }
+    catch (error) {
+        console.error('Error updating payment status:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}));
+exports.orderRouter.use(authMiddleware_1.default);
 exports.orderRouter.get("/getorders", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
@@ -58,6 +78,13 @@ exports.orderRouter.post("/add", paymentMiddleware_1.paymentMiddleware, (req, re
         if (!cartItems.length) {
             return res.status(400).json({ message: "No items in the cart" });
         }
+        const user = yield prisma.user.findUnique({
+            where: { id: userId },
+        });
+        //   //  console.log(user?.paymentSession);  false
+        //     if (!user?.paymentSession) {
+        //         return res.status(400).json({ message: "Please pay to proceed" });
+        //     }
         const orders = yield prisma.$transaction(cartItems === null || cartItems === void 0 ? void 0 : cartItems.map((item) => prisma.order.create({
             data: {
                 userId,
@@ -66,6 +93,7 @@ exports.orderRouter.post("/add", paymentMiddleware_1.paymentMiddleware, (req, re
                 quantity: item.quantity,
             },
         })));
+        // Reset the payment session to false after placing the order
         yield prisma.user.update({
             where: { id: userId },
             data: { paymentSession: false },
@@ -78,23 +106,5 @@ exports.orderRouter.post("/add", paymentMiddleware_1.paymentMiddleware, (req, re
     catch (error) {
         console.error("Error placing order:", error);
         res.status(500).json({ message: "Internal Server Error" });
-    }
-}));
-exports.orderRouter.post('/update-payment-status', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { userId, paymentStatus } = req.body;
-    if (!userId || !paymentStatus) {
-        return res.status(400).json({ error: 'Missing userId or paymentStatus' });
-    }
-    try {
-        // Update the user's payment status in the database
-        const updatedUser = yield prisma.user.update({
-            where: { id: userId },
-            data: { paymentSession: true },
-        });
-        res.status(200).json({ message: 'Payment status updated successfully', user: updatedUser });
-    }
-    catch (error) {
-        console.error('Error updating payment status:', error);
-        res.status(500).json({ error: 'Internal server error' });
     }
 }));

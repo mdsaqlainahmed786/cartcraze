@@ -28,17 +28,16 @@ const paymentMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, 
             email: decodedToken.email,
             isVerified: decodedToken.isVerified,
         };
-        console.log(req.user);
-        // Check if the user is verified
         if (!req.user.isVerified)
             return res.status(401).json({ message: "Unauthorized" });
-        // Retrieve the paymentSession directly from the database
         const user = yield prisma.user.findUnique({
             where: { id: req.user.userId },
             select: { paymentSession: true },
         });
-        if (!user)
+        console.log(user === null || user === void 0 ? void 0 : user.paymentSession);
+        if (!user) {
             return res.status(401).json({ message: "Please pay to proceed" });
+        }
         next();
     }
     catch (err) {

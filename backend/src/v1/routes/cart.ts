@@ -196,6 +196,8 @@ cartRouter.delete("/deleteall", async (req: AuthenticatedRequest, res: Response)
 cartRouter.post("/create-checkout-session", async (req: AuthenticatedRequest, res: Response) => {
     const products = req.body.products;
 
+    console.log(req.user?.userId, "THIS IS SHIT>>>>>>>>")
+
     try {
         const lineItems = products.map((item: any) => ({
             price_data: {
@@ -232,6 +234,10 @@ cartRouter.post("/create-checkout-session", async (req: AuthenticatedRequest, re
             mode: 'payment',
             success_url: 'http://localhost:5173/success',
             cancel_url: 'http://localhost:5173',
+            metadata:{
+                userId: req.user?.userId
+            }
+            
         });
         res.json({ sessionId: session.id });
     } catch (error) {

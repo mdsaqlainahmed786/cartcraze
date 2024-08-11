@@ -66,6 +66,31 @@ function Checkout() {
     }
   };
   useEffect(() => {
+    const token = Cookies.get("Secret_Auth_token");
+    if(token){
+      const getUserDetails = async () => {
+        try{
+          const response = await axios.get("http://localhost:3000/api/v1/user/getuser", {
+            withCredentials: true
+          });
+          console.log(response.data);
+          setDeliveryDetails({
+            address: response.data.userAddress,
+            phoneNumber: response.data.userPhoneNumber,
+            pinCode: response.data.userPincode,
+            state: response.data.userState,
+            district: response.data.userDistrict
+          });
+        } catch (error) {
+          console.error(error);
+        }
+    }
+    getUserDetails();
+    
+  }
+}, []);
+  useEffect(() => {
+    
     if (
       deliveryDetails.address !== "" &&
       deliveryDetails.phoneNumber !== "" &&
@@ -176,6 +201,7 @@ function Checkout() {
                   <label className="text-sm text-neutral-700">Address</label>
                   <textarea
                     placeholder="Enter your Address"
+                    value={deliveryDetails.address}
                     className="w-full border-2 p-1 focus-none outline-none rounded-md pr-10 md:py-2"
                     onChange={(e) => {
                       setDeliveryDetails({
@@ -194,6 +220,7 @@ function Checkout() {
                     <input
                       type="tel"
                       id="phone"
+                      value={deliveryDetails.phoneNumber}
                       pattern="[0-9]{10}"
                       placeholder="Phone number"
                       className="w-full border-2 p-1 focus-none outline-none rounded-md pr-10 md:py-2"
@@ -212,6 +239,7 @@ function Checkout() {
                       type="text"
                       pattern="[0-9]{6}"
                       placeholder="Enter PinCode"
+                      value={deliveryDetails.pinCode}
                       className="w-full border-2 p-1 focus-none outline-none rounded-md pr-10 md:py-2"
                       onChange={(e) => {
                         setDeliveryDetails({

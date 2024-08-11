@@ -14,8 +14,6 @@ if(!endpointSecret){
 }
 
 app.post("/api/webhook",express.raw({type: 'application/json'}), (request:Request, response:Response)=>{
-
-    // stripe webhook call karna....
     const sig = request.headers['stripe-signature'];
 
   let event;
@@ -30,22 +28,29 @@ app.post("/api/webhook",express.raw({type: 'application/json'}), (request:Reques
   // Handle the event
   switch (event.type) {
     case 'payment_intent.succeeded':
-      const paymentIntentSucceeded = event.data.object;
+    
+    
+      break;
+    // ... handle other event types
+
+    case 'checkout.session.completed':
+      const session = event.data.object;
+      console.log(session, "BETCH>>>")
       // Then define and call a function to handle the event payment_intent.succeeded
       //@ts-ignore
       const updatePaymentStatus = async (userId, paymentStatus) => {
         try {
             await axios.post('http://localhost:3000/api/v1/orders/update-payment-status', {
                 userId,
-                paymentStatus:paymentIntentSucceeded,
+                paymentStatus:session,
             });
+            console.log(userId, paymentStatus);
         } catch (error) {
             console.error('Failed to update payment status:', error);
         }
     };
-    updatePaymentStatus(paymentIntentSucceeded.metadata.userId, 'succeeded');
-      break;
-    // ... handle other event types
+    updatePaymentStatus(session.metadata.userId, 'succeeded');
+      
     default:
       console.log(`Unhandled event type ${event.type}`);
   }
