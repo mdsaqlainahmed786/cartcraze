@@ -101,11 +101,11 @@ function MobileFilters({ productCategory, onFilterOpen, setProducts }: FilterPro
   };
 
   return (
-    <>
-      <div className="flex flex-col border-b-2 pb-3 border-black">
-        <div className="flex justify-between mx-auto w-[40vw] items-center mt-3">
+    <div>
+      <div className="flex flex-col border-b-2 pb-3 sticky bg-white shadow-md top-0 z-50 border-black">
+        <div className="flex justify-between mx-auto   items-center mt-3">
           <div>
-            <span className="text-3xl font-semibold">Filters</span>
+            <span className="text-3xl font-semibold mr-10">Filters</span>
           </div>
           <div onClick={clearFilters} className="text-3xl cursor-pointer">
             <FaFilterCircleXmark />
@@ -169,7 +169,7 @@ function MobileFilters({ productCategory, onFilterOpen, setProducts }: FilterPro
           </button>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

@@ -5,7 +5,7 @@ import FooterComp from "../../Components/FooterComp";
 import CategoryProduct from "../../Components/CategoryProduct";
 import "../../index.css";
 import gifLoader from "../../assets/loader.gif";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import Filter from "../../Components/Filter";
 import MobileFilters from "../../Components/MobileFilters";
@@ -32,8 +32,10 @@ function Products() {
   const [loader, setLoader] = useState(false);
   const location = useLocation();
   const { productCategory } = useParams();
-  useEffect(() => {
-    const fetchProducts = async(queryParams: string) => {
+
+  // Memoize the fetchProducts function with useCallback
+  const fetchProducts = useCallback(
+    async (queryParams: string) => {
       setLoader(true);
       try {
         const response = await axios.get(
@@ -49,11 +51,15 @@ function Products() {
       } finally {
         setLoader(false);
       }
-    };
+    },
+    [productCategory]
+  );
 
-    const queryParams = location.search;
-    fetchProducts(queryParams);
-    // console.log(fetchingCategory)
+  useEffect(() => {
+    fetchProducts(location.search);
+  }, [location.search]);
+
+  useEffect(() => {
     const handleResize = () => {
       setIsMdScreen(window.innerWidth <= 1023);
     };
@@ -70,13 +76,11 @@ function Products() {
       window.removeEventListener("resize", handleResize);
       document.body.classList.remove("no-scroll");
     };
-  }, [mobileFilter, isMdScreen, location.search, productCategory, products.length]);
+  }, [mobileFilter, isMdScreen]);
 
   const onFilterOpen = () => {
     setMobileFilter(!mobileFilter);
   };
-
- // const category = products.length > 0 ? products[0].category : "";
 
   return (
     <>
@@ -86,7 +90,7 @@ function Products() {
           <img src={gifLoader} alt="loader" />
         </div>
       )}
-      
+
       {error && (
         <div className="flex flex-col justify-center items-center h-[80vh] mx-auto">
           <img
@@ -139,28 +143,31 @@ function Products() {
             />
           ))}
           {productslength === 0 && !loader && !error && (
-        <div className="flex  flex-col justify-center items-center h-[80vh]">
-          <img  className="h-[25vh] md:h-[40vh]" src={noProducts} alt="no products" />
-          <span className="text-[18px] text-neutral-500">
-            No products found with these filters
-            </span>
+            <div className="flex flex-col justify-center items-center h-[80vh]">
+              <img
+                className="h-[25vh] md:h-[40vh]"
+                src={noProducts}
+                alt="no products"
+              />
+              <span className="text-[18px] text-neutral-500">
+                No products found with these filters
+              </span>
             </div>
-            )}
+          )}
         </div>
       </div>
       <div
-        className={`bottom-16 overflow-y-scroll transition-transform duration-300 rounded-lg ${
-          mobileFilter
-            ? "sticky transform translate-y-0"
-            : "hidden transform translate-y-full"
-        } h-[60vh] w-full bg-white z-40 lg:hidden`}
-      >
-        <MobileFilters
-          productCategory={productCategory}
-          onFilterOpen={onFilterOpen}
-          setProducts={setProducts}
-        />
-      </div>
+  className={`fixed bottom-0 overflow-y-scroll transition-all duration-300 rounded-lg transform ${
+    mobileFilter ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
+  } h-[60vh] w-full bg-white z-40 lg:hidden`}
+>
+  <MobileFilters
+    productCategory={productCategory}
+    onFilterOpen={onFilterOpen}
+    setProducts={setProducts}
+  />
+</div>
+
       <FooterComp />
     </>
   );
