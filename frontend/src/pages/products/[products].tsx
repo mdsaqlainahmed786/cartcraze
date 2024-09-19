@@ -5,8 +5,8 @@ import FooterComp from "../../Components/FooterComp";
 import CategoryProduct from "../../Components/CategoryProduct";
 import "../../index.css";
 import gifLoader from "../../assets/loader.gif";
-import { useState, useEffect, useCallback } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useLocation, useParams } from "react-router-dom";
 import Filter from "../../Components/Filter";
 import MobileFilters from "../../Components/MobileFilters";
 import noProducts from "../../assets/noproducts.png";
@@ -32,32 +32,28 @@ function Products() {
   const [loader, setLoader] = useState(false);
   const location = useLocation();
   const { productCategory } = useParams();
-
-  // Memoize the fetchProducts function with useCallback
-  const fetchProducts = useCallback(
-    async (queryParams: string) => {
-      setLoader(true);
-      try {
-        const response = await axios.get(
-          `http://localhost:3000/api/v1/products/category/${productCategory}${queryParams}`
-        );
-        setProducts(response.data.categorySpecificProducts);
-        setProductsLength(response.data.categorySpecificProducts.length);
-        setError(false);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-        setError(true);
-        setLoader(false);
-      } finally {
-        setLoader(false);
-      }
-    },
-    [productCategory]
-  );
+  const fetchProducts = async (queryParams: string) => {
+    setLoader(true);
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/v1/products/category/${productCategory}${queryParams}`
+      );
+      setProducts(response.data.categorySpecificProducts);
+      setProductsLength(response.data.categorySpecificProducts.length);
+      setError(false);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      setError(true);
+      setLoader(false);
+    } finally {
+      setLoader(false);
+    }
+  };
 
   useEffect(() => {
-    fetchProducts(location.search);
-  }, [location.search]);
+    const searchQuery = location.search;
+    fetchProducts(searchQuery);
+  }, [location.search, productCategory]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -109,7 +105,7 @@ function Products() {
       )}
       <div className={`flex flex-col ${error || loader ? "hidden" : ""}`}>
         <div className={`flex flex-row justify-between items-center p-3`}>
-          <div>Home &#10095; Products &#10095; Mens'wear</div>
+          <div><Link to="/" className="cursor-pointer hover:underline">Home &#10095; </Link>{productCategory}</div>
           <div
             onClick={onFilterOpen}
             className="text-3xl cursor-pointer lg:hidden"
@@ -157,16 +153,18 @@ function Products() {
         </div>
       </div>
       <div
-  className={`fixed bottom-0 overflow-y-scroll transition-all duration-300 rounded-lg transform ${
-    mobileFilter ? "translate-y-0 opacity-100" : "translate-y-full opacity-0"
-  } h-[60vh] w-full bg-white z-40 lg:hidden`}
->
-  <MobileFilters
-    productCategory={productCategory}
-    onFilterOpen={onFilterOpen}
-    setProducts={setProducts}
-  />
-</div>
+        className={`fixed bottom-0 overflow-y-scroll transition-all duration-300 rounded-lg transform ${
+          mobileFilter
+            ? "translate-y-0 opacity-100"
+            : "translate-y-full opacity-0"
+        } h-[60vh] w-full bg-white z-40 lg:hidden`}
+      >
+        <MobileFilters
+          productCategory={productCategory}
+          onFilterOpen={onFilterOpen}
+          setProducts={setProducts}
+        />
+      </div>
 
       <FooterComp />
     </>

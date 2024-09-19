@@ -154,7 +154,7 @@ function MobileFilters({ productCategory, onFilterOpen, setProducts }: FilterPro
           setMaxVal={setMaxVal}
           errMsg={errMsg}
         /> */}
-        <div className="w-full flex justify-end items-center space-x-5 pt-5">
+        <div className="w-full flex justify-end items-center space-x-5 pt-5 pb-[62px]">
           <button
             onClick={onFilterOpen}
             className="p-2 font-semibold border border-black rounded-md text-lg"

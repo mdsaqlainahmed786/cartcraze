@@ -1,14 +1,38 @@
-import { useEffect } from "react";
-import featured_1 from "../../assets/featured_1.webp";
-import FeaturedProductComp from "./FeaturedProductComp";
+import { useEffect, useState } from "react";
 import "aos/dist/aos.css";
 import AOS from 'aos'
+import axios from "axios";
+import CategoryProduct from "../CategoryProduct";
 function FeaturedProducts() {
+  
+  interface Product {
+    id: string;
+    title: string;
+    category: string;
+    newPrice: number;
+    oldPrice: number;
+    images: string[];
+    sizes: string[];
+    color: string;
+  }
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/api/v1/products/all"
+      );
+      setFeaturedProducts(response.data.products);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  }
   useEffect(() => {
+    fetchProducts()
     AOS.init({
-      duration: 600, // Animation duration in milliseconds // Whether animation should happen only once - while scrolling down
+      duration: 600, 
     });
   }, []);
+  const products = featuredProducts.slice(-4);
   return (
     <div
       className="pb-24 mx-auto max-w-[80vw] space-y-3 aos-init aos-animate"
@@ -22,42 +46,19 @@ function FeaturedProducts() {
         Checkout our products which has been loved by our users across our
         Business
       </span>
-      <div className="flex flex-wrap gap-8 justify-center mx-auto max-w-[80vw]">
-        <FeaturedProductComp
-          image={featured_1}
-          title="Marvel T-shirt"
-          category="T-SHIRT"
-          oldPrice="699"
-          newPrice="549"
-        />
-        <FeaturedProductComp
-          image={featured_1}
-          title="Marvel T-shirt"
-          category="T-SHIRT"
-          oldPrice="699"
-          newPrice="549"
-        />
-        <FeaturedProductComp
-          image={featured_1}
-          title="Marvel T-shirt"
-          category="T-SHIRT"
-          oldPrice="699"
-          newPrice="549"
-        />
-        <FeaturedProductComp
-          image={featured_1}
-          title="Marvel T-shirt"
-          category="T-SHIRT"
-          oldPrice="699"
-          newPrice="549"
-        />
-        <FeaturedProductComp
-          image={featured_1}
-          title="Marvel T-shirt"
-          category="T-SHIRT"
-          oldPrice="699"
-          newPrice="549"
-        />
+      <div className="flex flex-wrap gap-8 justify-center mx-auto max-w-[70vw] md:flex-nowrap">
+      {products.map((product) => (
+            <CategoryProduct
+              key={product.id}
+              category={product.category}
+              imageSrc={product.images[0]}
+              newPrice={product.newPrice}
+              oldPrice={product.oldPrice}
+              title={product.title}
+              sizes={product.sizes}
+              color={product.color}
+            />
+          ))}
       </div>
     </div>
   );

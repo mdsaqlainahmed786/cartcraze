@@ -1,10 +1,20 @@
 import { useState, useEffect } from "react";
-import men from "../../assets/mens'ware.webp";
-import women from "../../assets/women's_ware.webp";
-import FeaturedProductComp from "../Featuredprod/FeaturedProductComp";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import axios from "axios";
+import CategoryProduct from "../CategoryProduct";
 function NewArrivals() {
+  
+  interface Product {
+    id: string;
+    title: string;
+    category: string;
+    newPrice: number;
+    oldPrice: number;
+    images: string[];
+    sizes: string[];
+    color: string;
+  }
   // useEffect(() => {
   //   AOS.init({
   //     duration: 600, // Animation duration in milliseconds // Whether animation should happen only once - while scrolling down
@@ -12,11 +22,19 @@ function NewArrivals() {
   // }, []);
   const [menArrivals, setMenArrivals] = useState(true);
   const [womenArrivals, setWomenArrivals] = useState(false);
-  const menArrivalsHandler = () => {
+  const [menProducts, setMenProducts] = useState<Product[]>([]);
+  const [womenProducts, setWomenProducts] = useState<Product[]>([]);
+  const menArrivalsHandler = async() => {
     setMenArrivals(true);
+    const response = await axios.get("http://localhost:3000/api/v1/products/category/Men-Tshirt");
+    console.log("Mens products hai ji",response.data.categorySpecificProducts);
+    setMenProducts(response.data.categorySpecificProducts);
     setWomenArrivals(false);
   };
-  const womenArrivalsHandler = () => {
+  const womenArrivalsHandler = async() => {
+    const response = await axios.get("http://localhost:3000/api/v1/products/category/Women-Tops");
+    console.log("Women products hai ji",response.data.categorySpecificProducts);
+    setWomenProducts(response.data.categorySpecificProducts);
     setWomenArrivals(true);
     setMenArrivals(false);
   };
@@ -24,7 +42,12 @@ function NewArrivals() {
     AOS.init({
       duration: 600,
     });
+    if(menArrivals){
+      menArrivalsHandler();
+    }
   }, []);
+  const menRelatedProducts = menProducts.slice(0,4)
+  const womenRelatedProducts = womenProducts.slice(0,4)
   return (
     <div
       className="pb-24 mx-auto max-w-[80vw] space-y-3 aos-init aos-animate"
@@ -67,86 +90,42 @@ function NewArrivals() {
         </div>
       </div>
       <div
-        className={`flex pt-5 flex-wrap gap-8 justify-center mx-auto max-w-[80vw] ${
+        className={`flex pt-5 flex-wrap gap-8 justify-center mx-auto max-w-[80vw] md:flex-nowrap ${
           menArrivals ? "flex" : "hidden"
         }`}
       >
-        <FeaturedProductComp
-          image={men}
-          category="T-shirt"
-          oldPrice="599"
-          newPrice="499"
-          title="Gym Freak T-shirt"
-        />
-        <FeaturedProductComp
-          image={men}
-          category="T-shirt"
-          oldPrice="599"
-          newPrice="499"
-          title="Gym Freak T-shirt"
-        />
-        <FeaturedProductComp
-          image={men}
-          category="T-shirt"
-          oldPrice="599"
-          newPrice="499"
-          title="Gym Freak T-shirt"
-        />
-        <FeaturedProductComp
-          image={men}
-          category="T-shirt"
-          oldPrice="599"
-          newPrice="499"
-          title="Gym Freak T-shirt"
-        />
-        <FeaturedProductComp
-          image={men}
-          category="T-shirt"
-          oldPrice="599"
-          newPrice="499"
-          title="Gym Freak T-shirt"
-        />
+         {menRelatedProducts.map((product) => (
+            <CategoryProduct
+              key={product.id}
+              category={product.category}
+              imageSrc={product.images[0]}
+              newPrice={product.newPrice}
+              oldPrice={product.oldPrice}
+              title={product.title}
+              sizes={product.sizes}
+              color={product.color}
+            />
+          ))}
+ 
+      
       </div>
       <div
-        className={`flex pt-5 flex-wrap gap-8 justify-center mx-auto max-w-[80vw] ${
+        className={`flex pt-5 flex-wrap gap-8 justify-center mx-auto max-w-[80vw] md:flex-nowrap ${
           womenArrivals ? "flex" : "hidden"
         }`}
       >
-        <FeaturedProductComp
-          image={women}
-          category="T-shirt"
-          oldPrice="599"
-          newPrice="499"
-          title="Pink funk T-shirt"
-        />
-        <FeaturedProductComp
-          image={women}
-          category="T-shirt"
-          oldPrice="599"
-          newPrice="499"
-          title="Pink funk T-shirt"
-        />
-        <FeaturedProductComp
-          image={women}
-          category="T-shirt"
-          oldPrice="599"
-          newPrice="499"
-          title="Pink funk T-shirt"
-        />
-        <FeaturedProductComp
-          image={women}
-          category="T-shirt"
-          oldPrice="599"
-          newPrice="499"
-          title="Pink funk T-shirt"
-        />
-        <FeaturedProductComp
-          image={women}
-          category="T-shirt"
-          oldPrice="599"
-          newPrice="499"
-          title="Pink funk T-shirt"
-        />
+        {womenRelatedProducts.map((product) => (
+            <CategoryProduct
+              key={product.id}
+              category={product.category}
+              imageSrc={product.images[0]}
+              newPrice={product.newPrice}
+              oldPrice={product.oldPrice}
+              title={product.title}
+              sizes={product.sizes}
+              color={product.color}
+            />
+          ))}
       </div>
     </div>
   );

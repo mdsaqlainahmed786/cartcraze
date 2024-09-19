@@ -12,7 +12,7 @@ interface CategoryProductProps {
   category: string;
   newPrice: number;
   oldPrice: number;
-  sizes: string[];
+  sizes?: string[];
   color: string;
 }
 
