@@ -18,19 +18,24 @@ const express_1 = __importDefault(require("express"));
 const zod_1 = __importDefault(require("zod"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 const cors_1 = __importDefault(require("cors"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const mail_1 = __importDefault(require("@sendgrid/mail"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const authMiddleware_1 = __importDefault(require("./middlewares/authMiddleware"));
 exports.userRouter = express_1.default.Router();
 exports.userRouter.use((0, cookie_parser_1.default)());
-mail_1.default.setApiKey(process.env.SENDGRID_API_KEY);
 exports.userRouter.use((0, cors_1.default)({
     credentials: true,
     origin: "http://localhost:5173"
 }));
+const forgotPasswordLimiter = (0, express_rate_limit_1.default)({
+    windowMs: 1 * 60 * 1000, // 1 minute
+    max: 1, // Limit each IP to 1 request per windowMs
+    message: "Too many request. Please try again later.",
+    headers: true, // Send rate limit info in response headers
+});
 const transporter = nodemailer_1.default.createTransport({
     service: 'gmail',
     auth: {
@@ -203,7 +208,7 @@ exports.userRouter.post("/signin", (req, res) => __awaiter(void 0, void 0, void 
         });
     }
 }));
-exports.userRouter.post('/forgot_password', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.userRouter.post('/forgot_password', forgotPasswordLimiter, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email } = req.body;
     try {
         const userToResetPassword = yield prisma.user.findUnique({
@@ -216,21 +221,51 @@ exports.userRouter.post('/forgot_password', (req, res) => __awaiter(void 0, void
         }
         const resetPasswordToken = jsonwebtoken_1.default.sign({ userId: userToResetPassword.id, email: userToResetPassword.email }, process.env.JWT_SECRET, { expiresIn: '3m' });
         const verificationLink = `http://localhost:5173/reset_password/${resetPasswordToken}`;
-        const mail = {
-            to: email,
-            from: 'cartcrazeofficial786@gmail.com',
-            subject: 'Reset your password',
-            text: `Please verify your email to reset your password by clicking the following link, will expire in 3 minutes: ${verificationLink}`,
-            html: `<strong>Please verify your email to reset your password by clicking the following link, will expire in 3 minutes: <a href="${verificationLink}">Verify Email</a></strong>`,
-        };
-        mail_1.default.send(mail)
-            .then(() => {
-            res.status(200).json({ message: "The reset email verification has been sent to your mail!", resetPasswordToken });
-        })
-            .catch((error) => {
-            console.error(error);
-            res.status(400).json({ message: "Error sending email. Try again later.", error });
+        const transporter = nodemailer_1.default.createTransport({
+            service: 'gmail',
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure: false,
+            auth: {
+                user: process.env.EMAIL_USER, // Your Gmail address
+                pass: process.env.EMAIL_PASS // Your App password
+            }
         });
+        const mailOptions = {
+            from: {
+                name: 'CartCraze',
+                address: process.env.EMAIL_USER
+            }, // Sender address
+            to: email, // List of receivers
+            subject: 'Verify your email', // Subject line
+            text: `Please verify your email to reset your password by clicking the following link, will expire in 3 minutes: ${verificationLink}`, // Plain text body
+            html: `<strong>Please verify your email to reset your password by clicking the following link, will expire in 3 minutes: <a href="${verificationLink}">Verify Email</a></strong>`, // HTML body
+        };
+        const sendMail = (transporter, mailOptions) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                yield transporter.sendMail(mailOptions);
+            }
+            catch (error) {
+                console.error('Error sending email:', error);
+            }
+        });
+        sendMail(transporter, mailOptions);
+        // const mail = {
+        //     to: email,
+        //     from: 'cartcrazeofficial786@gmail.com',
+        //     subject: 'Reset your password',
+        //     text: `Please verify your email to reset your password by clicking the following link, will expire in 3 minutes: ${verificationLink}`,
+        //     html: `<strong>Please verify your email to reset your password by clicking the following link, will expire in 3 minutes: <a href="${verificationLink}">Verify Email</a></strong>`,
+        // };
+        // sgMail.send(mail)
+        //     .then(() => {
+        //         res.status(200).json({ message: "The reset email verification has been sent to your mail!", resetPasswordToken });
+        //     })
+        //     .catch((error) => {
+        //         console.error(error);
+        //         res.status(400).json({ message: "Error sending email. Try again later.", error });
+        //     });
+        res.status(200).json({ message: "The verification link has been sent to mail!" });
     }
     catch (err) {
         res.status(400).json({ message: "There was an error or the token is expired/invalid. Try again later.", err });

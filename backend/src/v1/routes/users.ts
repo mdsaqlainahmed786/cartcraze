@@ -4,16 +4,15 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import bcrypt from "bcrypt"
 import axios from "axios"
 import crypto from "crypto"
+import rateLimit from 'express-rate-limit';
 import cors from "cors"
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
-import sgMail from "@sendgrid/mail"
 import cookieParser from "cookie-parser"
 import path from "path"
 import authMiddleware from "./middlewares/authMiddleware";
 export const userRouter = express.Router();
 userRouter.use(cookieParser())
-sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
 userRouter.use(cors({
     credentials: true,
     origin: "http://localhost:5173"
@@ -24,6 +23,12 @@ interface AuthenticatedRequest extends Request {
         email: string
     }
 }
+const forgotPasswordLimiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minute
+    max: 1, // Limit each IP to 1 request per windowMs
+    message: "Too many request. Please try again later.",
+    headers: true, // Send rate limit info in response headers
+  });
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -207,7 +212,7 @@ userRouter.post("/signin", async (req: Request, res: Response) => {
     }
 });
 
-userRouter.post('/forgot_password', async (req: Request, res: Response) => {
+userRouter.post('/forgot_password', forgotPasswordLimiter, async (req: Request, res: Response) => {
     const { email } = req.body;
     try {
         const userToResetPassword = await prisma.user.findUnique({
@@ -221,22 +226,53 @@ userRouter.post('/forgot_password', async (req: Request, res: Response) => {
 
         const resetPasswordToken = jwt.sign({ userId: userToResetPassword.id, email: userToResetPassword.email }, process.env.JWT_SECRET as string, { expiresIn: '3m' });
         const verificationLink = `http://localhost:5173/reset_password/${resetPasswordToken}`;
-        const mail = {
-            to: email,
-            from: 'cartcrazeofficial786@gmail.com',
-            subject: 'Reset your password',
-            text: `Please verify your email to reset your password by clicking the following link, will expire in 3 minutes: ${verificationLink}`,
-            html: `<strong>Please verify your email to reset your password by clicking the following link, will expire in 3 minutes: <a href="${verificationLink}">Verify Email</a></strong>`,
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure: false,
+            auth: {
+                user: process.env.EMAIL_USER,  // Your Gmail address
+                pass: process.env.EMAIL_PASS   // Your App password
+            }
+        });
+
+        const mailOptions = {
+            from: {
+                name: 'CartCraze',
+                address: process.env.EMAIL_USER
+            }, // Sender address
+            to: email, // List of receivers
+            subject: 'Verify your email', // Subject line
+            text: `Please verify your email to reset your password by clicking the following link, will expire in 3 minutes: ${verificationLink}`, // Plain text body
+            html: `<strong>Please verify your email to reset your password by clicking the following link, will expire in 3 minutes: <a href="${verificationLink}">Verify Email</a></strong>`, // HTML body
         };
 
-        sgMail.send(mail)
-            .then(() => {
-                res.status(200).json({ message: "The reset email verification has been sent to your mail!", resetPasswordToken });
-            })
-            .catch((error) => {
-                console.error(error);
-                res.status(400).json({ message: "Error sending email. Try again later.", error });
-            });
+        const sendMail = async (transporter: any, mailOptions: any) => {
+            try {
+                await transporter.sendMail(mailOptions);
+            } catch (error) {
+                console.error('Error sending email:', error);
+            }
+        }
+        sendMail(transporter, mailOptions)
+        // const mail = {
+        //     to: email,
+        //     from: 'cartcrazeofficial786@gmail.com',
+        //     subject: 'Reset your password',
+        //     text: `Please verify your email to reset your password by clicking the following link, will expire in 3 minutes: ${verificationLink}`,
+        //     html: `<strong>Please verify your email to reset your password by clicking the following link, will expire in 3 minutes: <a href="${verificationLink}">Verify Email</a></strong>`,
+        // };
+
+        // sgMail.send(mail)
+        //     .then(() => {
+        //         res.status(200).json({ message: "The reset email verification has been sent to your mail!", resetPasswordToken });
+        //     })
+        //     .catch((error) => {
+        //         console.error(error);
+        //         res.status(400).json({ message: "Error sending email. Try again later.", error });
+        //     });
+        res.status(200).json({ message: "The verification link has been sent to mail!" });
     } catch (err) {
         res.status(400).json({ message: "There was an error or the token is expired/invalid. Try again later.", err });
     }

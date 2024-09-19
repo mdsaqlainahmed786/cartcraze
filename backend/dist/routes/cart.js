@@ -207,7 +207,6 @@ exports.cartRouter.delete("/deleteall", (req, res) => __awaiter(void 0, void 0, 
 exports.cartRouter.post("/create-checkout-session", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _h;
     const products = req.body.products;
-    // console.log(req.user?.userId, "THIS IS SHIT>>>>>>>>")
     try {
         const lineItems = products.map((item) => ({
             price_data: {

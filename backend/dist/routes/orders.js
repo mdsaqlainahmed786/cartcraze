@@ -30,7 +30,7 @@ const transporter = nodemailer_1.default.createTransport({
 });
 exports.orderRouter.post('/update-payment-status', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { userId, paymentStatus, receipt } = req.body;
-    console.log(req.body, "THIS IS DSMNN REQUEST BODY");
+    console.log(req.body, "THIS IS REQUEST BODY");
     if (!userId || !paymentStatus) {
         return res.status(400).json({ error: 'Missing userId or paymentStatus' });
     }
@@ -43,34 +43,38 @@ exports.orderRouter.post('/update-payment-status', (req, res) => __awaiter(void 
             where: { id: userId },
         });
         console.log("Payment receipt:", receipt);
-        // const transporter = nodemailer.createTransport({
-        //     service: 'gmail',
-        //     host: 'smtp.gmail.com',
-        //     port: 587,
-        //     secure: false,
-        //     auth: {
-        //         user: process.env.EMAIL_USER,  // Your Gmail address
-        //         pass: process.env.EMAIL_PASS   // Your App password
-        //     }
-        // });
-        // const mailOptions = {
-        //     from: {
-        //         name: 'CartCraze',
-        //         address: process.env.EMAIL_USER
-        //     }, // Sender address
-        //     to: user?.email, // List of receivers
-        //     subject: 'Payment Receipt', // Subject line
-        //     text: `Click on the link to view your order receipt.Thank you for shopping with us!`, // Plain text body
-        //     html: `<p>View your order receipt here: <a href="${receipt}">Go to receipt</a></p>`, // HTML body
-        // };
-        // const sendMail = async (transporter: any, mailOptions: any) => {
-        //     try {
-        //         await transporter.sendMail(mailOptions);
-        //     } catch (error) {
-        //         console.error('Error sending email:', error);
-        //     }
-        // }
-        // sendMail(transporter, mailOptions)
+        // Uncomment and use this code when you're ready to send emails
+        const transporter = nodemailer_1.default.createTransport({
+            service: 'gmail',
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure: false,
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
+            }
+        });
+        const mailOptions = {
+            from: {
+                name: 'CartCraze',
+                address: process.env.EMAIL_USER
+            },
+            to: user === null || user === void 0 ? void 0 : user.email,
+            subject: 'Payment Receipt',
+            text: `Click on the link to view your order receipt. Thank you for shopping with us!`,
+            html: `<p>Thank you for shopping with us, click on the link to view your order receipt: <a href="${receipt}">Get receipt</a></p>`,
+        };
+        //@ts-ignore
+        const sendMail = (transporter, mailOptions) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                yield transporter.sendMail(mailOptions);
+                console.log('Email sent successfully');
+            }
+            catch (error) {
+                console.error('Error sending email:', error);
+            }
+        });
+        yield sendMail(transporter, mailOptions);
         res.status(200).json({ message: 'Payment status updated successfully and the mail has been sent!', user: updatedUser });
     }
     catch (error) {

@@ -12,7 +12,7 @@ const NotFoundPage = () => {
       alt="404 Not Found"
     />
     <span className="text-neutral-500 text-[18px] text-center px-5">
-        The page you are looking for might have been removed or is temporarily unavailable.
+        The page you are looking for might have been removed or it is temporarily unavailable.
     </span>
     <button
       onClick={() => navigate("/")}

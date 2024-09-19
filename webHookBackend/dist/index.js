@@ -21,12 +21,8 @@ const endpointSecret = process.env.STRIPE_WEB_HOOK_SECRET;
 if (!endpointSecret) {
     throw new Error("Stripe Webhook Secret is not defined");
 }
-app.post("/api/webhook", express_1.default.raw({ type: 'application/json' }), (request, response) => {
+app.post("/api/webhook", express_1.default.raw({ type: 'application/json' }), (request, response) => __awaiter(void 0, void 0, void 0, function* () {
     const sig = request.headers['stripe-signature'];
-    let body = request.body.toString();
-    let parsedBody = JSON.parse(body);
-    const receipt = parsedBody.data.object.receipt_url;
-    console.log(receipt, "THIS IS MY RECIEPT>>>>>");
     let event;
     try {
         event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
@@ -37,32 +33,38 @@ app.post("/api/webhook", express_1.default.raw({ type: 'application/json' }), (r
     }
     // Handle the event
     switch (event.type) {
-        case 'payment_intent.succeeded':
-            break;
         case 'checkout.session.completed':
             const session = event.data.object;
-            const updatePaymentStatus = (userId, paymentStatus) => __awaiter(void 0, void 0, void 0, function* () {
+            // Retrieve the Charge or PaymentIntent to get the receipt URL
+            let receiptUrl;
+            if (session.payment_intent) {
+                const paymentIntent = yield stripe.paymentIntents.retrieve(session.payment_intent);
+                if (paymentIntent.latest_charge) {
+                    const charge = yield stripe.charges.retrieve(paymentIntent.latest_charge);
+                    receiptUrl = charge.receipt_url;
+                }
+            }
+            console.log("Receipt URL:", receiptUrl);
+            const updatePaymentStatus = (userId, paymentStatus, receipt) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
                     yield axios_1.default.post('http://localhost:3000/api/v1/orders/update-payment-status', {
                         userId,
                         paymentStatus: session,
-                        if(receipt) {
-                            receipt;
-                        }
+                        receipt: receiptUrl
                     });
-                    console.log(userId, paymentStatus);
+                    console.log(userId, paymentStatus, receiptUrl);
                 }
                 catch (error) {
                     console.error('Failed to update payment status:', error);
                 }
             });
-            updatePaymentStatus(session.metadata.userId, 'succeeded');
+            yield updatePaymentStatus(session.metadata.userId, 'succeeded', receiptUrl);
             break;
         default:
             console.log(`Unhandled event type ${event.type}`);
     }
     response.send();
-});
+}));
 app.listen(5001, () => {
     console.log("Server is running on port 5001");
 });

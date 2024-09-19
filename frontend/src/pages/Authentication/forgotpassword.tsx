@@ -1,13 +1,14 @@
 import TitlePng from "../../assets/Title.png";
 import reset from "../../assets/reset.png";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
-
+import Cookies from "js-cookie";
 function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false)
+  const navigate = useNavigate();
   //@ts-expect-error form event
   const onSubmitHandler = async (e) => {
     setLoading(true)
@@ -50,7 +51,24 @@ function ForgotPassword() {
           });
           //@ts-expect-error err
           console.log(err.response.data.message);
-        } else {
+          
+        } 
+        //@ts-expect-error err
+        else if(err.response && err.response.status === 429){
+          toast.error("Too many requests. Please try again later", {
+            style: {
+              border: "1px solid black",
+              padding: "16px",
+              color: "black",
+              marginTop: "75px",
+            },
+            iconTheme: {
+              primary: "black",
+              secondary: "white",
+            },
+          });
+        }
+        else {
           toast.error("An error occurred. Please try again.", {
             style: {
               border: "1px solid black",
@@ -69,6 +87,12 @@ function ForgotPassword() {
         setLoading(false)
       }
   };
+  useEffect(() => {
+    const token = Cookies.get("Secret_Auth_token");
+    if (token) {
+      navigate("/");
+    }
+  }, [navigate]);
   return (
     <>
       <div className="flex flex-col justify-center items-center h-screen">

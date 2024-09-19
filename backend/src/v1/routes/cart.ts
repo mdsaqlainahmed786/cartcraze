@@ -195,9 +195,6 @@ cartRouter.delete("/deleteall", async (req: AuthenticatedRequest, res: Response)
 })
 cartRouter.post("/create-checkout-session", async (req: AuthenticatedRequest, res: Response) => {
     const products = req.body.products;
-
-   // console.log(req.user?.userId, "THIS IS SHIT>>>>>>>>")
-
     try {
         const lineItems = products.map((item: any) => ({
             price_data: {

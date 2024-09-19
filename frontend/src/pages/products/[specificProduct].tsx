@@ -253,9 +253,6 @@ function ProductDetail() {
           <h1 className="text-3xl mt-5">Product not found</h1>
         </div>
       )}
-      <div className="flex flex-row justify-between items-center mx-5">
-        <div>Home &#10095; Products &#10095; Mens'wear</div>
-      </div>
       <div className="hidden lg:flex flex-row lg:justify-between mt-5">
         <ImageThumbnail
           images={slideImages}

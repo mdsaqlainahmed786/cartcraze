@@ -163,8 +163,8 @@ function Checkout() {
         </span>
 
         <div className="flex justify-center items-center">
-          <div className="flex justify-center items-center bg-gray-800 mx-5 text-white rounded-full p-2 px-5 my-5 md:max-w-[40vw] text-[10px] lg:text-lg">
-            Get Flat 20% OFF on first order, Use coupon CARTCRAZE20
+          <div className="flex justify-center items-center bg-gray-800 mx-5 text-white rounded-full p-2 px-5 my-5 md:max-w-[45vw] text-[13px] lg:text-lg">
+          We're almost there! Ready to make it yours?
           </div>
         </div>
 
