@@ -22,7 +22,7 @@ function Verify() {
     const verifyEmail = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/v1/user/verify/${Token}`,
+          `${import.meta.env.VITE_BACKEND_URL}/api/v1/user/verify/${Token}`,
           { withCredentials: true }
         );
         console.log(response);

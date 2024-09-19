@@ -44,7 +44,7 @@ function ProductDetail() {
       try {
         setBuyNowLoading(true)
         const response = await axios.post(
-           "http://localhost:3000/api/v1/cart/add",
+           `${import.meta.env.VITE_BACKEND_URL}/api/v1/cart/add`,
            {
              productId: product?.id,
              quantity: 1,
@@ -57,7 +57,7 @@ function ProductDetail() {
         setSelectedSize(response.data.item.size);
      //    console.log(response.data.message);
          const cartResponse = await axios.get(
-          "http://localhost:3000/api/v1/cart/getcart",
+          `${import.meta.env.VITE_BACKEND_URL}/api/v1/cart/getcart`,
           {
             withCredentials: true,
           }
@@ -108,7 +108,7 @@ function ProductDetail() {
       try {
         setCartLoading(true)
         const response = await axios.post(
-           "http://localhost:3000/api/v1/cart/add",
+           `${import.meta.env.VITE_BACKEND_URL}/api/v1/cart/add`,
            {
              productId: product?.id,
              quantity: 1,
@@ -134,7 +134,7 @@ function ProductDetail() {
         setSelectedSize(response.data.item.size);
      //    console.log(response.data.message);
          const cartResponse = await axios.get(
-          "http://localhost:3000/api/v1/cart/getcart",
+          `${import.meta.env.VITE_BACKEND_URL}/api/v1/cart/getcart`,
           {
             withCredentials: true,
           }
@@ -204,7 +204,7 @@ function ProductDetail() {
     const productFetcher = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/v1/products/get/${productName}`
+          `${import.meta.env.VITE_BACKEND_URL}/api/v1/products/get/${productName}`
         );
         console.log(response.data.specificProduct);
         const detailedProduct = response.data.specificProduct;

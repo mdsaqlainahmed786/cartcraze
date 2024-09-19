@@ -48,7 +48,7 @@ function Cart() {
     try {
       setLoading(true);
       const response = await axios.get(
-        "http://localhost:3000/api/v1/cart/getcart",
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/cart/getcart`,
         {
           withCredentials: true,
         }
@@ -72,7 +72,7 @@ function Cart() {
     try {
       setLoading(true);
       const response = await axios.delete(
-        "http://localhost:3000/api/v1/cart/deleteall",
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/cart/deleteall`,
         {
           withCredentials: true,
         }

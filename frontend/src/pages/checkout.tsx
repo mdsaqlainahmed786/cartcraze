@@ -32,7 +32,7 @@ function Checkout() {
     setLoading(true);
     try {
       const response = await axios.put(
-        "http://localhost:3000/api/v1/user/delivery",
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/user/delivery`,
         {
           address: deliveryDetails.address,
           District: deliveryDetails.district,
@@ -70,7 +70,7 @@ function Checkout() {
     if(token){
       const getUserDetails = async () => {
         try{
-          const response = await axios.get("http://localhost:3000/api/v1/user/getuser", {
+          const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getuser`, {
             withCredentials: true
           });
           console.log(response.data);
@@ -107,7 +107,7 @@ function Checkout() {
     );
     const body = { products: cartItems };
     const response = await axios.post(
-      "http://localhost:3000/api/v1/cart/create-checkout-session",
+      `${import.meta.env.VITE_BACKEND_URL}/api/v1/cart/create-checkout-session`,
       body,
       {
         headers: {
@@ -136,7 +136,7 @@ function Checkout() {
   const fetchProducts = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/v1/cart/getcart",
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/cart/getcart`,
         {
           withCredentials: true,
         }

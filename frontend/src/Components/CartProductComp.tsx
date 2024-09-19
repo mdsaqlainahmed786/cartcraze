@@ -39,7 +39,7 @@ function CartProductComp({
     setQuantity(newQuantity);
     try {
       await axios.put(
-        `http://localhost:3000/api/v1/cart/update/${id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/cart/update/${id}`,
         {
           productId: productId,
           quantity: newQuantity
@@ -57,7 +57,7 @@ function CartProductComp({
   const handleSizeChange = async (newSize: string) => {
     try {
          await axios.put(
-        `http://localhost:3000/api/v1/cart/update/${id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/cart/update/${id}`,
         {
           productId: productId,
           quantity: quantity,
@@ -78,7 +78,7 @@ function CartProductComp({
 
   const handleRemove = async () => {
     try {
-      await axios.delete(`http://localhost:3000/api/v1/cart/delete/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/v1/cart/delete/${id}`, {
         withCredentials: true,
       });
       fetchProducts();

@@ -13,7 +13,7 @@ function Success() {
     try {
       
       const response = await axios.get(
-        "http://localhost:3000/api/v1/user/getuser",
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getuser`,
         {
           withCredentials: true,
         }
@@ -39,7 +39,7 @@ function Success() {
     try {
      
       const response = await axios.post(
-        "http://localhost:3000/api/v1/orders/add",
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/orders/add`,
         {
           body: "",
         },

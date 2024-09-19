@@ -12,13 +12,13 @@ function UserProfile({ className, username, email, onLogOut }: className) {
   return (
     <div className="block group relative">
       <div className="cursor-pointer bg-black text-white flex justify-center text-[20px] min-w-9 h-9 rounded-full text-center px-1 mt-1 mx-2">
-        {username[0]?.toUpperCase()}
+        {username[0]?.charAt(0).toUpperCase()}
       </div>
       <div className={className}>
         <div className="flex flex-col">
           <div className="flex items-center">
             <div className="bg-black text-white flex justify-center text-[20px] min-w-9 h-9 rounded-full text-center px-1 mt-1 mx-2">
-              {username[0]?.toUpperCase()}
+              {username[0]?.charAt(0).toUpperCase()}
             </div>
             <div className="flex flex-col mt-4 -space-y-2">
               <span className="text-xl font-bold">Hi,</span>

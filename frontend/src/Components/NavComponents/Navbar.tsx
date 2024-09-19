@@ -52,7 +52,7 @@ function Navbar() {
     if (tokenCookie) {
       const getUser = async () => {
         try {
-          const res = await axios.get("http://localhost:3000/api/v1/user/getuser", {
+          const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getuser`, {
             withCredentials: true, // Token will be automatically sent with cookies
           });
           
@@ -90,7 +90,7 @@ function Navbar() {
     };
   }, [isMdScreen, isHamOpen]);
   const onLogOut = async () => {
-    await axios.get("http://localhost:3000/api/v1/user/logout", {
+    await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/logout`, {
       withCredentials: true,
     });
 
@@ -246,7 +246,7 @@ function Navbar() {
             <div className="flex items-center">
               {token ? (
                 <div className="text-gray-800 bg-white flex justify-center text-[20px] w-full min-w-9 h-9 rounded-full mt-1 mx-2 px-1 pt-0.5">
-                  {userName[0]?.toUpperCase()}
+                  {userName?.charAt(0).toUpperCase()}
                 </div>
               ) : (
                 <CgProfile className="text-4xl mx-2" />
@@ -353,7 +353,7 @@ function Navbar() {
           <>
             <div className="block group relative">
               <div className="bg-black text-white flex justify-center text-[20px] w-full min-w-6  h-9 rounded-full mt-1 mx-2 px-1 pb-10">
-                {userName[0]?.toUpperCase()}
+                {userName?.charAt(0).toUpperCase()}
               </div>
             </div>
           </>

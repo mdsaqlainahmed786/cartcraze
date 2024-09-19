@@ -42,7 +42,7 @@ app.post("/api/webhook", express.raw({ type: 'application/json' }), async (reque
 
       const updatePaymentStatus = async (userId: string, paymentStatus: string, receipt: string) => {
         try {
-          await axios.post('http://localhost:3000/api/v1/orders/update-payment-status', {
+          await axios.post(`${process.env.BACKEND_URL}/api/v1/orders/update-payment-status`, {
             userId,
             paymentStatus: session,
             receipt: receiptUrl!

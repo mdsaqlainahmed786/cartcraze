@@ -15,7 +15,7 @@ function ForgotPassword() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/v1/user/forgot_password",
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/user/forgot_password`,
         { email },
         { withCredentials: true }
       );

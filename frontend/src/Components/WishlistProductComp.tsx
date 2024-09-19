@@ -34,7 +34,7 @@ function WishlistProductComp({
         setLoading(true)
         console.log(cartCount)
         const response = await axios.post(
-           "http://localhost:3000/api/v1/cart/add",
+           `${import.meta.env.VITE_BACKEND_URL}/api/v1/cart/add`,
            {
              productId: productCartId,
              quantity: 1,
@@ -57,7 +57,7 @@ function WishlistProductComp({
         });
          console.log(response.data.message);
          const cartResponse = await axios.get(
-          "http://localhost:3000/api/v1/cart/getcart",
+          `${import.meta.env.VITE_BACKEND_URL}/api/v1/cart/getcart`,
           {
             withCredentials: true,
           }
@@ -102,7 +102,7 @@ function WishlistProductComp({
     }
   }
   const fetchProductForId = async() =>{
-    const product = await axios.get(`http://localhost:3000/api/v1/products/get/${title}`)
+    const product = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/products/get/${title}`)
   //  console.log(title)
     setProductCartId(product.data.specificProduct.id)
    // console.log(productCartId)

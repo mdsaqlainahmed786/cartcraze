@@ -36,7 +36,7 @@ function Products() {
     setLoader(true);
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/v1/products/category/${productCategory}${queryParams}`
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/products/category/${productCategory}${queryParams}`
       );
       setProducts(response.data.categorySpecificProducts);
       setProductsLength(response.data.categorySpecificProducts.length);

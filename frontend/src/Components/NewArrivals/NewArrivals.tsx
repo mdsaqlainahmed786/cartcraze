@@ -26,13 +26,13 @@ function NewArrivals() {
   const [womenProducts, setWomenProducts] = useState<Product[]>([]);
   const menArrivalsHandler = async() => {
     setMenArrivals(true);
-    const response = await axios.get("http://localhost:3000/api/v1/products/category/Men-Tshirt");
+    const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/products/category/Men-Tshirt`);
     console.log("Mens products hai ji",response.data.categorySpecificProducts);
     setMenProducts(response.data.categorySpecificProducts);
     setWomenArrivals(false);
   };
   const womenArrivalsHandler = async() => {
-    const response = await axios.get("http://localhost:3000/api/v1/products/category/Women-Tops");
+    const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/products/category/Women-Tops`);
     console.log("Women products hai ji",response.data.categorySpecificProducts);
     setWomenProducts(response.data.categorySpecificProducts);
     setWomenArrivals(true);

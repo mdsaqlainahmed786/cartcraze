@@ -19,7 +19,7 @@ function FeaturedProducts() {
   const fetchProducts = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/api/v1/products/all"
+        `${import.meta.env.VITE_BACKEND_URL}/api/v1/products/all`
       );
       setFeaturedProducts(response.data.products);
     } catch (error) {

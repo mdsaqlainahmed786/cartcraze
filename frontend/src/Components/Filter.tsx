@@ -81,7 +81,7 @@ const Filter = ({ setProducts, productCategory }: FilterProps) => {
     navigate(`/products/${productCategory}?${queryParams.toString()}`);
 
     try {
-      const url = new URL(`http://localhost:3000/api/v1/products/category/${productCategory}`);
+      const url = new URL(`${import.meta.env.VITE_BACKEND_URL}/api/v1/products/category/${productCategory}`);
       if (colors) {
         url.searchParams.append('color', colors);
       }

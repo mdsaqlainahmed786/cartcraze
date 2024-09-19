@@ -19,7 +19,7 @@ export const Input: React.FC = () => {
         if(search.length === 0){
           return;
         }
-        const { data } = await axios.get(`http://localhost:3000/api/v1/products/search?productQuery=${upperedSearch}`);
+        const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/products/search?productQuery=${upperedSearch}`);
         //console.log(data.products);
      setSearchResults(data.products);
       } catch (error) {

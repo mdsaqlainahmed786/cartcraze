@@ -32,7 +32,7 @@ function Orders() {
   const fetchOrders = async () => {
     try {
       setLoading(true)
-      const response = await axios.get('http://localhost:3000/api/v1/orders/getorders', {
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/orders/getorders`, {
         withCredentials: true
       })
       console.log(response.data.orders)
