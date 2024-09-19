@@ -16,12 +16,20 @@ exports.orderRouter = void 0;
 const client_1 = require("@prisma/client");
 const express_1 = __importDefault(require("express"));
 const paymentMiddleware_1 = require("./middlewares/paymentMiddleware");
+const nodemailer_1 = __importDefault(require("nodemailer"));
 const authMiddleware_1 = __importDefault(require("./middlewares/authMiddleware"));
 exports.orderRouter = express_1.default.Router();
 const prisma = new client_1.PrismaClient();
 exports.orderRouter.use(express_1.default.json());
+const transporter = nodemailer_1.default.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER, // Your Gmail address
+        pass: process.env.EMAIL_PASS // Your App password
+    }
+});
 exports.orderRouter.post('/update-payment-status', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { userId, paymentStatus } = req.body;
+    const { userId, paymentStatus, receipt } = req.body;
     console.log(req.body, "THIS IS DSMNN REQUEST BODY");
     if (!userId || !paymentStatus) {
         return res.status(400).json({ error: 'Missing userId or paymentStatus' });
@@ -31,7 +39,39 @@ exports.orderRouter.post('/update-payment-status', (req, res) => __awaiter(void 
             where: { id: userId },
             data: { paymentSession: true },
         });
-        res.status(200).json({ message: 'Payment status updated successfully', user: updatedUser });
+        const user = yield prisma.user.findUnique({
+            where: { id: userId },
+        });
+        console.log("Payment receipt:", receipt);
+        // const transporter = nodemailer.createTransport({
+        //     service: 'gmail',
+        //     host: 'smtp.gmail.com',
+        //     port: 587,
+        //     secure: false,
+        //     auth: {
+        //         user: process.env.EMAIL_USER,  // Your Gmail address
+        //         pass: process.env.EMAIL_PASS   // Your App password
+        //     }
+        // });
+        // const mailOptions = {
+        //     from: {
+        //         name: 'CartCraze',
+        //         address: process.env.EMAIL_USER
+        //     }, // Sender address
+        //     to: user?.email, // List of receivers
+        //     subject: 'Payment Receipt', // Subject line
+        //     text: `Click on the link to view your order receipt.Thank you for shopping with us!`, // Plain text body
+        //     html: `<p>View your order receipt here: <a href="${receipt}">Go to receipt</a></p>`, // HTML body
+        // };
+        // const sendMail = async (transporter: any, mailOptions: any) => {
+        //     try {
+        //         await transporter.sendMail(mailOptions);
+        //     } catch (error) {
+        //         console.error('Error sending email:', error);
+        //     }
+        // }
+        // sendMail(transporter, mailOptions)
+        res.status(200).json({ message: 'Payment status updated successfully and the mail has been sent!', user: updatedUser });
     }
     catch (error) {
         console.error('Error updating payment status:', error);

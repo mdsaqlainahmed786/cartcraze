@@ -117,7 +117,7 @@ function ReviewAndPay({
               Total Payment: ₹{payableAmount.toFixed(0)}/-
             </span>
             <button
-              disabled={!enableProceedToPay}
+              disabled={!enableProceedToPay || payableAmount === 0}
               onClick={onProceedToPay}
               className="bg-gray-800 text-[13px] px-2 w-36 text-white py-2 rounded-full hover:bg-black md:text-lg disabled:opacity-70 disabled:cursor-not-allowed"
             >

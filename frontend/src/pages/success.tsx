@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import FooterComp from "../Components/FooterComp";
 import Navbar from "../Components/NavComponents/Navbar";
 import { SiTicktick } from "react-icons/si";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import gifLoader from "../assets/loader.gif";
 function Success() {
@@ -18,15 +18,16 @@ function Success() {
           withCredentials: true,
         }
       );
-      console.log(response.data);
+      console.log(response.data.userPaymentSession);
       if(!response.data.userPaymentSession) {
        console.log("No payment session found")
        setIsPaymentSession(false)
        window.location.href = "/";
        return;
       }
-      setIsPaymentSession(true) 
+      setIsPaymentSession(true)
     } catch (error: unknown) {
+      //@ts-expect-error err
       if (error?.response.status === 400) {
         window.location.href = "/";
         console.log(error)
@@ -36,7 +37,7 @@ function Success() {
   }
   const orderRouter = async () => {
     try {
-      setLoader(true);
+     
       const response = await axios.post(
         "http://localhost:3000/api/v1/orders/add",
         {
@@ -49,6 +50,7 @@ function Success() {
       console.log(response.data);
       
     } catch (error:unknown) {
+       //@ts-expect-error err
       if(error?.response.status === 400){
        window.location.href = "/";
       }
@@ -60,7 +62,6 @@ function Success() {
 
   useEffect(() => {
       userDetails()
-    
   }, []);
 
   useEffect(()=>{

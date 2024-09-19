@@ -196,7 +196,7 @@ cartRouter.delete("/deleteall", async (req: AuthenticatedRequest, res: Response)
 cartRouter.post("/create-checkout-session", async (req: AuthenticatedRequest, res: Response) => {
     const products = req.body.products;
 
-    console.log(req.user?.userId, "THIS IS SHIT>>>>>>>>")
+   // console.log(req.user?.userId, "THIS IS SHIT>>>>>>>>")
 
     try {
         const lineItems = products.map((item: any) => ({
@@ -245,15 +245,15 @@ cartRouter.post("/create-checkout-session", async (req: AuthenticatedRequest, re
         res.status(500).send("Error creating session");
     }
 });
-cartRouter.get("/buy-now", async (req: AuthenticatedRequest, res: Response) => {
-    const userId = req.user?.userId
-    if (!userId) return res.status(401).json({ message: "unauthorized!" })
-        try{
+// cartRouter.get("/buy-now", async (req: AuthenticatedRequest, res: Response) => {
+//     const userId = req.user?.userId
+//     if (!userId) return res.status(401).json({ message: "unauthorized!" })
+//         try{
 
-    }catch(error){
-        res.json({
-            message: "There was a error",
-            error
-        })
-    }
-})
+//     }catch(error){
+//         res.json({
+//             message: "There was a error",
+//             error
+//         })
+//     }
+// })

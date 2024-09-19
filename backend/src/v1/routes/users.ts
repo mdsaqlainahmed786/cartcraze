@@ -5,6 +5,7 @@ import bcrypt from "bcrypt"
 import axios from "axios"
 import crypto from "crypto"
 import cors from "cors"
+import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import sgMail from "@sendgrid/mail"
 import cookieParser from "cookie-parser"
@@ -23,6 +24,29 @@ interface AuthenticatedRequest extends Request {
         email: string
     }
 }
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,  // Your Gmail address
+        pass: process.env.EMAIL_PASS   // Your App password
+    }
+});
+export const sendMail = async (to: string, subject: string, text: string, html: string) => {
+    const mailOptions = {
+        from: process.env.EMAIL_USER,  // Sender address
+        to: to,                        // List of receivers
+        subject: subject,              // Subject line
+        text: text,                    // Plain text body
+        html: html                     // HTML body
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log('Email sent successfully');
+    } catch (error) {
+        console.error('Error sending email:', error);
+    }
+};
 const prisma = new PrismaClient();
 dotenv.config();
 const userSignupInput = z.object({
@@ -45,62 +69,63 @@ userRouter.post("/signup", async (req: Request, res: Response) => {
     if (!bodyParser.success) {
         return res.status(400).json({ error: "There was an error", issues: bodyParser.error.issues });
     }
+
     const { username, email, password } = bodyParser.data;
     try {
-        const checkUser = await prisma.user.findUnique({
-            where: {
-                email
-            }
-        })
-        if (checkUser) return res.status(400).json({ message: "User already exists" })
-    } catch (err) { console.log(err) }
-    try {
-        const hashedPassword = await bcrypt.hash(password, 10)
-        const user = await prisma.user.create({
-            data: {
-                username,
-                email,
-                password: hashedPassword
-            }
-        });
-        const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET as string, { expiresIn: '2m' })
-        //res.cookie("Secret_Auth_token", token)
-        //res.send("signed Up!")
-        const verificationLink = `http://localhost:5173/verify/${token}`
-        const mail = {
-            to: email,
-            from: 'cartcrazeofficial786@gmail.com',
-            subject: 'Verify your email',
-            text: `Please verify your email by clicking the following link, will expire in 2 minutes: ${verificationLink}`,
-            html: `<strong>Please verify your email by clicking the following link, will expire in 2 minutes: <a href="${verificationLink}">Verify Email</a></strong>`,
-        }
-        await sgMail.send(mail)
-        res.status(200).json({
-            message: "The verification link has been sent to mail!",
-            token,
-        });
-        setTimeout(async () => {
-            const userCheck = await prisma.user.findFirst({
-                where: {
-                    id: user.id
-                }
-            })
+        const checkUser = await prisma.user.findUnique({ where: { email } });
+        if (checkUser) return res.status(400).json({ message: "User already exists" });
 
-            if (!userCheck || !userCheck.isVerified) {
-                await prisma.user.delete({
-                    where: {
-                        id: user.id
-                    }
-                })
-                // res.clearCookie("Secret_Auth_token");
-            }
-        }, 2 * 60 * 1000) //3 * 60 * 1000
-    } catch (error) {
-        res.status(400).json({
-            error
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const user = await prisma.user.create({
+            data: { username, email, password: hashedPassword }
         });
+
+        const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET as string, { expiresIn: '2m' });
+        const verificationLink = `http://localhost:5173/verify/${token}`;
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure: false,
+            auth: {
+                user: process.env.EMAIL_USER,  // Your Gmail address
+                pass: process.env.EMAIL_PASS   // Your App password
+            }
+        });
+
+        const mailOptions = {
+            from: {
+                name: 'CartCraze',
+                address: process.env.EMAIL_USER
+            }, // Sender address
+            to: email, // List of receivers
+            subject: 'Verify your email', // Subject line
+            text: `Please verify your email by clicking the following link: ${verificationLink}`, // Plain text body
+            html: `<p>Please verify your email by clicking the following link: <a href="${verificationLink}">Verify Email</a></p>`, // HTML body
+        };
+
+        const sendMail = async (transporter: any, mailOptions: any) => {
+            try {
+                await transporter.sendMail(mailOptions);
+            } catch (error) {
+                console.error('Error sending email:', error);
+            }
+        }
+        sendMail(transporter, mailOptions)
+        res.status(200).json({ message: "The verification link has been sent to mail!", token });
+
+        setTimeout(async () => {
+            const userCheck = await prisma.user.findFirst({ where: { id: user.id } });
+            if (!userCheck || !userCheck.isVerified) {
+                await prisma.user.delete({ where: { id: user.id } });
+            }
+        }, 2 * 60 * 1000); // 2 minutes timer
+
+    } catch (error) {
+        res.status(400).json({ error });
     }
 });
+
 
 userRouter.get("/verify/:token", async (req: Request, res: Response) => {
     const token = req.params?.token as string
@@ -164,7 +189,7 @@ userRouter.post("/signin", async (req: Request, res: Response) => {
             return res.status(400).json({ message: "The user has an incorrect password!" });
         }
         if (!user.isVerified) return res.status(401).json({ message: "Please verify your account!" })
-        const token = jwt.sign({ userId: user.id, email: user.email, isVerified: user.isVerified, paymentSession:user.paymentSession }, process.env.JWT_SECRET as string)
+        const token = jwt.sign({ userId: user.id, email: user.email, isVerified: user.isVerified, paymentSession: user.paymentSession }, process.env.JWT_SECRET as string)
         // console.log(token)
         res.cookie("Secret_Auth_token", token)
         res.status(200).json({
@@ -259,7 +284,7 @@ userRouter.get('/logout', async (req: Request, res: Response) => {
 })
 
 userRouter.put("/delivery", authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
-   
+
     const { address, District, state, pincode, phoneNumber } = req.body;
     try {
         const userId = req.user?.userId
@@ -274,11 +299,11 @@ userRouter.put("/delivery", authMiddleware, async (req: AuthenticatedRequest, re
                 id: userId
             },
             data: {
-                address:address,
-                District:District,
-                state:state,
-                pincode:pincode,
-                phoneNumber:phoneNumber
+                address: address,
+                District: District,
+                state: state,
+                pincode: pincode,
+                phoneNumber: phoneNumber
             },
         })
         res.status(200).json({
@@ -296,7 +321,7 @@ userRouter.put("/delivery", authMiddleware, async (req: AuthenticatedRequest, re
 userRouter.get("/getuser", async (req, res) => {
     try {
         const token = req.cookies?.Secret_Auth_token;
-        
+
         if (!token) {
             return res.status(200).json({
                 message: "No token found!"
@@ -338,3 +363,4 @@ userRouter.get("/getuser", async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
+

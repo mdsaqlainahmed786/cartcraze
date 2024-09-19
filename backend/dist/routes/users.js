@@ -12,13 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userRouter = void 0;
+exports.sendMail = exports.userRouter = void 0;
 const client_1 = require("@prisma/client");
 const express_1 = __importDefault(require("express"));
 const zod_1 = __importDefault(require("zod"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const cors_1 = __importDefault(require("cors"));
+const nodemailer_1 = __importDefault(require("nodemailer"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const mail_1 = __importDefault(require("@sendgrid/mail"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
@@ -30,6 +31,30 @@ exports.userRouter.use((0, cors_1.default)({
     credentials: true,
     origin: "http://localhost:5173"
 }));
+const transporter = nodemailer_1.default.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER, // Your Gmail address
+        pass: process.env.EMAIL_PASS // Your App password
+    }
+});
+const sendMail = (to, subject, text, html) => __awaiter(void 0, void 0, void 0, function* () {
+    const mailOptions = {
+        from: process.env.EMAIL_USER, // Sender address
+        to: to, // List of receivers
+        subject: subject, // Subject line
+        text: text, // Plain text body
+        html: html // HTML body
+    };
+    try {
+        yield transporter.sendMail(mailOptions);
+        console.log('Email sent successfully');
+    }
+    catch (error) {
+        console.error('Error sending email:', error);
+    }
+});
+exports.sendMail = sendMail;
 const prisma = new client_1.PrismaClient();
 dotenv_1.default.config();
 const userSignupInput = zod_1.default.object({
@@ -52,62 +77,54 @@ exports.userRouter.post("/signup", (req, res) => __awaiter(void 0, void 0, void 
     }
     const { username, email, password } = bodyParser.data;
     try {
-        const checkUser = yield prisma.user.findUnique({
-            where: {
-                email
-            }
-        });
+        const checkUser = yield prisma.user.findUnique({ where: { email } });
         if (checkUser)
             return res.status(400).json({ message: "User already exists" });
-    }
-    catch (err) {
-        console.log(err);
-    }
-    try {
         const hashedPassword = yield bcrypt_1.default.hash(password, 10);
         const user = yield prisma.user.create({
-            data: {
-                username,
-                email,
-                password: hashedPassword
-            }
+            data: { username, email, password: hashedPassword }
         });
         const token = jsonwebtoken_1.default.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '2m' });
-        //res.cookie("Secret_Auth_token", token)
-        //res.send("signed Up!")
         const verificationLink = `http://localhost:5173/verify/${token}`;
-        const mail = {
-            to: email,
-            from: 'cartcrazeofficial786@gmail.com',
-            subject: 'Verify your email',
-            text: `Please verify your email by clicking the following link, will expire in 2 minutes: ${verificationLink}`,
-            html: `<strong>Please verify your email by clicking the following link, will expire in 2 minutes: <a href="${verificationLink}">Verify Email</a></strong>`,
-        };
-        yield mail_1.default.send(mail);
-        res.status(200).json({
-            message: "The verification link has been sent to mail!",
-            token,
-        });
-        setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
-            const userCheck = yield prisma.user.findFirst({
-                where: {
-                    id: user.id
-                }
-            });
-            if (!userCheck || !userCheck.isVerified) {
-                yield prisma.user.delete({
-                    where: {
-                        id: user.id
-                    }
-                });
-                // res.clearCookie("Secret_Auth_token");
+        const transporter = nodemailer_1.default.createTransport({
+            service: 'gmail',
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure: false,
+            auth: {
+                user: process.env.EMAIL_USER, // Your Gmail address
+                pass: process.env.EMAIL_PASS // Your App password
             }
-        }), 2 * 60 * 1000); //3 * 60 * 1000
+        });
+        const mailOptions = {
+            from: {
+                name: 'CartCraze',
+                address: process.env.EMAIL_USER
+            }, // Sender address
+            to: email, // List of receivers
+            subject: 'Verify your email', // Subject line
+            text: `Please verify your email by clicking the following link: ${verificationLink}`, // Plain text body
+            html: `<p>Please verify your email by clicking the following link: <a href="${verificationLink}">Verify Email</a></p>`, // HTML body
+        };
+        const sendMail = (transporter, mailOptions) => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                yield transporter.sendMail(mailOptions);
+            }
+            catch (error) {
+                console.error('Error sending email:', error);
+            }
+        });
+        sendMail(transporter, mailOptions);
+        res.status(200).json({ message: "The verification link has been sent to mail!", token });
+        setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
+            const userCheck = yield prisma.user.findFirst({ where: { id: user.id } });
+            if (!userCheck || !userCheck.isVerified) {
+                yield prisma.user.delete({ where: { id: user.id } });
+            }
+        }), 2 * 60 * 1000); // 2 minutes timer
     }
     catch (error) {
-        res.status(400).json({
-            error
-        });
+        res.status(400).json({ error });
     }
 }));
 exports.userRouter.get("/verify/:token", (req, res) => __awaiter(void 0, void 0, void 0, function* () {

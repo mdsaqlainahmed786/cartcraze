@@ -23,6 +23,10 @@ if (!endpointSecret) {
 }
 app.post("/api/webhook", express_1.default.raw({ type: 'application/json' }), (request, response) => {
     const sig = request.headers['stripe-signature'];
+    let body = request.body.toString();
+    let parsedBody = JSON.parse(body);
+    const receipt = parsedBody.data.object.receipt_url;
+    console.log(receipt, "THIS IS MY RECIEPT>>>>>");
     let event;
     try {
         event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
@@ -35,17 +39,16 @@ app.post("/api/webhook", express_1.default.raw({ type: 'application/json' }), (r
     switch (event.type) {
         case 'payment_intent.succeeded':
             break;
-        // ... handle other event types
         case 'checkout.session.completed':
             const session = event.data.object;
-            console.log(session, "BETCH>>>");
-            // Then define and call a function to handle the event payment_intent.succeeded
-            //@ts-ignore
             const updatePaymentStatus = (userId, paymentStatus) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
                     yield axios_1.default.post('http://localhost:3000/api/v1/orders/update-payment-status', {
                         userId,
                         paymentStatus: session,
+                        if(receipt) {
+                            receipt;
+                        }
                     });
                     console.log(userId, paymentStatus);
                 }
@@ -54,10 +57,10 @@ app.post("/api/webhook", express_1.default.raw({ type: 'application/json' }), (r
                 }
             });
             updatePaymentStatus(session.metadata.userId, 'succeeded');
+            break;
         default:
             console.log(`Unhandled event type ${event.type}`);
     }
-    // Return a 200 response to acknowledge receipt of the event
     response.send();
 });
 app.listen(5001, () => {
