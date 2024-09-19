@@ -97,7 +97,6 @@ function Orders() {
               category={item.product.category}    
               newPrice={item.product.newPrice}   
               oldPrice={item.product.oldPrice}   
-              //@ts-expect-error interface err
               size={item.size}                   
               quantity={item.quantity}            
             />

@@ -4,6 +4,8 @@ interface OrdersCompProps {
     category: string;
     newPrice: number;
     oldPrice: number;
+    size: string;
+    quantity: number;
 }
 function OrdersComp({imgSrc, title, category, newPrice, oldPrice, size, quantity}: OrdersCompProps) {
     return (

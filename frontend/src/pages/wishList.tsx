@@ -2,7 +2,6 @@ import Navbar from "../Components/NavComponents/Navbar";
 import FooterComp from "../Components/FooterComp";
 import WishlistProductComp from "../Components/WishlistProductComp";
 import { useState, useEffect } from "react";
-import NotFound from "../Components/NotFound";
 import emptyCart from "../assets/not.png";
 import { useNavigate } from "react-router-dom";
 import { wishlistState } from "../RecoilStateProviders/WishListCount";
