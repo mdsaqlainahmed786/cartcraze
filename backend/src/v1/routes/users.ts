@@ -194,7 +194,7 @@ userRouter.post("/signin", async (req: Request, res: Response) => {
         if (!user.isVerified) return res.status(401).json({ message: "Please verify your account!" })
         const token = jwt.sign({ userId: user.id, email: user.email, isVerified: user.isVerified, paymentSession: user.paymentSession }, process.env.JWT_SECRET as string)
         // console.log(token)
-        res.cookie("Secret_Auth_token", token, { httpOnly: true, secure: true, sameSite: "none", maxAge: 24 * 60 * 60 * 1000 });
+        res.cookie("Secret_Auth_token", token);
         res.status(200).json({
             message: "The user has been successfully found!",
             UserId: user.id,
