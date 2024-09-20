@@ -21,7 +21,7 @@ const forgotPasswordLimiter = rateLimit({
     max: 1, // Limit each IP to 1 request per windowMs
     message: "Too many request. Please try again later.",
     headers: true, // Send rate limit info in response headers
-  });
+});
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -146,7 +146,7 @@ userRouter.get("/verify/:token", async (req: Request, res: Response) => {
         // console.log(newToken)
 
         res.clearCookie("Secret_Auth_token");
-        res.cookie("Secret_Auth_token", newToken, { maxAge: 24 * 60 * 60 * 1000 , httpOnly: true, secure: true, sameSite: "none",});
+        res.cookie("Secret_Auth_token", newToken, { maxAge: 24 * 60 * 60 * 1000, secure: true, sameSite: "none", });
 
         const userName = await prisma.user.findUnique({
             where: {
@@ -188,7 +188,7 @@ userRouter.post("/signin", async (req: Request, res: Response) => {
         }
         if (!user.isVerified) return res.status(401).json({ message: "Please verify your account!" })
         const token = jwt.sign({ userId: user.id, email: user.email, isVerified: user.isVerified, paymentSession: user.paymentSession }, process.env.JWT_SECRET as string)
-        res.cookie("Secret_Auth_token", token, {maxAge: 24 * 60 * 60 * 1000 , httpOnly: true, secure: true, sameSite: "none"});
+        res.cookie("Secret_Auth_token", token, { maxAge: 24 * 60 * 60 * 1000, secure: true, sameSite: "none" });
         res.status(200).json({
             message: "The user has been successfully found!",
             UserId: user.id,
