@@ -16,6 +16,7 @@ import MobileNavIcons from "../NavComponents/MobileNavIcons";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { wishlistState } from "../../RecoilStateProviders/WishListCount";
 import { useRecoilValue, useSetRecoilState } from "recoil";
+import Cookies from "js-cookie";
 import axios from "axios";
 import toast from "react-hot-toast";
 import UserProfile from "./UserProfile";
@@ -34,41 +35,38 @@ function Navbar() {
   const [isHamSymbolOpen, setIsHamSymbolOpen] = useState(false);
   const userEmail = useRecoilValue(emailState);
   const userName = useRecoilValue(usernameState);
+  const [token, setToken] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
   const wishlistCount = useRecoilValue(wishlistState);
   const cartCount = useCartCount();
-  const [authenticated, setAuthenticated] = useState(false);
   // const existingWishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");// Get the current path
   const [isMdScreen, setIsMdScreen] = useState(window.innerWidth <= 1023);
   //console.log(isMdScreen)
   const setUserName = useSetRecoilState(usernameState);
   const setUserEmail = useSetRecoilState(emailState);
-
+  
   useEffect(() => {
-    const getUser = async () => {
-      try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getuser`,
-          {
-            withCredentials: true,
-          }
-        );
-
-        if (res.status == 200) {
+    const tokenCookie = Cookies.get("Secret_Auth_token");
+    
+    if (tokenCookie) {
+      const getUser = async () => {
+        try {
+          const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getuser`, {
+            withCredentials: true, // Token will be automatically sent with cookies
+          });
+          
           setUserName(res.data.userName);
           setUserEmail(res.data.userEmail);
-          setAuthenticated(true);
+        } catch (error) {
+          console.log(error);
         }
+      };
 
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    getUser();
-  }, [setUserName, setUserEmail]);
-
+      getUser();
+    }
+  },[token, setUserName, setUserEmail]);
+ 
   const onHandleHam = () => {
     setIsHamOpen(!isHamOpen);
     setIsHamSymbolOpen(!isHamSymbolOpen);
@@ -108,12 +106,15 @@ function Navbar() {
         secondary: "white",
       },
     });
-
+  
     navigate("/signup");
     localStorage.removeItem("username");
     localStorage.removeItem("email");
   };
-
+  useEffect(() => {
+    const token = Cookies.get("Secret_Auth_token")!;
+    setToken(token);
+  }, []);
   const isActive = (path: string) => location.pathname === path;
   return (
     <>
@@ -188,7 +189,7 @@ function Navbar() {
                   </div>
                 </Link>
               </div>
-              {!authenticated ? (
+              {!token ? (
                 <Icons link="signup" reactIcons={<CgProfile />} />
               ) : (
                 <>
@@ -204,12 +205,10 @@ function Navbar() {
               )}
             </div>
           </div>
-          <div
-            onClick={() => {
-              setIsHamOpen(!isHamOpen);
-              setIsOpen(false);
-            }}
-          >
+          <div onClick={() =>{ 
+            setIsHamOpen(!isHamOpen)
+            setIsOpen(false)
+          }}>
             <HamburgerMenu
               setIsHamSymbolOpen={setIsHamSymbolOpen}
               isHamsymbolOpen={isHamSymbolOpen}
@@ -245,7 +244,7 @@ function Navbar() {
             className={`flex flex-col justify-center items-center bg-gray-800 text-white`}
           >
             <div className="flex items-center">
-              {authenticated ? (
+              {token ? (
                 <div className="text-gray-800 bg-white flex justify-center text-[20px] w-full min-w-9 h-9 rounded-full mt-1 mx-2 px-1 pt-0.5">
                   {userName?.charAt(0).toUpperCase()}
                 </div>
@@ -255,12 +254,12 @@ function Navbar() {
 
               <div className="flex flex-col mt-4">
                 <span className="text-xl font-bold">Hi,</span>
-                {authenticated ? (
+                {token ? (
                   <span className="font-semibold">{userName}</span>
                 ) : (
                   <span className="mb-11">Guest User</span>
                 )}
-                {authenticated ? (
+                {token ? (
                   <span className="text-sm pb-10">{userEmail}</span>
                 ) : (
                   <div></div>
@@ -276,7 +275,7 @@ function Navbar() {
             <MobileNavcomp link="Men-Shirt" navItems="Mens Shirt" />
           </div>
           <div className="w-full" onClick={onHandleHam}>
-            <MobileNavcomp link="Men-Tshirt" navItems="Mens Tshirt" />
+          <MobileNavcomp link="Men-Tshirt" navItems="Mens Tshirt" />
           </div>
           <div className="w-full" onClick={onHandleHam}>
             <MobileNavcomp link="Women-Tops" navItems="Women Tops" />
@@ -285,7 +284,7 @@ function Navbar() {
             <MobileNavcomp link="Women-Shirt" navItems="Women Shirt" />
           </div>
 
-          {authenticated ? (
+          {token ? (
             <div
               onClick={onLogOut}
               className="hover:bg-gray-200 rounded-md w-full p-1 cursor-pointer flex justify-center items-center"
@@ -311,9 +310,9 @@ function Navbar() {
         <button
           className="cursor-pointer hover:bg-gray-200 rounded-full p-2"
           onClick={() => {
-            setIsOpen(!isOpen);
-            setIsHamOpen(false);
-            setIsHamSymbolOpen(false);
+            setIsOpen(!isOpen)
+            setIsHamOpen(false)
+            setIsHamSymbolOpen(false)
           }}
         >
           {!isOpen ? <IoMdSearch /> : <BiSolidSearchAlt2 />}
@@ -346,7 +345,7 @@ function Navbar() {
             </div>
           </Link>
         </div>
-        {!authenticated ? (
+        {!token ? (
           <Link to="/signin">
             <MobileNavIcons reactMobileIcons={<CgProfile />} />
           </Link>
