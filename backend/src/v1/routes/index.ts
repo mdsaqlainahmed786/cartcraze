@@ -19,10 +19,10 @@ app.use(cors({
 
 
 app.use(helmet())   
+app.use(express.json())
 app.use(cookieParser());
 
 //app.use('/api', limiter)
-app.use(express.json())
 app.get("/", (req, res)=>{
     res.send("Hello World")
 })
