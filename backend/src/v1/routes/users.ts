@@ -146,7 +146,11 @@ userRouter.get("/verify/:token", async (req: Request, res: Response) => {
         // console.log(newToken)
 
         res.clearCookie("Secret_Auth_token");
-        res.cookie("Secret_Auth_token", newToken);
+        res.cookie("Secret_Auth_token", newToken, {
+            secure: true,
+            sameSite: 'none',
+            maxAge: 1000 * 60 * 60 * 24 * 7
+        });
 
         const userName = await prisma.user.findUnique({
             where: {
@@ -188,7 +192,11 @@ userRouter.post("/signin", async (req: Request, res: Response) => {
         }
         if (!user.isVerified) return res.status(401).json({ message: "Please verify your account!" })
         const token = jwt.sign({ userId: user.id, email: user.email, isVerified: user.isVerified, paymentSession: user.paymentSession }, process.env.JWT_SECRET as string)
-        res.cookie("Secret_Auth_token", token);
+        res.cookie("Secret_Auth_token", token, {
+            secure: true,
+            sameSite: 'none',
+            maxAge: 1000 * 60 * 60 * 24 * 7
+        });
         res.status(200).json({
             message: "The user has been successfully found!",
             UserId: user.id,
