@@ -34,6 +34,6 @@ app.use("/api/v1/orders", orderRouter)
 //app.use("/api/v1/wishlist", wishListRouter)
 
 
-app.listen(3000 || process.env.PORT, () => {
+app.listen(process.env.PORT, () => {
     console.log("The server is listening on port 3000")
 })
