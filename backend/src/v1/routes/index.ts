@@ -13,7 +13,7 @@ import helmet from "helmet"
 const app = express()
 
 app.use(cors({
-    origin:"https://cartcraze.anxiousdev.online",
+    origin:["https://cartcraze.anxiousdev.online", "http://localhost:5173"],
     credentials: true
 }));
 

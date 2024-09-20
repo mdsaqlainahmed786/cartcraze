@@ -26,6 +26,7 @@ function Signin() {
     const token = Cookies.get("Secret_Auth_token");
     if (token) {
       setIsAlreadyLoggedIn(token);
+      console.log(token);
     }
     if (isAlreadyLoggedIn) {
       navigate("/");
