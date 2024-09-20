@@ -83,7 +83,8 @@ function Signup() {
 
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/v1/user/signup`,
-        userDetails
+        userDetails,
+        { withCredentials: true } 
       );
 
       if (response) {
