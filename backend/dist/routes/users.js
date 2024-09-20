@@ -309,16 +309,28 @@ exports.userRouter.post("/reset_password/:token", (req, res) => __awaiter(void 0
     }
 }));
 exports.userRouter.get('/logout', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.clearCookie("Secret_Auth_token");
+    var _c;
+    const token = (_c = req.cookies) === null || _c === void 0 ? void 0 : _c.Secret_Auth_token;
+    if (!token) {
+        return res.status(200).json({
+            message: "No token found!"
+        });
+    }
+    // Clear the cookie with matching options
+    res.clearCookie("Secret_Auth_token", {
+        secure: true, // Same as when the cookie was set
+        sameSite: 'none', // Same as when the cookie was set
+        path: '/', // Default path should match where the cookie was set
+    });
     res.status(200).json({
-        message: "logout successful"
+        message: "Logout successful betch"
     });
 }));
 exports.userRouter.put("/delivery", authMiddleware_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c;
+    var _d;
     const { address, District, state, pincode, phoneNumber } = req.body;
     try {
-        const userId = (_c = req.user) === null || _c === void 0 ? void 0 : _c.userId;
+        const userId = (_d = req.user) === null || _d === void 0 ? void 0 : _d.userId;
         const user = yield prisma.user.findUnique({
             where: {
                 id: userId
@@ -351,9 +363,9 @@ exports.userRouter.put("/delivery", authMiddleware_1.default, (req, res) => __aw
     }
 }));
 exports.userRouter.get("/getuser", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _d;
+    var _e;
     try {
-        const token = (_d = req.cookies) === null || _d === void 0 ? void 0 : _d.Secret_Auth_token;
+        const token = (_e = req.cookies) === null || _e === void 0 ? void 0 : _e.Secret_Auth_token;
         if (!token) {
             return res.status(200).json({
                 message: "No token found!"

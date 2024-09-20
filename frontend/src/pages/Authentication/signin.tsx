@@ -6,16 +6,14 @@ import Navbar from "../../Components/NavComponents/Navbar";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import toast from "react-hot-toast";
 import axios from "axios";
-import Cookies from "js-cookie";
 // import { useRecoilState } from 'recoil'
 // import { emailState, usernameState } from "../../RecoilStateProviders/UserDetails";
 function Signin() {
   const [loading, setLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   //const [currentUserEmail, setCurrentUserEmail] = useRecoilState(emailState);
   // const [currentUsername, setCurrentUsername] = useRecoilState(usernameState);
-  const [isAlreadyLoggedIn, setIsAlreadyLoggedIn] = useState<string | null>(
-    null
-  );
+  
   const [userObj, setUserobj] = useState({
     email: "",
     password: "",
@@ -23,18 +21,29 @@ function Signin() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
-    const token = Cookies.get("Secret_Auth_token");
-    if (token) {
-      setIsAlreadyLoggedIn(token);
-      console.log(token);
-    }
-    if (isAlreadyLoggedIn) {
+    const checkAuthStatus = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getuser`, {
+          withCredentials: true,
+        });
+        if (res.data.userName && res.data.userEmail) {
+          setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.log(error);
+        setIsAuthenticated(false);
+      }
+    };
+
+    checkAuthStatus();
+  }, [setIsAuthenticated]);
+  useEffect(() => {
+    if (isAuthenticated) {
       navigate("/");
     }
-    if (isAlreadyLoggedIn === null) {
-      return;
-    }
-  }, [isAlreadyLoggedIn, navigate]);
+  }, [isAuthenticated]);
   const onSubmitSignin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // if (!captchaVerified) {

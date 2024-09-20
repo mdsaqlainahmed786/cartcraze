@@ -313,11 +313,25 @@ userRouter.post("/reset_password/:token", async (req: Request, res: Response) =>
 })
 
 userRouter.get('/logout', async (req: Request, res: Response) => {
-    res.clearCookie("Secret_Auth_token")
+    const token = req.cookies?.Secret_Auth_token;
+    if (!token) {
+        return res.status(200).json({
+            message: "No token found!"
+        });
+    }
+
+    // Clear the cookie with matching options
+    res.clearCookie("Secret_Auth_token", {
+        secure: true,        // Same as when the cookie was set
+        sameSite: 'none',    // Same as when the cookie was set
+        path: '/',           // Default path should match where the cookie was set
+    });
+    
     res.status(200).json({
-        message: "logout successful"
-    })
-})
+        message: "Logout successful betch"
+    });
+});
+
 
 userRouter.put("/delivery", authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
 

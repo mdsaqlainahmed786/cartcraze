@@ -31,7 +31,7 @@ function Navbar() {
   const [isHamOpen, setIsHamOpen] = useState(false);
   // const [wishListCount, setWishListCount] = useState(0)
   const [isOpen, setIsOpen] = useState(false);
-
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isHamSymbolOpen, setIsHamSymbolOpen] = useState(false);
   const userEmail = useRecoilValue(emailState);
   const userName = useRecoilValue(usernameState);
@@ -47,37 +47,56 @@ function Navbar() {
   const setUserEmail = useSetRecoilState(emailState);
   
   useEffect(() => {
-    function getCookie(name: string) {
-      // Create a regular expression to find the cookie with the specific name
-      const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-      
-      // If a match is found, return the value of the cookie, otherwise return null
-      if (match) {
-          return match[2];
-      }
-      return null;
-  }
-  const tokenCookie = getCookie("Secret_Auth_token");
-  console.log(tokenCookie);
-  
-    
-    if (tokenCookie) {
-      const getUser = async () => {
-        try {
-          const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getuser`, {
-            withCredentials: true, // Token will be automatically sent with cookies
-          });
-          
+    const checkAuthStatus = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getuser`, {
+          withCredentials: true,
+        });
+        if (res.data.userName && res.data.userEmail) {
+          setIsAuthenticated(true);
           setUserName(res.data.userName);
           setUserEmail(res.data.userEmail);
-        } catch (error) {
-          console.log(error);
+        } else {
+          setIsAuthenticated(false);
         }
-      };
+      } catch (error) {
+        console.log(error);
+        setIsAuthenticated(false);
+      }
+    };
 
-      getUser();
+    checkAuthStatus();
+  }, [setUserName, setUserEmail]);
+
+  const onLogOut = async () => {
+    try {
+      await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/logout`, {
+        withCredentials: true,
+      });
+
+      setIsAuthenticated(false);
+      setUserName("");
+      setUserEmail("");
+
+      toast.success("Logout Successful", {
+        style: {
+          border: "1px solid black",
+          padding: "16px",
+          color: "black",
+          marginTop: "75px",
+        },
+        iconTheme: {
+          primary: "black",
+          secondary: "white",
+        },
+      });
+
+      navigate("/signup");
+    } catch (error) {
+      console.error("Logout failed", error);
+      toast.error("Logout failed. Please try again.");
     }
-  },[token, setUserName, setUserEmail]);
+  };
  
   const onHandleHam = () => {
     setIsHamOpen(!isHamOpen);
@@ -101,28 +120,7 @@ function Navbar() {
       document.body.classList.remove("no-scroll");
     };
   }, [isMdScreen, isHamOpen]);
-  const onLogOut = async () => {
-    await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/logout`, {
-      withCredentials: true,
-    });
 
-    toast.success("Logout Successful", {
-      style: {
-        border: "1px solid black",
-        padding: "16px",
-        color: "black",
-        marginTop: "75px",
-      },
-      iconTheme: {
-        primary: "black",
-        secondary: "white",
-      },
-    });
-  
-    navigate("/signup");
-    localStorage.removeItem("username");
-    localStorage.removeItem("email");
-  };
   useEffect(() => {
     const token = Cookies.get("Secret_Auth_token")!;
     setToken(token);
@@ -201,20 +199,20 @@ function Navbar() {
                   </div>
                 </Link>
               </div>
-              {!token ? (
-                <Icons link="signup" reactIcons={<CgProfile />} />
-              ) : (
-                <>
-                  <UserProfile
-                    className={
-                      "hidden -right-28 bg-white z-[999] h-48 w-[20rem] absolute pl-4 py-2 text-[19px] -ml-5 mt-1 shadow-xl rounded-lg group-hover:block"
-                    }
-                    username={userName}
-                    email={userEmail}
-                    onLogOut={onLogOut}
-                  />
-                </>
-              )}
+              {isAuthenticated ? (
+        <>
+          <UserProfile
+            className={
+              "hidden -right-28 bg-white z-[999] h-48 w-[20rem] absolute pl-4 py-2 text-[19px] -ml-5 mt-1 shadow-xl rounded-lg group-hover:block"
+            }
+            username={userName}
+            email={userEmail}
+            onLogOut={onLogOut}
+          />
+        </>
+      ) : (
+        <Icons link="signup" reactIcons={<CgProfile />} />
+      )}
             </div>
           </div>
           <div onClick={() =>{ 
