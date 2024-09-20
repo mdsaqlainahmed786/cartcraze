@@ -22,6 +22,9 @@ app.use(cors({
 }));
 //app.use('/api', limiter)
 app.use(express.json())
+app.get("/", (req, res)=>{
+    res.send("Hello World")
+})
 app.use("/api/v1/user", userRouter)
 app.use("/api/v1/products", productsRouter)
 app.use("/api/v1/cart",authMiddleware, cartRouter)
