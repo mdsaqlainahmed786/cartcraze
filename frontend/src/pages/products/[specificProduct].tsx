@@ -6,7 +6,6 @@ import serverDown from "../../assets/serverDown.png";
 import "../../index.css";
 import Navbar from "../../Components/NavComponents/Navbar";
 import FooterComp from "../../Components/FooterComp";
-import ImageMagnifier from "../../Components/ProductDetails/ImageMagnifier";
 import ImageThumbnail from "../../Components/ProductDetails/ImageThumbnail";
 import ProductDescription from "../../Components/ProductDetails/ProductDescription";
 import BenefitsOfStore from "../../Components/BenefitsOfStore/BenefitsOfStore";
@@ -259,7 +258,6 @@ function ProductDetail() {
           setImage={setImage}
           selectedImage={image}
         />
-        <ImageMagnifier imageSrc={image} />
         <ProductDescription
           productName={productName!}
           productDescription={product.description}
