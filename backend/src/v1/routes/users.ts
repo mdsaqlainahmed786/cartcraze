@@ -163,6 +163,7 @@ userRouter.get("/verify/:token", async (req: Request, res: Response) => {
             userName
         })
     } catch (error) {
+        console.log(error, "THIS IS LOGIN ERROR")
         res.status(400).json({
             message: "Invalid token or token expired!",
             error
