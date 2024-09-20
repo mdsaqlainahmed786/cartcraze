@@ -15,7 +15,7 @@ export const userRouter = express.Router();
 userRouter.use(cookieParser())
 userRouter.use(cors({
     credentials: true,
-    origin: "http://localhost:5173"
+    origin: "https://cartcraze.vercel.app"
 }))
 interface AuthenticatedRequest extends Request {
     user?: {
