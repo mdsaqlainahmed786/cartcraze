@@ -8,20 +8,19 @@ import authMiddleware from "./middlewares/authMiddleware"
 import rateLimit from "express-rate-limit"
 import { orderRouter } from "./orders"
 import helmet from "helmet"
-//import { wishListRouter } from "./wishlist"
+
 
 const app = express()
-// const limiter = rateLimit({
-//     max:100,
-//     windowMs: 60 * 10 * 1000,
-//     message:"Too many requests, Please try again shortly!"
-// })
-app.use(cookieParser());
+
 app.use(cors({
-    credentials: true,
-    origin:"https://cartcraze.vercel.app"
+    origin:"https://cartcraze.vercel.app",
+    credentials: true
 }));
+
+
 app.use(helmet())   
+app.use(cookieParser());
+
 //app.use('/api', limiter)
 app.use(express.json())
 app.get("/", (req, res)=>{

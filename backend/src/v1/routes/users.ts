@@ -1,15 +1,11 @@
 import { PrismaClient } from "@prisma/client";
-import express, { Request, Response } from "express"; import z from "zod";
-import jwt, { JwtPayload } from "jsonwebtoken";
-import bcrypt from "bcrypt"
-import axios from "axios"
-import crypto from "crypto"
-import rateLimit from 'express-rate-limit';
-import cors from "cors"
-import nodemailer from 'nodemailer';
+import bcrypt from "bcrypt";
 import dotenv from 'dotenv';
-import cookieParser from "cookie-parser"
-import path from "path"
+import express, { Request, Response } from "express";
+import rateLimit from 'express-rate-limit';
+import jwt, { JwtPayload } from "jsonwebtoken";
+import nodemailer from 'nodemailer';
+import z from "zod";
 import authMiddleware from "./middlewares/authMiddleware";
 export const userRouter = express.Router();
 
@@ -64,7 +60,6 @@ const userSigninInput = z.object({
 const resetPasswordInput = z.object({
     password: z.string().min(8)
 });
-userRouter.use(express.json());
 
 userRouter.post("/signup", async (req: Request, res: Response) => {
     const bodyParser = userSignupInput.safeParse(req.body);
@@ -151,7 +146,7 @@ userRouter.get("/verify/:token", async (req: Request, res: Response) => {
         // console.log(newToken)
 
         res.clearCookie("Secret_Auth_token");
-        res.cookie("Secret_Auth_token", newToken, { httpOnly: true, secure: true, sameSite: "none", maxAge: 24 * 60 * 60 * 1000 });
+        res.cookie("Secret_Auth_token", newToken, { maxAge: 24 * 60 * 60 * 1000 , httpOnly: true, secure: true, sameSite: "none",});
 
         const userName = await prisma.user.findUnique({
             where: {
@@ -193,8 +188,7 @@ userRouter.post("/signin", async (req: Request, res: Response) => {
         }
         if (!user.isVerified) return res.status(401).json({ message: "Please verify your account!" })
         const token = jwt.sign({ userId: user.id, email: user.email, isVerified: user.isVerified, paymentSession: user.paymentSession }, process.env.JWT_SECRET as string)
-        // console.log(token)
-        res.cookie("Secret_Auth_token", token);
+        res.cookie("Secret_Auth_token", token, {maxAge: 24 * 60 * 60 * 1000 , httpOnly: true, secure: true, sameSite: "none"});
         res.status(200).json({
             message: "The user has been successfully found!",
             UserId: user.id,
