@@ -47,7 +47,19 @@ function Navbar() {
   const setUserEmail = useSetRecoilState(emailState);
   
   useEffect(() => {
-    const tokenCookie = Cookies.get("Secret_Auth_token");
+    function getCookie(name: string) {
+      // Create a regular expression to find the cookie with the specific name
+      const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+      
+      // If a match is found, return the value of the cookie, otherwise return null
+      if (match) {
+          return match[2];
+      }
+      return null;
+  }
+  const tokenCookie = getCookie("Secret_Auth_token");
+  console.log(tokenCookie);
+  
     
     if (tokenCookie) {
       const getUser = async () => {

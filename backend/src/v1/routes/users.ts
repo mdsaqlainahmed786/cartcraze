@@ -195,8 +195,7 @@ userRouter.post("/signin", async (req: Request, res: Response) => {
         res.cookie("Secret_Auth_token", token, {
             secure: true,
             sameSite: 'none',
-            maxAge: 1000 * 60 * 60 * 24 * 7,
-            domain: 'https://cartcraze.anxiousdev.online'
+            maxAge: 1000 * 60 * 60 * 24 * 7
         });
         res.status(200).json({
             message: "The user has been successfully found!",
