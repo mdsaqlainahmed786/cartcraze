@@ -7,6 +7,7 @@ import { cartRouter } from "./cart"
 import authMiddleware from "./middlewares/authMiddleware"
 import rateLimit from "express-rate-limit"
 import { orderRouter } from "./orders"
+import helmet from "helmet"
 //import { wishListRouter } from "./wishlist"
 
 const app = express()
@@ -20,6 +21,7 @@ app.use(cors({
     credentials: true,
     origin:"https://cartcraze.vercel.app"
 }));
+app.use(helmet())   
 //app.use('/api', limiter)
 app.use(express.json())
 app.get("/", (req, res)=>{

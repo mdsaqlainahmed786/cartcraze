@@ -12,11 +12,8 @@ import cookieParser from "cookie-parser"
 import path from "path"
 import authMiddleware from "./middlewares/authMiddleware";
 export const userRouter = express.Router();
-userRouter.use(cookieParser())
-userRouter.use(cors({
-    credentials: true,
-    origin: "https://cartcraze.vercel.app"
-}))
+
+
 interface AuthenticatedRequest extends Request {
     user?: {
         userId: string,
