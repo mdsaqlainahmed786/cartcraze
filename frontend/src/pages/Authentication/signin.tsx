@@ -12,7 +12,7 @@ import Cookies from "js-cookie";
 function Signin() {
   const [loading, setLoading] = useState(false);
   //const [currentUserEmail, setCurrentUserEmail] = useRecoilState(emailState);
- // const [currentUsername, setCurrentUsername] = useRecoilState(usernameState);
+  // const [currentUsername, setCurrentUsername] = useRecoilState(usernameState);
   const [isAlreadyLoggedIn, setIsAlreadyLoggedIn] = useState<string | null>(
     null
   );
@@ -27,10 +27,10 @@ function Signin() {
     if (token) {
       setIsAlreadyLoggedIn(token);
     }
-    if(isAlreadyLoggedIn){
-      navigate("/")
+    if (isAlreadyLoggedIn) {
+      navigate("/");
     }
-    if(isAlreadyLoggedIn === null){
+    if (isAlreadyLoggedIn === null) {
       return;
     }
   }, [isAlreadyLoggedIn, navigate]);
@@ -59,18 +59,23 @@ function Signin() {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/v1/user/signin`,
         userObj,
-        { withCredentials: true }
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
       );
-     // console.log(response.data.username);
-    //  const username = response.data.username
-    //   setCurrentUsername(username)
-    //   localStorage.setItem('username', username)
-    //    console.log(currentUsername)
-    //   console.log(response.data.userEmail);
-    //  const usersEmail = response.data.userEmail
-    //   setCurrentUserEmail(usersEmail)
-    //  localStorage.setItem('email', usersEmail)
-    //   console.log(currentUserEmail)
+      // console.log(response.data.username);
+      //  const username = response.data.username
+      //   setCurrentUsername(username)
+      //   localStorage.setItem('username', username)
+      //    console.log(currentUsername)
+      //   console.log(response.data.userEmail);
+      //  const usersEmail = response.data.userEmail
+      //   setCurrentUserEmail(usersEmail)
+      //  localStorage.setItem('email', usersEmail)
+      //   console.log(currentUserEmail)
       if (response.status === 200) {
         toast.success("SignIn Successful", {
           style: {
@@ -84,7 +89,7 @@ function Signin() {
             secondary: "white",
           }, // Add styling and options to customize error toast notification
         });
-         navigate("/");
+        navigate("/");
       }
     } catch (error) {
       toast.error("Something went wrong!", {
@@ -103,7 +108,7 @@ function Signin() {
       setLoading(false);
     }
 
-   // console.log(userObj);
+    // console.log(userObj);
   };
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
