@@ -229,8 +229,8 @@ cartRouter.post("/create-checkout-session", async (req: AuthenticatedRequest, re
             payment_method_types: ['card'],
             line_items: lineItems,
             mode: 'payment',
-            success_url: 'http://localhost:5173/success',
-            cancel_url: 'http://localhost:5173',
+            success_url: 'https://cartcraze.vercel.app/success',
+            cancel_url: 'https://cartcraze.vercel.app',
             metadata:{
                 userId: req.user?.userId
             }

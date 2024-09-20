@@ -86,7 +86,7 @@ userRouter.post("/signup", async (req: Request, res: Response) => {
         });
 
         const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET as string, { expiresIn: '2m' });
-        const verificationLink = `http://localhost:5173/verify/${token}`;
+        const verificationLink = `https://cartcraze.vercel.app/verify/${token}`;
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             host: 'smtp.gmail.com',
@@ -225,7 +225,7 @@ userRouter.post('/forgot_password', forgotPasswordLimiter, async (req: Request, 
         }
 
         const resetPasswordToken = jwt.sign({ userId: userToResetPassword.id, email: userToResetPassword.email }, process.env.JWT_SECRET as string, { expiresIn: '3m' });
-        const verificationLink = `http://localhost:5173/reset_password/${resetPasswordToken}`;
+        const verificationLink = `https://cartcraze.vercel.app/reset_password/${resetPasswordToken}`;
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             host: 'smtp.gmail.com',
