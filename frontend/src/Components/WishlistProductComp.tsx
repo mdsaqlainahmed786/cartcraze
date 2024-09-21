@@ -6,6 +6,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useRecoilState } from "recoil";
+import { emailState, usernameState } from "../RecoilStateProviders/UserDetails";
 //import Cookies from "js-cookie";
 interface WishListProps {
   title: string;
@@ -13,7 +14,7 @@ interface WishListProps {
   imgSrc: string;
   newPrice: number;
   oldPrice: number;
-  onRemove?:()=>void
+  onRemove?: () => void;
 }
 function WishlistProductComp({
   title,
@@ -21,30 +22,31 @@ function WishlistProductComp({
   category,
   newPrice,
   oldPrice,
-  onRemove
+  onRemove,
 }: WishListProps) {
- // const [userLoggedIn, setUserLoggedIn] = useState(false);
-  const [cartCount, setCartCount] = useRecoilState(CartCountState)
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  const [productCartId, setProductCartId] = useState('')
-  const [loading, setLoading] = useState(false)
-  const navigate = useNavigate()
-  const onAddtoCart = async() => {
-    if(isAuthenticated){
+  // const [userLoggedIn, setUserLoggedIn] = useState(false);
+  const [cartCount, setCartCount] = useRecoilState(CartCountState);
+  const [productCartId, setProductCartId] = useState("");
+  const userName = useRecoilState(usernameState);
+  const userEmail = useRecoilState(emailState);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const onAddtoCart = async () => {
+    if (userName && userEmail) {
       try {
-        setLoading(true)
-        console.log(cartCount)
+        setLoading(true);
+        console.log(cartCount);
         const response = await axios.post(
-           `${import.meta.env.VITE_BACKEND_URL}/api/v1/cart/add`,
-           {
-             productId: productCartId,
-             quantity: 1,
-           },
-           {
-             withCredentials: true,
-           }
-         );
-         toast.success("Product added to cart", {
+          `${import.meta.env.VITE_BACKEND_URL}/api/v1/cart/add`,
+          {
+            productId: productCartId,
+            quantity: 1,
+          },
+          {
+            withCredentials: true,
+          }
+        );
+        toast.success("Product added to cart", {
           style: {
             border: "1px solid black",
             padding: "16px",
@@ -56,29 +58,44 @@ function WishlistProductComp({
             secondary: "white",
           },
         });
-         console.log(response.data.message);
-         const cartResponse = await axios.get(
+        console.log(response.data.message);
+        const cartResponse = await axios.get(
           `${import.meta.env.VITE_BACKEND_URL}/api/v1/cart/getcart`,
           {
             withCredentials: true,
           }
         );
         setCartCount(cartResponse.data.cartItems.length);
-       } catch (error) {
+      } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
-          console.error("Error adding product to cart", error.response.data.message);
-          toast.error(error.response.data.message, {
-            style: {
-              border: "1px solid black",
-              padding: "16px",
-              color: "black",
-              marginTop: "75px",
-            },
-            iconTheme: {
-              primary: "black",
-              secondary: "white",
-            },
-          });
+          if (error.response.data.message === "No token found!") {
+            toast.error("Please login to add product in cart", {
+              style: {
+                border: "1px solid black",
+                padding: "16px",
+                color: "black",
+                marginTop: "75px",
+              },
+              iconTheme: {
+                primary: "black",
+                secondary: "white",
+              },
+            });
+            navigate("/signin");
+          } else {
+            toast.error(error.response.data.message, {
+              style: {
+                border: "1px solid black",
+                padding: "16px",
+                color: "black",
+                marginTop: "75px",
+              },
+              iconTheme: {
+                primary: "black",
+                secondary: "white",
+              },
+            });
+          }
         } else {
           console.error("Error adding product to cart", error);
         }
@@ -86,55 +103,53 @@ function WishlistProductComp({
         setLoading(false);
       }
     }
-    else{
-      toast.error("Please login to add product to cart", {
-        style: {
-          border: "1px solid black",
-          padding: "16px",
-          color: "black",
-          marginTop: "75px",
-        },
-        iconTheme: {
-          primary: "black",
-          secondary: "white",
-        },
-      });
-      navigate("/signin");
-    }
-  }
-  const fetchProductForId = async() =>{
-    const product = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/products/get/${title}`)
-  //  console.log(title)
-    setProductCartId(product.data.specificProduct.id)
-   // console.log(productCartId)
-
-  }
-  useEffect(()=>{
-    // const token = Cookies.get("Secret_Auth_token");
-    // if (token) {
-    //   setUserLoggedIn(true);
+    // else if(!userName  && !userEmail ){
+    //   console.log("No user logged in")
+    //   toast.error("Please login to add product to cart", {
+    //     style: {
+    //       border: "1px solid black",
+    //       padding: "16px",
+    //       color: "black",
+    //       marginTop: "75px",
+    //     },
+    //     iconTheme: {
+    //       primary: "black",
+    //       secondary: "white",
+    //     },
+    //   });
+    //   navigate("/signin");
     // }
-    fetchProductForId()
-  },[])
+  };
+  const fetchProductForId = async () => {
+    const product = await axios.get(
+      `${import.meta.env.VITE_BACKEND_URL}/api/v1/products/get/${title}`
+    );
+    //  console.log(title)
+    setProductCartId(product.data.specificProduct.id);
+    // console.log(productCartId)
+  };
   useEffect(() => {
-    const checkAuthStatus = async () => {
-      try {
-        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getuser`, {
-          withCredentials: true,
-        });
-        if (res.data.userName && res.data.userEmail) {
-          setIsAuthenticated(true);
-        } else {
-          setIsAuthenticated(false);
-        }
-      } catch (error) {
-        console.log(error);
-        setIsAuthenticated(false);
-      }
-    };
+    fetchProductForId();
+  }, []);
+  // useEffect(() => {
+  //   const checkAuthStatus = async () => {
+  //     try {
+  //       const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getuser`, {
+  //         withCredentials: true,
+  //       });
+  //       if (res.data.userName && res.data.userEmail) {
+  //         setIsAuthenticated(true);
+  //       } else {
+  //         setIsAuthenticated(false);
+  //       }
+  //     } catch (error) {
+  //       console.log(error);
+  //       setIsAuthenticated(false);
+  //     }
+  //   };
 
-    checkAuthStatus();
-  }, [setIsAuthenticated]);
+  //   checkAuthStatus();
+  // }, [setIsAuthenticated]);
   return (
     <>
       <div className="flex md:w-[60vw] w-full border-2 rounded-md space-x-2 shadow-md">
@@ -159,13 +174,13 @@ function WishlistProductComp({
           <div className="w-full flex flex-row space-x-5 items-center pt-4">
             <button
               onClick={onAddtoCart}
-              className={`bg-gray-800 hover:bg-black text-white flex justify-center p-1.5 w-[30vw] rounded-2xl text-sm lg:w-44 ${ loading
-                ? "opacity-80 cursor-not-allowed hover:bg-gray-800"
-                : ""}`}
-                disabled={loading}
+              className={`bg-gray-800 hover:bg-black text-white flex justify-center p-1.5 w-[30vw] rounded-2xl text-sm lg:w-44 ${
+                loading ? "opacity-80 cursor-not-allowed hover:bg-gray-800" : ""
+              }`}
+              disabled={loading}
             >
               <div className="flex space-x-2">
-              {loading && (
+                {loading && (
                   <div role="status">
                     <svg
                       aria-hidden="true"
@@ -186,7 +201,7 @@ function WishlistProductComp({
                     <span className="sr-only">Loading...</span>
                   </div>
                 )}{" "}
-              <span>Add to cart</span>
+                <span>Add to cart</span>
               </div>
             </button>
             <button

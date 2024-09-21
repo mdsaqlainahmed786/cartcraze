@@ -4,11 +4,12 @@ import Navbar from "../Components/NavComponents/Navbar";
 import { SiTicktick } from "react-icons/si";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Confetti from 'react-confetti'
 import gifLoader from "../assets/loader.gif";
 function Success() {
   const [loader, setLoader] = useState<boolean>(true);
   const [isPaymentSession, setIsPaymentSession] = useState(false);
-
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
   const userDetails = async () => {
     try {
       const response = await axios.get(
@@ -34,6 +35,7 @@ function Success() {
       console.error(error);
     }
   };
+
   const orderRouter = async () => {
     try {
       const response = await axios.post(
@@ -56,7 +58,15 @@ function Success() {
       setLoader(false);
     }
   };
+ useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({ width: window.innerWidth, height: window.innerHeight });
+    };
 
+    handleResize();
+    window.addEventListener("resize", handleResize); 
+    return () => window.removeEventListener("resize", handleResize); 
+  }, []);
   useEffect(() => {
     userDetails();
   }, []);
@@ -67,7 +77,7 @@ function Success() {
     }
   }, [isPaymentSession]);
 
-  if (loader) {
+  if (!loader) {
     return (
       <>
         <Navbar />
@@ -85,15 +95,17 @@ function Success() {
   }
   return (
     <>
+      <Confetti width={windowSize.width} height={windowSize.height}  style={{ position: "fixed", top: 0, left: 0 }} numberOfPieces={100} />
       <Navbar />
-      <div className="flex flex-col justify-center items-center mt-11 mx-auto pb-24">
-        <span className="text-xl font-semibold md:text-3xl">
+      <div className="flex flex-col justify-center items-center mt-11 mx-auto pb-24 max-w-[80vw] md:max-w-[50vw]">
+        <div className="flex flex-col space-y-12 h-[80vh] items-center justify-center">
+        <span className="text-2xl text-center font-semibold md:text-4xl">
           Congratulations! Your Order was placed 🎉🎉
         </span>
-        <div className="flex flex-col space-y-5 h-[80vh] items-center justify-center space-x-2">
+          <span className="text-xl text-center font-semibold md:text-3xl"></span> 
           <SiTicktick className="text-8xl" />
           <span className="text-lg md:text-lg text-center font-medium">
-            Your Payment was successful! Thank you for shopping with us.
+            Your Payment was successful! Thank you for shopping with us. You can check your order receipt in your received email inbox.
           </span>
           <Link to="/orders">
             <span className="hover:underline cursor-pointer">

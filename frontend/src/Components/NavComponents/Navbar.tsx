@@ -1,6 +1,6 @@
 import TitlePng from "../../assets/Title.png";
 import HamburgerMenu from "../NavComponents/Hamburger";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Input } from "../NavComponents/Input";
 import { IoHomeOutline } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
@@ -47,30 +47,29 @@ function Navbar() {
 
   const setUserEmail = useSetRecoilState(emailState);
   
-  useEffect(() => {
-    const checkAuthStatus = async () => {
-     
-      try {
-        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getuser`, {
-          withCredentials: true,
-        });
-        if (res.data.userName && res.data.userEmail) {
-          setIsAuthenticated(true);
-          setUserName(res.data.userName);
-          setUserEmail(res.data.userEmail);
-        } else {
-          setIsAuthenticated(false);
-        }
-      } catch (error) {
-        console.log(error);
-        setIsAuthenticated(false);
-      } finally {
-        setAuthChecked(true);
-      }
-    };
+  const checkAuthStatus = useCallback(async () => {
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getuser`, {
+        withCredentials: true,
+      });
 
+      if (res.data.userName && res.data.userEmail) {
+        setIsAuthenticated(true);
+        setUserName(res.data.userName);
+        setUserEmail(res.data.userEmail);
+      } else {
+        setIsAuthenticated(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setIsAuthenticated(false);
+    } finally {
+      setAuthChecked(true);
+    }
+  }, []);
+  useEffect(() => {
     checkAuthStatus();
-  }, [setUserName, setUserEmail]);
+  },[checkAuthStatus])
   const renderAuthComponent = () => {
     if (!authChecked) {
       return <div className="min-w-9 h-9 rounded-full px-1 mt-1 mx-2 bg-gray-200 animate-pulse"></div>;
@@ -319,13 +318,25 @@ function Navbar() {
           </div>
 
           {isAuthenticated ? (
+            <>
+           {/* <div className="w-full" onClick={onHandleHam}>
+            <MobileNavcomp link="orders" navItems="Orders" />
+          </div>  */}
+          <div   
+              className="hover:bg-gray-200 rounded-md w-full p-1 cursor-pointer flex justify-center items-center"
+            >
+             <Link to="/orders">
+              <span className="mx-2">Orders</span>
+              </Link>
+            </div>
             <div
               onClick={onLogOut}
               className="hover:bg-gray-200 rounded-md w-full p-1 cursor-pointer flex justify-center items-center"
             >
               <CiLogout className="text-lg -mb-1" />
-              <span className="mx-2">logout</span>
+              <span className="mx-2">Logout</span>
             </div>
+            </>
           ) : (
             <div
               onClick={() => navigate("/signin")}

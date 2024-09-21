@@ -8,10 +8,11 @@ import { useEffect, useState } from "react";
 import loginCart from "../assets/loginCart.png";
 import emptyCart from "../assets/not.png";
 import axios from "axios";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { CartCountState } from "../RecoilStateProviders/CartCount";
 import { TiDeleteOutline } from "react-icons/ti";
 import toast from "react-hot-toast";
+import { emailState, usernameState } from "../RecoilStateProviders/UserDetails";
 interface CartItem {
   id: string;
   quantity: number;
@@ -33,6 +34,8 @@ function Cart() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [totalPrice, setTotalPrice] = useState<number>(0);
+  const userName = useRecoilValue(usernameState);
+  const userEmail = useRecoilValue(emailState);
  // const cartCount = useCartCount()
   const [_, setCartCount] = useRecoilState(CartCountState)
   const navigate = useNavigate();
@@ -97,36 +100,41 @@ function Cart() {
     }
   }
   useEffect(() => {
-   
     fetchProducts();
-   // console.log(cartCount)
   }, []);
   useEffect(() => {
     const checkAuthStatus = async () => {
-      try {
-        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getuser`, {
-          withCredentials: true,
-        });
-        if (res.data.userName && res.data.userEmail) {
+      // try {
+      //   const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getuser`, {
+      //     withCredentials: true,
+      //   });
+      //   if (res.data.userName && res.data.userEmail) {
           
-          setGotoLogin(false);
-        } else {
-          setGotoLogin(true);
-        }
-      } catch (error) {
-        console.log(error);
+      //     setGotoLogin(false);
+      //   } else {
+      //     setGotoLogin(true);
+      //   }
+      // } catch (error) {
+      //   console.log(error);
+      // }
+     
+      if(userName && userEmail){
+        setGotoLogin(false);
+      }
+      else{
+        setGotoLogin(true);
       }
     };
 
     checkAuthStatus();
-  }, [gotoLogin]);
+  }, [gotoLogin, userName, userEmail]);
 
   if (gotoLogin === null) {
     return null; 
     // Or a loading spinner or any placeholder
   }
 
-  if (gotoLogin) {
+  if (gotoLogin && userName === null && userEmail === null) {
     return (
       <>
         <Navbar />
