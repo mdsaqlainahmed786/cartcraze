@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 import Navbar from "../../Components/NavComponents/Navbar";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { toast } from "react-hot-toast";
-import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import NotRobot from "../../Components/NotRobot";
 
@@ -20,9 +19,7 @@ function Signup() {
   const [confirmingPassword, setConfirmingPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-  const [isAlreadyLoggedIn, setIsAlreadyLoggedIn] = useState<string | null>(
-    null
-  );
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -31,17 +28,29 @@ function Signup() {
   };
 
   useEffect(() => {
-    const token = Cookies.get("Secret_Auth_token");
-    if (token) {
-      setIsAlreadyLoggedIn(token);
+    const checkAuthStatus = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getuser`, {
+          withCredentials: true,
+        });
+        if (res.data.userName && res.data.userEmail) {
+          setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.log(error);
+        setIsAuthenticated(false);
+      }
+    };
+
+    checkAuthStatus();
+  }, [setIsAuthenticated]);
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
     }
-    if(isAlreadyLoggedIn){
-      navigate("/")
-    }
-    if(isAlreadyLoggedIn === null){
-      return;
-    }
-  }, [isAlreadyLoggedIn, navigate]);
+  }, [isAuthenticated]);
 
   const onSubmitSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

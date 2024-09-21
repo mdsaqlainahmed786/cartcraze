@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Navbar from "../Components/NavComponents/Navbar";
 import FooterComp from "../Components/FooterComp";
-import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
@@ -15,6 +14,7 @@ function Checkout() {
   const userEmail = useRecoilState(emailState)
   const [cartItems, setCartItems] = useState([]);
   const [disableSaveBtn, setDisableSaveBtn] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [enableProceedToPay, setEnableProceedToPay] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -66,13 +66,14 @@ function Checkout() {
     }
   };
   useEffect(() => {
-    const token = Cookies.get("Secret_Auth_token");
-    if(token){
       const getUserDetails = async () => {
         try{
           const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getuser`, {
             withCredentials: true
           });
+          if(response.data.userName && response.data.userEmail && response.data.isVerified){
+            setIsAuthenticated(true);
+          }
           console.log(response.data);
           setDeliveryDetails({
             address: response.data.userAddress,
@@ -87,8 +88,13 @@ function Checkout() {
     }
     getUserDetails();
     
-  }
+  
 }, []);
+useEffect(() => {
+  if (isAuthenticated === null) {
+    navigate("/");
+  }
+}, [isAuthenticated, navigate]);
   useEffect(() => {
     
     if (
@@ -124,12 +130,12 @@ function Checkout() {
 
   };
   useEffect(() => {
-    const token = Cookies.get("Secret_Auth_token");
-    if (!token) {
-      navigate("/");
-    }
+    // const token = Cookies.get("Secret_Auth_token");
+    // if (!token) {
+    //   navigate("/");
+    // }
     fetchProducts();
-  }, [navigate]);
+  }, []);
   const taxRate = 0.05;
   const taxAmount = totalPrice * taxRate;
   const payableAmount = totalPrice + taxAmount;

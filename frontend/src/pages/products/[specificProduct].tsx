@@ -10,7 +10,6 @@ import ImageThumbnail from "../../Components/ProductDetails/ImageThumbnail";
 import ProductDescription from "../../Components/ProductDetails/ProductDescription";
 import BenefitsOfStore from "../../Components/BenefitsOfStore/BenefitsOfStore";
 import axios from "axios";
-import Cookies from "js-cookie";
 import toast from "react-hot-toast";
 import { useRecoilState } from "recoil";
 import { CartCountState } from "../../RecoilStateProviders/CartCount";
@@ -196,10 +195,7 @@ function ProductDetail() {
   });
 
   useEffect(() => {
-    const token = Cookies.get("Secret_Auth_token");
-    if (token) {
-      setUserLoggedIn(true);
-    }
+   
     const productFetcher = async () => {
       try {
         const response = await axios.get(
@@ -220,6 +216,24 @@ function ProductDetail() {
     };
     productFetcher();
   }, [productName]);
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getuser`, {
+          withCredentials: true,
+        });
+        if (res.data.userName && res.data.userEmail) {
+          setUserLoggedIn(true);
+        } else {
+          setUserLoggedIn(false);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    checkAuthStatus();
+  }, [setUserLoggedIn]);
 
   useEffect(() => {
     if (slideImages.length > 0) {

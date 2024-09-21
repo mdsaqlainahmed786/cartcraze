@@ -6,7 +6,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useRecoilState } from "recoil";
-import Cookies from "js-cookie";
+//import Cookies from "js-cookie";
 interface WishListProps {
   title: string;
   category: string;
@@ -23,13 +23,14 @@ function WishlistProductComp({
   oldPrice,
   onRemove
 }: WishListProps) {
-  const [userLoggedIn, setUserLoggedIn] = useState(false);
+ // const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [cartCount, setCartCount] = useRecoilState(CartCountState)
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [productCartId, setProductCartId] = useState('')
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
   const onAddtoCart = async() => {
-    if(userLoggedIn){
+    if(isAuthenticated){
       try {
         setLoading(true)
         console.log(cartCount)
@@ -109,12 +110,31 @@ function WishlistProductComp({
 
   }
   useEffect(()=>{
-    const token = Cookies.get("Secret_Auth_token");
-    if (token) {
-      setUserLoggedIn(true);
-    }
+    // const token = Cookies.get("Secret_Auth_token");
+    // if (token) {
+    //   setUserLoggedIn(true);
+    // }
     fetchProductForId()
   },[])
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getuser`, {
+          withCredentials: true,
+        });
+        if (res.data.userName && res.data.userEmail) {
+          setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.log(error);
+        setIsAuthenticated(false);
+      }
+    };
+
+    checkAuthStatus();
+  }, [setIsAuthenticated]);
   return (
     <>
       <div className="flex md:w-[60vw] w-full border-2 rounded-md space-x-2 shadow-md">

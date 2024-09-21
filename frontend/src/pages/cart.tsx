@@ -5,7 +5,6 @@ import loader from "../assets/loader.gif";
 import Navbar from "../Components/NavComponents/Navbar";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
 import loginCart from "../assets/loginCart.png";
 import emptyCart from "../assets/not.png";
 import axios from "axios";
@@ -98,11 +97,29 @@ function Cart() {
     }
   }
   useEffect(() => {
-    const token = Cookies.get("Secret_Auth_token");
-    setGotoLogin(!token);
+   
     fetchProducts();
    // console.log(cartCount)
   }, []);
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getuser`, {
+          withCredentials: true,
+        });
+        if (res.data.userName && res.data.userEmail) {
+          
+          setGotoLogin(false);
+        } else {
+          setGotoLogin(true);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    checkAuthStatus();
+  }, [gotoLogin]);
 
   if (gotoLogin === null) {
     return null; 
