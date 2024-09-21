@@ -43,10 +43,13 @@ function Navbar() {
   const [isMdScreen, setIsMdScreen] = useState(window.innerWidth <= 1023);
   //console.log(isMdScreen)
   const setUserName = useSetRecoilState(usernameState);
+  const [authChecked, setAuthChecked] = useState(false);
+
   const setUserEmail = useSetRecoilState(emailState);
   
   useEffect(() => {
     const checkAuthStatus = async () => {
+     
       try {
         const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getuser`, {
           withCredentials: true,
@@ -61,12 +64,50 @@ function Navbar() {
       } catch (error) {
         console.log(error);
         setIsAuthenticated(false);
+      } finally {
+        setAuthChecked(true);
       }
     };
 
     checkAuthStatus();
   }, [setUserName, setUserEmail]);
-
+  const renderAuthComponent = () => {
+    if (!authChecked) {
+      return <div className="min-w-9 h-9 rounded-full px-1 mt-1 mx-2 bg-gray-200 animate-pulse"></div>;
+    }
+    
+    if (isAuthenticated) {
+      return (
+        <UserProfile
+          className="hidden -right-28 bg-white z-[999] h-48 w-[20rem] absolute pl-4 py-2 text-[19px] -ml-5 mt-1 shadow-xl rounded-lg group-hover:block"
+          username={userName}
+          email={userEmail}
+          onLogOut={onLogOut}
+        />
+      );
+    }
+    
+    return <Icons link="signup" reactIcons={<CgProfile />} />;
+  };
+  const renderAuthMobileComponent = () => {
+    if (!authChecked) {
+      return <div className="flex justify-center min-w-10 h-10 rounded-full bg-gray-200 mt-1 -mr-3 mx-2 px-1 animate-pulse"></div>;
+    }
+    
+    if (isAuthenticated) {
+      return (
+        <div className="block group relative">
+        <div className="bg-black text-white flex justify-center text-[20px] w-full min-w-6 h-9 rounded-full mt-1 mx-2 px-1 pb-10">
+          {userName?.charAt(0).toUpperCase()}
+        </div>
+      </div>
+      );
+    }
+    
+    return (<Link to="/signin">
+    <MobileNavIcons reactMobileIcons={<CgProfile />} />
+  </Link>)
+  }
   const onLogOut = async () => {
     try {
       await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/logout`, {
@@ -195,20 +236,7 @@ function Navbar() {
                   </div>
                 </Link>
               </div>
-              {isAuthenticated ? (
-        <>
-          <UserProfile
-            className={
-              "hidden -right-28 bg-white z-[999] h-48 w-[20rem] absolute pl-4 py-2 text-[19px] -ml-5 mt-1 shadow-xl rounded-lg group-hover:block"
-            }
-            username={userName}
-            email={userEmail}
-            onLogOut={onLogOut}
-          />
-        </>
-      ) : (
-        <Icons link="signup" reactIcons={<CgProfile />} />
-      )}
+              {renderAuthComponent()}
             </div>
           </div>
           <div onClick={() =>{ 
@@ -351,19 +379,14 @@ function Navbar() {
             </div>
           </Link>
         </div>
-        {!isAuthenticated ? (
-          <Link to="/signin">
-            <MobileNavIcons reactMobileIcons={<CgProfile />} />
-          </Link>
+        {renderAuthMobileComponent()}
+        {/* {!isAuthenticated ? (
+ 
         ) : (
           <>
-            <div className="block group relative">
-              <div className="bg-black text-white flex justify-center text-[20px] w-full min-w-6  h-9 rounded-full mt-1 mx-2 px-1 pb-10">
-                {userName?.charAt(0).toUpperCase()}
-              </div>
-            </div>
+           
           </>
-        )}
+        )} */}
       </div>
     </>
   );

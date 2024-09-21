@@ -36,7 +36,9 @@ function Products() {
     setLoader(true);
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/v1/products/category/${productCategory}${queryParams}`
+        `${
+          import.meta.env.VITE_BACKEND_URL
+        }/api/v1/products/category/${productCategory}${queryParams}`
       );
       setProducts(response.data.categorySpecificProducts);
       setProductsLength(response.data.categorySpecificProducts.length);
@@ -82,8 +84,13 @@ function Products() {
     <>
       <Navbar />
       {loader && (
-        <div className="flex justify-center items-center h-[80vh]">
+        <div className="flex flex-col justify-center items-center h-[80vh]">
           <img src={gifLoader} alt="loader" />
+          <div>
+            <span className="text-lg text-neutral-500">
+              Please Hang on. We are on the way!
+            </span>
+          </div>
         </div>
       )}
 
@@ -105,7 +112,12 @@ function Products() {
       )}
       <div className={`flex flex-col ${error || loader ? "hidden" : ""}`}>
         <div className={`flex flex-row justify-between items-center p-3`}>
-          <div><Link to="/" className="cursor-pointer hover:underline">Home &#10095; </Link>{productCategory}</div>
+          <div>
+            <Link to="/" className="cursor-pointer hover:underline">
+              Home &#10095;{" "}
+            </Link>
+            {productCategory}
+          </div>
           <div
             onClick={onFilterOpen}
             className="text-3xl cursor-pointer lg:hidden"

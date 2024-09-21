@@ -108,7 +108,7 @@ function Verify() {
         )}
         {verified && !errorOccurred && (
           <div className="flex justify-center h-screen items-center flex-col mx-auto">
-            <span className="text-5xl pb-5 font-semibold text-neutral-700">Successfully Verified!</span>
+            <span className="text-5xl pb-5 font-semibold text-neutral-700 md:text-xl md:text-center">Successfully Verified!</span>
             <img className="w-60" src={success} alt="success" />
             <div className="flex flex-col justify-center items-center text-center mx-5 text-neutral-600 text-lg">
               <span>Yay! your account was successfully verified 🎉🎉</span>

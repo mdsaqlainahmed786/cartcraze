@@ -7,11 +7,10 @@ import axios from "axios";
 import gifLoader from "../assets/loader.gif";
 function Success() {
   const [loader, setLoader] = useState<boolean>(true);
-  const [isPaymentSession, setIsPaymentSession]=useState(false);
+  const [isPaymentSession, setIsPaymentSession] = useState(false);
 
   const userDetails = async () => {
     try {
-      
       const response = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getuser`,
         {
@@ -19,25 +18,24 @@ function Success() {
         }
       );
       console.log(response.data.userPaymentSession);
-      if(!response.data.userPaymentSession) {
-       console.log("No payment session found")
-       setIsPaymentSession(false)
-       window.location.href = "/";
-       return;
+      if (!response.data.userPaymentSession) {
+        console.log("No payment session found");
+        setIsPaymentSession(false);
+        window.location.href = "/";
+        return;
       }
-      setIsPaymentSession(true)
+      setIsPaymentSession(true);
     } catch (error: unknown) {
       //@ts-expect-error err
       if (error?.response.status === 400) {
         window.location.href = "/";
-        console.log(error)
+        console.log(error);
       }
       console.error(error);
-    } 
-  }
+    }
+  };
   const orderRouter = async () => {
     try {
-     
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/v1/orders/add`,
         {
@@ -48,11 +46,10 @@ function Success() {
         }
       );
       console.log(response.data);
-      
-    } catch (error:unknown) {
-       //@ts-expect-error err
-      if(error?.response.status === 400){
-       window.location.href = "/";
+    } catch (error: unknown) {
+      //@ts-expect-error err
+      if (error?.response.status === 400) {
+        window.location.href = "/";
       }
       console.error(error);
     } finally {
@@ -61,22 +58,26 @@ function Success() {
   };
 
   useEffect(() => {
-      userDetails()
+    userDetails();
   }, []);
 
-  useEffect(()=>{
-    if(isPaymentSession){
-      orderRouter()
+  useEffect(() => {
+    if (isPaymentSession) {
+      orderRouter();
     }
-  },[isPaymentSession])
-
+  }, [isPaymentSession]);
 
   if (loader) {
     return (
       <>
         <Navbar />
-        <div className="flex justify-center items-center h-[80vh]">
+        <div className="flex flex-col justify-center items-center h-[80vh]">
           <img src={gifLoader} alt="loader" />
+          <div>
+            <span className="text-lg text-neutral-500">
+              Please Hang on. We are on the way!
+            </span>
+          </div>
         </div>
         <FooterComp />
       </>
