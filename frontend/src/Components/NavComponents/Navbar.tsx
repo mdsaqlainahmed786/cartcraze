@@ -16,7 +16,7 @@ import MobileNavIcons from "../NavComponents/MobileNavIcons";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { wishlistState } from "../../RecoilStateProviders/WishListCount";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import Cookies from "js-cookie";
+
 import axios from "axios";
 import toast from "react-hot-toast";
 import UserProfile from "./UserProfile";
@@ -35,7 +35,6 @@ function Navbar() {
   const [isHamSymbolOpen, setIsHamSymbolOpen] = useState(false);
   const userEmail = useRecoilValue(emailState);
   const userName = useRecoilValue(usernameState);
-  const [token, setToken] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
   const wishlistCount = useRecoilValue(wishlistState);
@@ -121,10 +120,7 @@ function Navbar() {
     };
   }, [isMdScreen, isHamOpen]);
 
-  useEffect(() => {
-    const token = Cookies.get("Secret_Auth_token")!;
-    setToken(token);
-  }, []);
+ 
   const isActive = (path: string) => location.pathname === path;
   return (
     <>
@@ -254,7 +250,7 @@ function Navbar() {
             className={`flex flex-col justify-center items-center bg-gray-800 text-white`}
           >
             <div className="flex items-center">
-              {token ? (
+              {isAuthenticated ? (
                 <div className="text-gray-800 bg-white flex justify-center text-[20px] w-full min-w-9 h-9 rounded-full mt-1 mx-2 px-1 pt-0.5">
                   {userName?.charAt(0).toUpperCase()}
                 </div>
@@ -264,12 +260,12 @@ function Navbar() {
 
               <div className="flex flex-col mt-4">
                 <span className="text-xl font-bold">Hi,</span>
-                {token ? (
+                {isAuthenticated ? (
                   <span className="font-semibold">{userName}</span>
                 ) : (
                   <span className="mb-11">Guest User</span>
                 )}
-                {token ? (
+                {isAuthenticated ? (
                   <span className="text-sm pb-10">{userEmail}</span>
                 ) : (
                   <div></div>
@@ -294,7 +290,7 @@ function Navbar() {
             <MobileNavcomp link="Women-Shirt" navItems="Women Shirt" />
           </div>
 
-          {token ? (
+          {isAuthenticated ? (
             <div
               onClick={onLogOut}
               className="hover:bg-gray-200 rounded-md w-full p-1 cursor-pointer flex justify-center items-center"
@@ -355,7 +351,7 @@ function Navbar() {
             </div>
           </Link>
         </div>
-        {!token ? (
+        {!isAuthenticated ? (
           <Link to="/signin">
             <MobileNavIcons reactMobileIcons={<CgProfile />} />
           </Link>

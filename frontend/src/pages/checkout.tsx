@@ -6,6 +6,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useRecoilState } from "recoil";
+import loader from "../assets/loader.gif";
 import { emailState, usernameState } from "../RecoilStateProviders/UserDetails";
 import ReviewAndPay from "../Components/ReviewAndPay";
 function Checkout() {
@@ -19,6 +20,7 @@ function Checkout() {
   const [enableProceedToPay, setEnableProceedToPay] = useState(false);
   const [loading, setLoading] = useState(false);
   const [priceAfterDiscount, setPriceAfterDiscount] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   const [deliveryDetails, setDeliveryDetails] = useState({
     address: "",
     phoneNumber: "",
@@ -71,30 +73,31 @@ function Checkout() {
           const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getuser`, {
             withCredentials: true
           });
-          if(response.data.userName && response.data.userEmail){
+          if (response.data.userName && response.data.userEmail) {
             setIsAuthenticated(true);
+            setIsLoading(false);
+            setDeliveryDetails({
+              address: response.data.userAddress || "",
+              phoneNumber: response.data.userPhoneNumber || "",
+              pinCode: response.data.userPincode || "",
+              state: response.data.userState || "",
+              district: response.data.userDistrict || "",
+            });
+          } else {
+            setIsAuthenticated(false);
+            navigate("/");
           }
-          console.log(response.data);
-          setDeliveryDetails({
-            address: response.data.userAddress,
-            phoneNumber: response.data.userPhoneNumber,
-            pinCode: response.data.userPincode,
-            state: response.data.userState,
-            district: response.data.userDistrict
-          });
         } catch (error) {
-          console.error(error);
+          console.error("Authentication error:", error);
+          setIsAuthenticated(false);
+          setIsLoading(false);
+          navigate("/");
         }
     }
     getUserDetails();
     
   
-}, []);
-useEffect(() => {
-  if (!isAuthenticated) {
-    navigate("/");
-  }
-}, [isAuthenticated, navigate]);
+}, [navigate]);
   useEffect(() => {
     
     if (
@@ -129,6 +132,7 @@ useEffect(() => {
     console.log(result);
 
   };
+  
   useEffect(() => {
     // const token = Cookies.get("Secret_Auth_token");
     // if (!token) {
@@ -160,6 +164,21 @@ useEffect(() => {
       console.error(error);
     }
   };
+  if (isLoading) {
+    return (
+      <>
+        <Navbar />
+        <div className="flex justify-center items-center min-h-screen">
+          <img className="md:h-[25rem]" src={loader} alt="loader" />
+        </div>
+        <FooterComp />
+      </>
+    );
+  }
+  
+  if (!isAuthenticated) {
+    return null; // This will prevent any flash of content before redirect
+  }
   return (
     <>
       <Navbar />

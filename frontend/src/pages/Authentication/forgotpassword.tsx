@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
-import Cookies from "js-cookie";
 function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const navigate = useNavigate();
   //@ts-expect-error form event
   const onSubmitHandler = async (e) => {
@@ -87,12 +87,36 @@ function ForgotPassword() {
         setLoading(false)
       }
   };
+  // useEffect(() => {
+  //   const token = Cookies.get("Secret_Auth_token");
+  //   if (token) {
+  //     navigate("/");
+  //   }
+  // }, [navigate]);
   useEffect(() => {
-    const token = Cookies.get("Secret_Auth_token");
-    if (token) {
+    const checkAuthStatus = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getuser`, {
+          withCredentials: true,
+        });
+        if (res.data.userName && res.data.userEmail) {
+          setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.log(error);
+        setIsAuthenticated(false);
+      }
+    };
+
+    checkAuthStatus();
+  }, [setIsAuthenticated]);
+  useEffect(() => {
+    if (isAuthenticated) {
       navigate("/");
     }
-  }, [navigate]);
+  }, [isAuthenticated, navigate]);
   return (
     <>
       <div className="flex flex-col justify-center items-center h-screen">

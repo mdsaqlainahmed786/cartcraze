@@ -273,7 +273,22 @@ function ProductDetail() {
           setImage={setImage}
           selectedImage={image}
         />
-        <img src={slideImages[currentIndex]} alt="product" className=" h-96" />
+        <div className="w-full max-w-md">
+          <div className="relative w-full flex justify-center items-center">
+            <div
+              {...handlers}
+              className="relative overflow-hidden border-2 border-gray-300"
+            >
+              {image && (
+                <img
+                  src={image}
+                  alt={`Slide ${currentIndex}`}
+                  className="w-full h-full object-cover"
+                />
+              )}
+            </div>
+          </div>
+        </div>
         <ProductDescription
           productName={productName!}
           productDescription={product.description}
