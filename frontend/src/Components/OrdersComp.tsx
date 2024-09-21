@@ -33,7 +33,6 @@ function OrdersComp({imgSrc, title, category, newPrice, oldPrice, size, quantity
                 <div className='border p-2 border-black rounded-lg'>Size: {size}</div>
                 <div className='border p-2 border-black rounded-lg'>Qty: {quantity}</div>
               </div>
-              <span className='text-sm pt-1 text-slate-500'>Estimated Delivery: 8 days</span>
             </div>
           </div>
         </>

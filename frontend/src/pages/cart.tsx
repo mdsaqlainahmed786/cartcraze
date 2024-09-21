@@ -176,7 +176,7 @@ function Cart() {
         <div className="lg:w-[70%]">
           {/*This is shopping list*/}
           <div className={`w-full flex my-4 space-y-2 ${cartItems.length==0?'justify-center':'justify-between'} items-center max-w-[80vw] md:max-w-[60vw] pb-2 mx-auto`}>
-            <span className="text-3xl font-medium font-sans md:text-4xl">
+            <span className="text-2xl font-medium font-sans md:text-4xl">
               Your Shopping Cart ({cartItems.length})
             </span>
             <div onClick={onClearCart} className={`${cartItems.length==0?'hidden':'flex'} items-center flex-col cursor-pointer mx-2`} title="Clear Cart">
