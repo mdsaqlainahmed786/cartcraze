@@ -77,7 +77,7 @@ function Success() {
     }
   }, [isPaymentSession]);
 
-  if (!loader) {
+  if (loader) {
     return (
       <>
         <Navbar />
