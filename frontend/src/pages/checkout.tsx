@@ -71,7 +71,7 @@ function Checkout() {
           const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/v1/user/getuser`, {
             withCredentials: true
           });
-          if(response.data.userName && response.data.userEmail && response.data.isVerified){
+          if(response.data.userName && response.data.userEmail){
             setIsAuthenticated(true);
           }
           console.log(response.data);
@@ -91,7 +91,7 @@ function Checkout() {
   
 }, []);
 useEffect(() => {
-  if (isAuthenticated === null) {
+  if (!isAuthenticated) {
     navigate("/");
   }
 }, [isAuthenticated, navigate]);
