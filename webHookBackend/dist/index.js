@@ -47,7 +47,7 @@ app.post("/api/webhook", express_1.default.raw({ type: 'application/json' }), (r
             console.log("Receipt URL:", receiptUrl);
             const updatePaymentStatus = (userId, paymentStatus, receipt) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    yield axios_1.default.post(`${import.meta.env.VITE_BACKEND_URL}/api/v1/orders/update-payment-status`, {
+                    yield axios_1.default.post(`${process.env.BACKEND_URL}/api/v1/orders/update-payment-status`, {
                         userId,
                         paymentStatus: session,
                         receipt: receiptUrl
