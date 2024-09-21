@@ -225,7 +225,7 @@ userRouter.post('/forgot_password', forgotPasswordLimiter, async (req: Request, 
         }
 
         const resetPasswordToken = jwt.sign({ userId: userToResetPassword.id, email: userToResetPassword.email }, process.env.JWT_SECRET as string, { expiresIn: '3m' });
-        const verificationLink = `https://cartcraze.vercel.app/reset_password/${resetPasswordToken}`;
+        const verificationLink = `https://cartcraze.anxiousdev.online/reset_password/${resetPasswordToken}`;
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             host: 'smtp.gmail.com',
