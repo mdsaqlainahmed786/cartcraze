@@ -78,7 +78,7 @@ userRouter.post("/signup", async (req: Request, res: Response) => {
         });
 
         const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET as string, { expiresIn: '2m' });
-        const verificationLink = `https://cartcraze.vercel.app/verify/${token}`;
+        const verificationLink = `https://cartcraze.anxiousdev.online/verify/${token}`;
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             host: 'smtp.gmail.com',
