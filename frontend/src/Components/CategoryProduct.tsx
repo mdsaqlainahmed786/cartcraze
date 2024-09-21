@@ -137,7 +137,7 @@ function CategoryProduct({
             <div className="flex flex-wrap space-x-1 justify-start items-center">
               <div className="flex flex-wrap truncate max-h-16">
                 {sizes?.map((size) => (
-                  <div key={size} className="p-1 px-2.5 border-2 rounded-lg">
+                  <div key={size} className="p-1 px-1.5 border-2 rounded-lg">
                     {size}
                   </div>
                 ))}
