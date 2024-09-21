@@ -252,12 +252,14 @@ function ProductDetail() {
           <h1 className="text-3xl mt-5">Product not found</h1>
         </div>
       )}
+
       <div className="hidden lg:flex flex-row lg:justify-between mt-5">
         <ImageThumbnail
           images={slideImages}
           setImage={setImage}
           selectedImage={image}
         />
+        <img src={slideImages[currentIndex]} alt="product" className=" h-96" />
         <ProductDescription
           productName={productName!}
           productDescription={product.description}
