@@ -3,6 +3,10 @@ import axios from "axios";
 require('dotenv').config();
 
 const app = express();
+
+app.get("/", (req: Request, res: Response) => {
+  res.send("Hello from the webhook server");
+});
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const endpointSecret = process.env.STRIPE_WEB_HOOK_SECRET;
@@ -10,6 +14,8 @@ const endpointSecret = process.env.STRIPE_WEB_HOOK_SECRET;
 if (!endpointSecret) {
   throw new Error("Stripe Webhook Secret is not defined");
 }
+
+
 
 app.post("/api/webhook", express.raw({ type: 'application/json' }), async (request: Request, response: Response) => {
   const sig = request.headers['stripe-signature'];
