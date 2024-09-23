@@ -22,7 +22,7 @@ function Success() {
       if (!response.data.userPaymentSession) {
         console.log("No payment session found");
         setIsPaymentSession(false);
-        window.location.href = "/";
+         window.location.href = "/";
         return;
       }
       setIsPaymentSession(true);
@@ -51,7 +51,7 @@ function Success() {
     } catch (error: unknown) {
       //@ts-expect-error err
       if (error?.response.status === 400) {
-        window.location.href = "/";
+       window.location.href = "/";
       }
       console.error(error);
     } finally {
@@ -99,8 +99,8 @@ function Success() {
       <Navbar />
       <div className="flex flex-col justify-center items-center mt-11 mx-auto pb-24 max-w-[80vw] md:max-w-[50vw]">
         <div className="flex flex-col space-y-12 h-[80vh] items-center justify-center">
-        <span className="text-2xl text-center font-semibold md:text-4xl">
-          Congratulations! Your Order was placed 🎉🎉
+        <span className="text-3xl text-center font-semibold md:text-4xl">
+          Your Order was placed 🎉🎉
         </span>
           <span className="text-xl text-center font-semibold md:text-3xl"></span> 
           <SiTicktick className="text-8xl" />
@@ -108,7 +108,7 @@ function Success() {
             Your Payment was successful! Thank you for shopping with us. You can check your order receipt in your received email inbox.
           </span>
           <Link to="/orders">
-            <span className="hover:underline cursor-pointer">
+            <span className="text-center hover:underline cursor-pointer">
               Go to Orders Page ⟩
             </span>
           </Link>

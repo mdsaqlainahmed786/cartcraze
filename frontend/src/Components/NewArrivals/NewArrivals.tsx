@@ -118,7 +118,7 @@ function NewArrivals() {
             <span className="sr-only">Loading...</span>
           </div>
           <div>
-            <span className="text-lg text-neutral-500">
+            <span className="text-md text-neutral-500">
               Please Hang on. We are on the way!
             </span>
           </div>
