@@ -59,7 +59,7 @@ function Orders() {
           <img src={gifLoader} alt="loader" />
           <div>
             <span className="text-lg text-neutral-500">
-              Please Hang on. We are on the way!
+            Please wait. This might take a minute
             </span>
           </div>
         </div>

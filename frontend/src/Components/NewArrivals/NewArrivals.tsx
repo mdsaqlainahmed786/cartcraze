@@ -119,7 +119,7 @@ function NewArrivals() {
           </div>
           <div>
             <span className="text-md text-neutral-500">
-              Please Hang on. We are on the way!
+            Please wait. This might take a minute
             </span>
           </div>
         </div>
