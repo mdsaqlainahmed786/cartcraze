@@ -38,7 +38,7 @@ function FeaturedProducts() {
   const products = featuredProducts.slice(-4);
   return (
     <div
-      className="pb-24 mx-auto max-w-[80vw] space-y-3 aos-init aos-animate"
+      className="pb-24 mx-auto w-full space-y-3 aos-init aos-animate"
       data-aos="zoom-in-up"
       data-aos-anchor-placement="top-bottom"
     >
@@ -49,7 +49,7 @@ function FeaturedProducts() {
         Checkout our products which has been loved by our users across our
         Business
       </span>
-      <div className="flex flex-wrap gap-8 justify-center mx-auto max-w-[70vw] md:flex-nowrap">
+      <div className="flex flex-wrap gap-6 justify-center mx-auto w-full md:flex-wrap">
         {loading && 
         <div className="flex flex-col justify-center items-center space-y-3">
         <div role="status">

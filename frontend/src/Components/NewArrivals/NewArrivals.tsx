@@ -57,7 +57,7 @@ function NewArrivals() {
   const womenRelatedProducts = womenProducts.slice(0, 4);
   return (
     <div
-      className="pb-24 mx-auto max-w-[80vw] space-y-3 aos-init aos-animate"
+      className="pb-24 mx-auto w-full space-y-3 aos-init aos-animate"
       data-aos="zoom-in-up"
       data-aos-anchor-placement="top-bottom"
     >
@@ -126,7 +126,7 @@ function NewArrivals() {
       ) : (
         <>
           <div
-            className={`flex pt-5 flex-wrap gap-8 justify-center mx-auto max-w-[80vw] md:flex-nowrap ${
+            className={`flex pt-5 flex-wrap gap-6 justify-center mx-auto w-full md:flex-wrap ${
               menArrivals ? "flex" : "hidden"
             }`}
           >
@@ -144,7 +144,7 @@ function NewArrivals() {
             ))}
           </div>
           <div
-            className={`flex pt-5 flex-wrap gap-8 justify-center mx-auto max-w-[80vw] md:flex-nowrap ${
+            className={`flex pt-5 flex-wrap gap-6 justify-center mx-auto w-full md:flex-wrap ${
               womenArrivals ? "flex" : "hidden"
             }`}
           >
