@@ -46,7 +46,7 @@ export const Input: React.FC = () => {
         <IoSearch />
       </button>
       </div>
-      <div className={`${search?"absolute":"hidden"} mt-11 bg-white rounded-lg w-full max-w-[80vw] h-auto max-h-[58vh] md:max-w-[35vw] overflow-hidden md:mt-11`}>
+      <div className={`${search?"absolute":"hidden"} overflow-y-scroll mt-11 bg-white rounded-lg w-full max-w-[80vw] h-auto max-h-[58vh] md:max-w-[35vw] overflow-hidden md:mt-11`}>
         <div className="flex flex-col space-y-2 justify-center">
           {searchResults.map((product:Product) => (
             <SearchProduct imgSrc={product.images[0]} title={product.title} category={product.category}/>
