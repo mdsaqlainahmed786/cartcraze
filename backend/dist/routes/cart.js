@@ -238,8 +238,8 @@ exports.cartRouter.post("/create-checkout-session", (req, res) => __awaiter(void
             payment_method_types: ['card'],
             line_items: lineItems,
             mode: 'payment',
-            success_url: 'https://cartcraze.vercel.app/success',
-            cancel_url: 'https://cartcraze.vercel.app',
+            success_url: 'https://cartcraze.anxiousdev.online/success',
+            cancel_url: 'https://cartcraze.anxiousdev.online',
             metadata: {
                 userId: (_h = req.user) === null || _h === void 0 ? void 0 : _h.userId
             }

@@ -29,6 +29,6 @@ app.use("/api/v1/products", products_1.productsRouter);
 app.use("/api/v1/cart", authMiddleware_1.default, cart_1.cartRouter);
 app.use("/api/v1/orders", orders_1.orderRouter);
 //app.use("/api/v1/wishlist", wishListRouter)
-app.listen(process.env.PORT, () => {
+app.listen(5001, () => {
     console.log("The server is listening on port 3000");
 });

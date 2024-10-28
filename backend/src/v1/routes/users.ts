@@ -60,7 +60,6 @@ const userSigninInput = z.object({
 const resetPasswordInput = z.object({
     password: z.string().min(8)
 });
-
 userRouter.post("/signup", async (req: Request, res: Response) => {
     const bodyParser = userSignupInput.safeParse(req.body);
     if (!bodyParser.success) {
@@ -79,36 +78,46 @@ userRouter.post("/signup", async (req: Request, res: Response) => {
 
         const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET as string, { expiresIn: '2m' });
         const verificationLink = `https://cartcraze.anxiousdev.online/verify/${token}`;
+        
+        // Updated transporter configuration
         const transporter = nodemailer.createTransport({
-            service: 'gmail',
+            //@ts-ignore
             host: 'smtp.gmail.com',
-            port: 587,
-            secure: false,
+            port: 465,  // Changed to 465 for secure connection
+            secure: true, // Changed to true
             auth: {
-                user: process.env.EMAIL_USER,  // Your Gmail address
-                pass: process.env.EMAIL_PASS   // Your App password
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS,
+                type: 'OAuth2', // Added OAuth2 type
+            },
+            tls: {
+                rejectUnauthorized: false // Added for development
             }
         });
 
         const mailOptions = {
             from: {
                 name: 'CartCraze',
-                address: process.env.EMAIL_USER
-            }, // Sender address
-            to: email, // List of receivers
-            subject: 'Verify your email', // Subject line
-            text: `Please verify your email by clicking the following link: ${verificationLink}`, // Plain text body
-            html: `<p>Please verify your email by clicking the following link: <a href="${verificationLink}">Verify Email</a></p>`, // HTML body
+                address: process.env.EMAIL_USER as string
+            },
+            to: email,
+            subject: 'Verify your email',
+            text: `Please verify your email by clicking the following link: ${verificationLink}`,
+            html: `<p>Please verify your email by clicking the following link: <a href="${verificationLink}">Verify Email</a></p>`,
         };
 
-        const sendMail = async (transporter: any, mailOptions: any) => {
+        const sendMail = async (transporter: nodemailer.Transporter, mailOptions: nodemailer.SendMailOptions) => {
             try {
-                await transporter.sendMail(mailOptions);
+                const info = await transporter.sendMail(mailOptions);
+                console.log('Email sent successfully:', info.response);
+                return true;
             } catch (error) {
                 console.error('Error sending email:', error);
+                throw error; // Re-throw to handle in the main try-catch
             }
-        }
-        sendMail(transporter, mailOptions)
+        };
+
+        await sendMail(transporter, mailOptions); // Changed to await the result
         res.status(200).json({ message: "The verification link has been sent to mail!", token });
 
         setTimeout(async () => {
@@ -116,13 +125,13 @@ userRouter.post("/signup", async (req: Request, res: Response) => {
             if (!userCheck || !userCheck.isVerified) {
                 await prisma.user.delete({ where: { id: user.id } });
             }
-        }, 2 * 60 * 1000); // 2 minutes timer
+        }, 2 * 60 * 1000);
 
     } catch (error) {
-        res.status(400).json({ error });
+        console.error('Signup error:', error);
+        res.status(400).json({ error: "Failed to complete signup process" });
     }
 });
-
 
 userRouter.get("/verify/:token", async (req: Request, res: Response) => {
     const token = req.params?.token as string

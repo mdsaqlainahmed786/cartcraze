@@ -82,7 +82,7 @@ exports.userRouter.post("/signup", (req, res) => __awaiter(void 0, void 0, void 
             data: { username, email, password: hashedPassword }
         });
         const token = jsonwebtoken_1.default.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '2m' });
-        const verificationLink = `https://cartcraze.vercel.app/verify/${token}`;
+        const verificationLink = `https://cartcraze.anxiousdev.online/verify/${token}`;
         const transporter = nodemailer_1.default.createTransport({
             service: 'gmail',
             host: 'smtp.gmail.com',
@@ -220,7 +220,7 @@ exports.userRouter.post('/forgot_password', forgotPasswordLimiter, (req, res) =>
             return res.status(404).json({ message: "No user found with that email or not authorized yet!" });
         }
         const resetPasswordToken = jsonwebtoken_1.default.sign({ userId: userToResetPassword.id, email: userToResetPassword.email }, process.env.JWT_SECRET, { expiresIn: '3m' });
-        const verificationLink = `https://cartcraze.vercel.app/reset_password/${resetPasswordToken}`;
+        const verificationLink = `https://cartcraze.anxiousdev.online/reset_password/${resetPasswordToken}`;
         const transporter = nodemailer_1.default.createTransport({
             service: 'gmail',
             host: 'smtp.gmail.com',
